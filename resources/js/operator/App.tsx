@@ -3,20 +3,25 @@ import React, {lazy, Suspense} from 'react'
 import {
     BrowserRouter as Router,
     Switch,
-    Route,
 } from 'react-router-dom'
+
+import PrivateRoute from './components/PrivateRoute'
+import GuestRoute from './components/GuestRoute'
 
 export default function App() {
 
     const Login = lazy(() => import('./pages/Login'))
+    const Home = lazy(() => import('./pages/Home'))
+    const Absen = lazy(() => import('./pages/Absen'))
 
     return (
         <Router>
             <Switch>
                 <Suspense fallback={<div>Loading...</div>}>
-                    <Route path="/login">
-                        <Login />
-                    </Route>
+                    <GuestRoute path="/login"><Login /></GuestRoute>
+
+                    <PrivateRoute path="/" exact><Home /></PrivateRoute>
+                    <PrivateRoute path="/absen"><Absen /></PrivateRoute>
                 </Suspense>
             </Switch>
         </Router>
