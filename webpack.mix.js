@@ -16,3 +16,5 @@ const mix = require('laravel-mix');
 mix.postCss('resources/css/app.css', 'public/css', [
     require('tailwindcss'),
 ]);
+
+mix.ts("resources/js/operator/index.tsx","public/js/06e55b63").react()

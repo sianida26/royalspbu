@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::view('/','operator.app');
+
+// route exception here
+
+Route::view('/{path}','operator.app')
+    ->where('path','.*');

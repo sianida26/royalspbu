@@ -7,6 +7,7 @@
     <title>Document</title>
 </head>
 <body>
-    
+    <div id="root"></div>
+    <script src="{{asset('js/06e55b63/index.js')}}"></script>
 </body>
 </html>
