@@ -13,6 +13,7 @@ export default function App() {
     const Login = lazy(() => import('./pages/Login'))
     const Home = lazy(() => import('./pages/Home'))
     const Absen = lazy(() => import('./pages/Absen'))
+    const Laporan = lazy(() => import('./pages/Laporan'))
 
     return (
         <Router>
@@ -22,6 +23,7 @@ export default function App() {
 
                     <PrivateRoute path="/" exact><Home /></PrivateRoute>
                     <PrivateRoute path="/absen"><Absen /></PrivateRoute>
+                    <PrivateRoute path="/laporan"><Laporan /></PrivateRoute>
                 </Suspense>
             </Switch>
         </Router>

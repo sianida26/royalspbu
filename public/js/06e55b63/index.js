@@ -180,6 +180,11 @@ function App() {
       return __importStar(__webpack_require__(/*! ./pages/Absen */ "./resources/js/operator/pages/Absen.tsx"));
     });
   });
+  var Laporan = react_1.lazy(function () {
+    return Promise.resolve().then(function () {
+      return __importStar(__webpack_require__(/*! ./pages/Laporan */ "./resources/js/operator/pages/Laporan.tsx"));
+    });
+  });
   return react_1["default"].createElement(react_router_dom_1.BrowserRouter, null, react_1["default"].createElement(react_router_dom_1.Switch, null, react_1["default"].createElement(react_1.Suspense, {
     fallback: react_1["default"].createElement("div", null, "Loading...")
   }, react_1["default"].createElement(GuestRoute_1["default"], {
@@ -189,7 +194,9 @@ function App() {
     exact: true
   }, react_1["default"].createElement(Home, null)), react_1["default"].createElement(PrivateRoute_1["default"], {
     path: "/absen"
-  }, react_1["default"].createElement(Absen, null)))));
+  }, react_1["default"].createElement(Absen, null)), react_1["default"].createElement(PrivateRoute_1["default"], {
+    path: "/laporan"
+  }, react_1["default"].createElement(Laporan, null)))));
 }
 
 exports.default = App;
@@ -412,6 +419,7 @@ var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/r
 var react_qr_code_1 = __importDefault(__webpack_require__(/*! react-qr-code */ "./node_modules/react-qr-code/lib/index.js"));
 
 function Absen() {
+  // todo: add request qr code session
   return react_1["default"].createElement("div", null, react_1["default"].createElement(react_qr_code_1["default"], {
     value: "hei"
   }), react_1["default"].createElement("span", null, "Ini nanti text qr code nya"));
@@ -451,17 +459,188 @@ function Home() {
     history.push('/absen');
   };
 
+  var handleLaporanClick = function handleLaporanClick() {
+    history.push('/laporan');
+  };
+
   return react_1["default"].createElement("div", {
     className: "tw-w-full tw-flex tw-flex-col tw-gap-8"
   }, react_1["default"].createElement("div", {
     className: "tw-p-8 tw-border tw-border-black",
     onClick: handleAbsenClick
   }, react_1["default"].createElement("span", null, "Absen")), react_1["default"].createElement("div", {
-    className: "tw-p-8 tw-border tw-border-black"
+    className: "tw-p-8 tw-border tw-border-black",
+    onClick: handleLaporanClick
   }, react_1["default"].createElement("span", null, "Laporan")));
 }
 
 exports.default = Home;
+
+/***/ }),
+
+/***/ "./resources/js/operator/pages/Laporan.tsx":
+/*!*************************************************!*\
+  !*** ./resources/js/operator/pages/Laporan.tsx ***!
+  \*************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __assign = this && this.__assign || function () {
+  __assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+
+      for (var p in s) {
+        if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+      }
+    }
+
+    return t;
+  };
+
+  return __assign.apply(this, arguments);
+};
+
+var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  Object.defineProperty(o, k2, {
+    enumerable: true,
+    get: function get() {
+      return m[k];
+    }
+  });
+} : function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  o[k2] = m[k];
+});
+
+var __setModuleDefault = this && this.__setModuleDefault || (Object.create ? function (o, v) {
+  Object.defineProperty(o, "default", {
+    enumerable: true,
+    value: v
+  });
+} : function (o, v) {
+  o["default"] = v;
+});
+
+var __importStar = this && this.__importStar || function (mod) {
+  if (mod && mod.__esModule) return mod;
+  var result = {};
+  if (mod != null) for (var k in mod) {
+    if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+  }
+
+  __setModuleDefault(result, mod);
+
+  return result;
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var StepLaporan;
+
+(function (StepLaporan) {
+  StepLaporan[StepLaporan["PilihPompa"] = 0] = "PilihPompa";
+  StepLaporan[StepLaporan["IsiLaporan"] = 1] = "IsiLaporan";
+  StepLaporan[StepLaporan["PeriksaLaporan"] = 2] = "PeriksaLaporan";
+})(StepLaporan || (StepLaporan = {}));
+
+function Laporan() {
+  var _a = react_1.useState(StepLaporan.PilihPompa),
+      step = _a[0],
+      setStep = _a[1];
+
+  var _b = react_1.useState({
+    pompa: -1,
+    nozzles: {}
+  }),
+      report = _b[0],
+      setReport = _b[1];
+
+  var handlePilihPompa = function handlePilihPompa(pilihanPompa) {
+    setReport({
+      pompa: pilihanPompa,
+      nozzles: {}
+    });
+    setStep(StepLaporan.IsiLaporan);
+  };
+
+  var handleSubmitIsi = function handleSubmitIsi() {
+    setStep(StepLaporan.PeriksaLaporan);
+  };
+
+  var handleInputTotalisator = function handleInputTotalisator(input, nozzle) {
+    setReport(function (prev) {
+      var _a;
+
+      return __assign(__assign({}, prev), {
+        nozzles: __assign(__assign({}, prev.nozzles), (_a = {}, _a[nozzle] = +input, _a))
+      });
+    });
+  };
+
+  var renderPilihPompa = function renderPilihPompa() {
+    return react_1["default"].createElement("div", {
+      className: "tw-grid tw-grid-cols-2 tw-w-full tw-gap-8"
+    }, [1, 2, 3, 4].map(function (x) {
+      return react_1["default"].createElement("div", {
+        key: x,
+        onClick: function onClick() {
+          return handlePilihPompa(x);
+        },
+        className: "tw-w-24 tw-h-24 tw-border tw-border-black"
+      }, "pulau pompa " + x);
+    }));
+  };
+
+  var renderIsiLaporan = function renderIsiLaporan() {
+    return react_1["default"].createElement("div", {
+      className: "tw-flex tw-flex-col tw-gap-2"
+    }, [1, 2, 3, 4].map(function (x) {
+      return react_1["default"].createElement("div", {
+        key: x
+      }, react_1["default"].createElement("p", null, "Totalisator Nozzle ", x), react_1["default"].createElement("input", {
+        type: "number",
+        onChange: function onChange(e) {
+          return handleInputTotalisator(e.target.value, x);
+        },
+        className: "tw-border tw-border-black tw-p-2"
+      }));
+    }), react_1["default"].createElement("button", {
+      className: "tw-border tw-bg-gray-400",
+      onClick: handleSubmitIsi
+    }, "Selanjutnya"));
+  };
+
+  var renderPeriksaLaporan = function renderPeriksaLaporan() {
+    return react_1["default"].createElement("div", {
+      className: "tw-flex tw-flex-col tw-gap-2"
+    }, react_1["default"].createElement("p", {
+      className: "tw-text-center"
+    }, "Laporan pulau pompa ", report.pompa), Object.entries(report.nozzles).map(function (_a) {
+      var nozzle = _a[0],
+          totalisator = _a[1];
+      return react_1["default"].createElement("p", null, "nozzle ", nozzle, " : ", totalisator);
+    }), react_1["default"].createElement("button", {
+      className: "tw-border tw-bg-gray-400",
+      onClick: handleSubmitIsi
+    }, "Kirim"));
+  };
+
+  return react_1["default"].createElement("div", {
+    className: "tw-max-w-screen tw-w-full"
+  }, react_1["default"].createElement("p", {
+    className: "tw-text-center"
+  }, step === StepLaporan.PilihPompa ? 'Pilih Pompa' : step === StepLaporan.IsiLaporan ? 'Isi Laporan' : 'Periksa Laporan'), step === StepLaporan.PilihPompa ? renderPilihPompa() : step === StepLaporan.IsiLaporan ? renderIsiLaporan() : renderPeriksaLaporan());
+}
+
+exports.default = Laporan;
 
 /***/ }),
 
@@ -623,7 +802,7 @@ var react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/reac
 
 var authDefaultValues = {
   auth: {
-    isLoggedIn: false,
+    isLoggedIn: true,
     name: '',
     username: ''
   },

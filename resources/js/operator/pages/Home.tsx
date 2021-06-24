@@ -9,13 +9,17 @@ export default function Home() {
         history.push('/absen')
     }
 
+    const handleLaporanClick = () => {
+        history.push('/laporan')
+    }
+
     return (
         <div className="tw-w-full tw-flex tw-flex-col tw-gap-8">
             <div className="tw-p-8 tw-border tw-border-black" onClick={handleAbsenClick}>
                 <span>Absen</span>
             </div>
 
-            <div className="tw-p-8 tw-border tw-border-black">
+            <div className="tw-p-8 tw-border tw-border-black" onClick={handleLaporanClick}>
                 <span>Laporan</span>
             </div>
         </div>
