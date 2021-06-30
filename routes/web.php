@@ -13,9 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::view('/','operator.app');
+Route::view('/','royalSPBU.app');
 
-// route exception here
-
-Route::view('/{path}','operator.app')
-    ->where('path','.*');
+Route::view('/{path}','royalSPBU.app')
+    ->where('path','^(?!api).*$');

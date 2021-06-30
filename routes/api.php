@@ -3,6 +3,10 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\TankController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -16,4 +20,31 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+Route::post('/upload', [TankController::class, 'upload']);
+
+Route::prefix('admin')->group(function(){
+    Route::prefix('user')->group(function(){
+        Route::get('/getAll', [UserController::class, 'getAllUser'] );
+        Route::post('/add', [UserController::class, 'addUser'] );
+        Route::post('/edit', [UserController::class, 'editUser']);
+        Route::post('/delete', [UserController::class, 'deleteUser']);
+        Route::post('/resetPassword', [UserController::class, 'resetUserPassword']);
+    });
+
+    Route::prefix('product')->group(function(){
+        Route::get('/getAll',[ProductController::class, 'getAllProducts']);
+        Route::post('/add',[ProductController::class, 'addProduct']);
+        Route::post('/edit',[ProductController::class, 'editProduct']);
+        Route::post('/delete',[ProductController::class, 'deleteProduct']);
+    });
+
+    Route::prefix('tank')->group(function(){
+        Route::get('/getAll',[TankController::class,'getAllTanks']);
+        Route::post('/add',[TankController::class,'addTank']);
+        Route::post('/edit',[TankController::class,'editTank']);
+        Route::post('/delete',[TankController::class,'delete']);
+    });
+    
 });

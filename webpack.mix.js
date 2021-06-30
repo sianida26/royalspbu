@@ -17,4 +17,5 @@ mix.postCss('resources/css/app.css', 'public/css', [
     require('tailwindcss'),
 ]);
 
-mix.ts("resources/js/operator/index.tsx","public/js/06e55b63").react()
+// output untuk app
+mix.ts("resources/js/RoyalSPBU/index.tsx","public/js/e86691c3").react()
