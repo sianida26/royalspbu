@@ -83,6 +83,7 @@ class ProductController extends Controller
 
     public function deleteProduct(Request $request){
         $product = Product::findOrFail($request->id);
+        abort_unless($product->tanks->isEmpty(), 403, 'Anda harus menghapus atau mengalihkan semua tangki yang berkaitan dengan produk ini sebelum menghapus');
         $product->delete();
         return [
             'name' => $product->name,

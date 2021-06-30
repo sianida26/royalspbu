@@ -11,6 +11,7 @@ export default function Scan() {
     const [qrValue, setQrValue] = React.useState('')
     const videoElement = React.useRef<HTMLVideoElement>(null)
     const canvasElement = React.useRef<HTMLCanvasElement>(null)
+    const scannerContainer = React.useRef<HTMLDivElement>(null)
 
     React.useEffect(() => {
         main()
@@ -23,19 +24,19 @@ export default function Scan() {
     }, [])
 
     const handleResize = () => {
-        const width = document.documentElement.clientWidth
-        const height = document.documentElement.clientHeight
+        const width = scannerContainer.current!.clientWidth
+        const height = scannerContainer.current!.clientHeight
         videoElement.current!.width = width
         videoElement.current!.height = height
         canvasElement.current!.width = videoElement.current!.videoWidth
         canvasElement.current!.height = videoElement.current!.videoHeight
 
         if (width / videoElement.current!.videoWidth < height / videoElement.current!.videoHeight){
-            canvasElement.current!.style.width = '100vw'
+            canvasElement.current!.style.width = '100%'
             canvasElement.current!.style.height = 'auto'
         } else {
             canvasElement.current!.style.width = 'auto'
-            canvasElement.current!.style.height = '100vh'
+            canvasElement.current!.style.height = '100%'
         }
     }
 
@@ -47,7 +48,7 @@ export default function Scan() {
             await init()
             while (isScanning){
                 await scan()
-                await sleep(800)
+                await sleep(100)
             }
         } catch (e){
             console.log('error get camera: '+e)
@@ -94,6 +95,9 @@ export default function Scan() {
         const width = canvasElement.current!.width
         const height = canvasElement.current!.height
         context.clearRect(0,0,width,height)
+        context.strokeStyle = '#FF0000'
+        context.fillStyle = '#00FF00'
+        context.lineWidth = 6
         for (let i = 0; i < symbols.length; ++i){
             const sym = symbols[i]
             const points = sym.points
@@ -109,12 +113,28 @@ export default function Scan() {
             // setQrValue(sym.decode())
             console.log('horee'+sym.decode())
         }
+        if (symbols.length > 0){
+            const sym = symbols[0]
+            setQrValue(sym.decode())
+        }
     }
 
     return (
-        <div>
-            <video className="tw-block tw-absolute" ref={videoElement}></video>
-            <canvas ref={canvasElement} className="tw-block tw-absolute tw-top-0 tw-left-0 tw-right-0 tw-bottom-0 tw-m-auto"></canvas>
+        <div className="tw-flex tw-flex-col tw-w-full tw-px-4">
+            <p className="tw-text-right">Tanggal sekarang</p>
+            <div className="tw-w-full relative" ref={scannerContainer}>
+                <video className="tw-block tw-transform" style={{transform: 'rotateY(180deg)', WebkitTransform: 'rotateY(180deg)'}} ref={videoElement}></video>
+                <canvas ref={canvasElement} className="tw-hidden tw-absolute tw-top-0 tw-left-0 tw-right-0 tw-bottom-0 tw-m-auto"></canvas>
+            </div>
+            <div className="">
+                <p>Presensi Manual</p>
+                <input className="tw-border tw-border-black tw-p-1" value={qrValue} onChange={(e) => setQrValue(e.target.value)} />
+                <button>Cek</button>
+            </div>
+            <hr className="tw-border-b tw-border-black mt-2" />
+            <span>Presensi berhasil</span>
+            <span>Nama: Belum</span>
+            <span>Waktu presensi: belum diprogram</span>
         </div>
     )
 }

@@ -26,6 +26,17 @@ export interface TankObject {
     stock: number,
 }
 
+export interface PumpObject {
+    id: number,
+    nozzles: NozzleObject[]
+}
+
+export interface NozzleObject{
+    id: number,
+    tankId: number,
+    totalizator: number,
+}
+
 export interface IConfig {
 }
 
@@ -33,6 +44,7 @@ export interface IAdminConfig {
     editUserObject? : UserObject
     editProductObject? : ProductObject
     editTankObject? : TankObject
+    editPumpObject? : PumpObject
 }
 
 export interface IAuth {

@@ -75,11 +75,15 @@ export default function Tanks() {
                     case 401: {
                         errorMessage = "Password Salah"
                     } break;
+                    case 403: {
+                        errorMessage = error.response.data.message
+                    } break;
                 }
             }
             //you can show error notification here
             enqueueSnackbar(errorMessage,{variant:"error"});
-        });
+        })
+        .finally(() => setLoading(false))
     }
 
     return (

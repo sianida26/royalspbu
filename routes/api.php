@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\TankController;
+use App\Http\Controllers\PumpController;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,6 +46,13 @@ Route::prefix('admin')->group(function(){
         Route::post('/add',[TankController::class,'addTank']);
         Route::post('/edit',[TankController::class,'editTank']);
         Route::post('/delete',[TankController::class,'delete']);
+    });
+
+    Route::prefix('pump')->group(function(){
+        Route::get('/getAll',[PumpController::class,'getAll']);
+        Route::post('/add',[PumpController::class,'add']);
+        Route::post('/delete',[PumpController::class,'delete']);
+        Route::post('/edit',[PumpController::class,'edit']);
     });
     
 });

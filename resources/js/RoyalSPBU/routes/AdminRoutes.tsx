@@ -16,7 +16,11 @@ import EditProduct from '../pages/adminPages/products/EditProduct'
 
 import Tanks from '../pages/adminPages/tanks/Tanks'
 import FormTank from '../pages/adminPages/tanks/FormTank'
-import Scan from '../pages/adminPages/presence/Scan'
+
+import Pumps from '../pages/adminPages/pumps/Pumps'
+import FormPump from '../pages/adminPages/pumps/FormPump'
+
+import Presence from '../pages/adminPages/presence/Presence'
 
 import { Roles } from '../types'
 
@@ -76,9 +80,24 @@ const AdminRoutes = () => {
             component: FormTank,
         },
         {
-            path: '/scan',
+            path: '/presensi',
             exact: true,
-            component: Scan,
+            component: Presence,
+        },
+        {
+            path: '/pompa',
+            exact: true,
+            component: Pumps,
+        },
+        {
+            path: '/pompa/tambah',
+            exact: true,
+            component: FormPump
+        },
+        {
+            path: '/pompa/edit',
+            exact: true,
+            component: FormPump
         }
     ]
 

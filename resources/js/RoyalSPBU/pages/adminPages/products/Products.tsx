@@ -34,12 +34,12 @@ export default function Products() {
                 name: _product.name,
                 price: _product.price,
             })))
-            setLoading(false)
         })
         .catch(error =>{ //handle error response
             let errorMessage = error.pesan ? error.pesan : "Terjadi kesalahan pada pengaturan request ini. Silakan hubungi Admin.";
             enqueueSnackbar(errorMessage,{variant:"error"});
-        });
+        })
+        .finally(() => setLoading(false))
     }
 
     useEffect(() => {
@@ -53,6 +53,7 @@ export default function Products() {
 
     const handleDeleteProduct = (x: ProductObject) => {
         //TODO: Tambah konfirmasi dengan password
+        setLoading(true)
         axios({method:'post', url: '/product/delete', data: {id: x.id, /*password: */}})
         .then(result => { //handle success response
             let data = result.data;
@@ -70,11 +71,15 @@ export default function Products() {
                     case 401: {
                         errorMessage = "Password Salah"
                     } break;
+                    case 403: {
+                        errorMessage = error.response.data.message
+                    } break;
                 }
             }
             //you can show error notification here
             enqueueSnackbar(errorMessage,{variant:"error"});
-        });
+        })
+        .finally(() => setLoading(false))
     }
 
     return (

@@ -105,10 +105,11 @@ class TankController extends Controller
     }
 
     public function delete(Request $request){
-        $product = Tank::findOrFail($request->id);
-        $product->delete();
+        $tank = Tank::findOrFail($request->id);
+        abort_unless($tank->nozzles->isEmpty(), 403, 'Anda harus menghapus atau mengalihkan semua nozzle yang berkaitan dengan tangki ini sebelum menghapus');
+        $tank->delete();
         return [
-            'name' => $product->name,
+            'name' => $tank->name,
             'message' => 'Tangki berhasil dihapus',
         ];
     }

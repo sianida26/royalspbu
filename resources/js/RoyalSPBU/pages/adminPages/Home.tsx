@@ -17,6 +17,9 @@ export default function Home() {
             <div className="tw-py-8 tw-border tw-border-black" onClick={() => history.push('/tanks')}>
                 Tangki
             </div>
+            <div className="tw-py-8 tw-border tw-border-black" onClick={() => history.push('/pompa')}>
+                Pulau Pompa
+            </div>
         </div>
     )
 }

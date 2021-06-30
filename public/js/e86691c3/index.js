@@ -7021,10 +7021,71 @@ function Home() {
     onClick: function onClick() {
       return history.push('/tanks');
     }
-  }, "Tangki"));
+  }, "Tangki"), react_1["default"].createElement("div", {
+    className: "tw-py-8 tw-border tw-border-black",
+    onClick: function onClick() {
+      return history.push('/pompa');
+    }
+  }, "Pulau Pompa"));
 }
 
 exports.default = Home;
+
+/***/ }),
+
+/***/ "./resources/js/RoyalSPBU/pages/adminPages/presence/Presence.tsx":
+/*!***********************************************************************!*\
+  !*** ./resources/js/RoyalSPBU/pages/adminPages/presence/Presence.tsx ***!
+  \***********************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var Scan_1 = __importDefault(__webpack_require__(/*! ./Scan */ "./resources/js/RoyalSPBU/pages/adminPages/presence/Scan.tsx"));
+
+var Tab;
+
+(function (Tab) {
+  Tab[Tab["SCAN"] = 0] = "SCAN";
+  Tab[Tab["LIST"] = 1] = "LIST";
+})(Tab || (Tab = {}));
+
+function Presence() {
+  var _a = react_1["default"].useState(Tab.SCAN),
+      tab = _a[0],
+      setTab = _a[1];
+
+  return react_1["default"].createElement("div", {
+    className: "tw-w-full tw-flex tw-flex-col"
+  }, react_1["default"].createElement("div", {
+    className: "tw-w-full tw-flex tw-gap-3"
+  }, react_1["default"].createElement("span", {
+    className: "" + (tab === Tab.SCAN && 'tw-border tw-border-black'),
+    onClick: function onClick() {
+      return setTab(Tab.SCAN);
+    }
+  }, "Presensi"), react_1["default"].createElement("span", {
+    className: "" + (tab !== Tab.SCAN && 'tw-border tw-border-black'),
+    onClick: function onClick() {
+      return setTab(Tab.LIST);
+    }
+  }, "List Presensi")), tab === Tab.SCAN ? react_1["default"].createElement(Scan_1["default"], null) : react_1["default"].createElement("div", null, "Belum diprogram"));
+}
+
+exports.default = Presence;
 
 /***/ }),
 
@@ -7207,6 +7268,7 @@ function Scan() {
 
   var videoElement = react_1["default"].useRef(null);
   var canvasElement = react_1["default"].useRef(null);
+  var scannerContainer = react_1["default"].useRef(null);
   react_1["default"].useEffect(function () {
     main();
   }, []);
@@ -7219,19 +7281,19 @@ function Scan() {
   }, []);
 
   var handleResize = function handleResize() {
-    var width = document.documentElement.clientWidth;
-    var height = document.documentElement.clientHeight;
+    var width = scannerContainer.current.clientWidth;
+    var height = scannerContainer.current.clientHeight;
     videoElement.current.width = width;
     videoElement.current.height = height;
     canvasElement.current.width = videoElement.current.videoWidth;
     canvasElement.current.height = videoElement.current.videoHeight;
 
     if (width / videoElement.current.videoWidth < height / videoElement.current.videoHeight) {
-      canvasElement.current.style.width = '100vw';
+      canvasElement.current.style.width = '100%';
       canvasElement.current.style.height = 'auto';
     } else {
       canvasElement.current.style.width = 'auto';
-      canvasElement.current.style.height = '100vh';
+      canvasElement.current.style.height = '100%';
     }
   };
 
@@ -7274,7 +7336,7 @@ function Scan() {
 
             return [4
             /*yield*/
-            , sleep(800)];
+            , sleep(100)];
 
           case 5:
             _a.sent();
@@ -7390,6 +7452,9 @@ function Scan() {
     var width = canvasElement.current.width;
     var height = canvasElement.current.height;
     context.clearRect(0, 0, width, height);
+    context.strokeStyle = '#FF0000';
+    context.fillStyle = '#00FF00';
+    context.lineWidth = 6;
 
     for (var i = 0; i < symbols.length; ++i) {
       var sym = symbols[i];
@@ -7409,15 +7474,41 @@ function Scan() {
 
       console.log('horee' + sym.decode());
     }
+
+    if (symbols.length > 0) {
+      var sym = symbols[0];
+      setQrValue(sym.decode());
+    }
   };
 
-  return react_1["default"].createElement("div", null, react_1["default"].createElement("video", {
-    className: "tw-block tw-absolute",
+  return react_1["default"].createElement("div", {
+    className: "tw-flex tw-flex-col tw-w-full tw-px-4"
+  }, react_1["default"].createElement("p", {
+    className: "tw-text-right"
+  }, "Tanggal sekarang"), react_1["default"].createElement("div", {
+    className: "tw-w-full relative",
+    ref: scannerContainer
+  }, react_1["default"].createElement("video", {
+    className: "tw-block tw-transform",
+    style: {
+      transform: 'rotateY(180deg)',
+      WebkitTransform: 'rotateY(180deg)'
+    },
     ref: videoElement
   }), react_1["default"].createElement("canvas", {
     ref: canvasElement,
-    className: "tw-block tw-absolute tw-top-0 tw-left-0 tw-right-0 tw-bottom-0 tw-m-auto"
-  }));
+    className: "tw-hidden tw-absolute tw-top-0 tw-left-0 tw-right-0 tw-bottom-0 tw-m-auto"
+  })), react_1["default"].createElement("div", {
+    className: ""
+  }, react_1["default"].createElement("p", null, "Presensi Manual"), react_1["default"].createElement("input", {
+    className: "tw-border tw-border-black tw-p-1",
+    value: qrValue,
+    onChange: function onChange(e) {
+      return setQrValue(e.target.value);
+    }
+  }), react_1["default"].createElement("button", null, "Cek")), react_1["default"].createElement("hr", {
+    className: "tw-border-b tw-border-black mt-2"
+  }), react_1["default"].createElement("span", null, "Presensi berhasil"), react_1["default"].createElement("span", null, "Nama: Belum"), react_1["default"].createElement("span", null, "Waktu presensi: belum diprogram"));
 }
 
 exports.default = Scan;
@@ -7771,12 +7862,13 @@ function Products() {
           price: _product.price
         };
       }));
-      setLoading(false);
     })["catch"](function (error) {
       var errorMessage = error.pesan ? error.pesan : "Terjadi kesalahan pada pengaturan request ini. Silakan hubungi Admin.";
       enqueueSnackbar(errorMessage, {
         variant: "error"
       });
+    })["finally"](function () {
+      return setLoading(false);
     });
   };
 
@@ -7793,6 +7885,7 @@ function Products() {
 
   var handleDeleteProduct = function handleDeleteProduct(x) {
     //TODO: Tambah konfirmasi dengan password
+    setLoading(true);
     AdminAxios_1["default"]({
       method: 'post',
       url: '/product/delete',
@@ -7822,6 +7915,12 @@ function Products() {
               errorMessage = "Password Salah";
             }
             break;
+
+          case 403:
+            {
+              errorMessage = error.response.data.message;
+            }
+            break;
         }
       } //you can show error notification here
 
@@ -7829,6 +7928,8 @@ function Products() {
       enqueueSnackbar(errorMessage, {
         variant: "error"
       });
+    })["finally"](function () {
+      return setLoading(false);
     });
   };
 
@@ -7855,6 +7956,454 @@ function Products() {
       }
     }, "Delete")));
   }) : react_1["default"].createElement("span", null, "Belum ada produk"));
+}
+
+exports.default = Products;
+
+/***/ }),
+
+/***/ "./resources/js/RoyalSPBU/pages/adminPages/pumps/FormPump.tsx":
+/*!********************************************************************!*\
+  !*** ./resources/js/RoyalSPBU/pages/adminPages/pumps/FormPump.tsx ***!
+  \********************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __assign = this && this.__assign || function () {
+  __assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+
+      for (var p in s) {
+        if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+      }
+    }
+
+    return t;
+  };
+
+  return __assign.apply(this, arguments);
+};
+
+var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  Object.defineProperty(o, k2, {
+    enumerable: true,
+    get: function get() {
+      return m[k];
+    }
+  });
+} : function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  o[k2] = m[k];
+});
+
+var __setModuleDefault = this && this.__setModuleDefault || (Object.create ? function (o, v) {
+  Object.defineProperty(o, "default", {
+    enumerable: true,
+    value: v
+  });
+} : function (o, v) {
+  o["default"] = v;
+});
+
+var __importStar = this && this.__importStar || function (mod) {
+  if (mod && mod.__esModule) return mod;
+  var result = {};
+  if (mod != null) for (var k in mod) {
+    if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+  }
+
+  __setModuleDefault(result, mod);
+
+  return result;
+};
+
+var __spreadArray = this && this.__spreadArray || function (to, from) {
+  for (var i = 0, il = from.length, j = to.length; i < il; i++, j++) {
+    to[j] = from[i];
+  }
+
+  return to;
+};
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var notistack_1 = __webpack_require__(/*! notistack */ "./node_modules/notistack/dist/notistack.esm.js");
+
+var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+
+var AdminConfigProvider_1 = __webpack_require__(/*! ../../../providers/AdminConfigProvider */ "./resources/js/RoyalSPBU/providers/AdminConfigProvider.tsx");
+
+var AdminAxios_1 = __importDefault(__webpack_require__(/*! ../../../utils/AdminAxios */ "./resources/js/RoyalSPBU/utils/AdminAxios.ts"));
+
+function FormPump() {
+  var _a;
+
+  var isEdit = ((_a = location.pathname.split('/').pop()) === null || _a === void 0 ? void 0 : _a.toLowerCase()) === "edit";
+  var enqueueSnackbar = notistack_1.useSnackbar().enqueueSnackbar;
+  var history = react_router_dom_1.useHistory();
+
+  var _b = AdminConfigProvider_1.useAdminConfig(),
+      configs = _b.configs,
+      setConfig = _b.setConfig;
+
+  var _c = react_1.useState(false),
+      loading = _c[0],
+      setLoading = _c[1];
+
+  var _d = react_1.useState(AdminConfigProvider_1.editPumpDefaultObject),
+      formData = _d[0],
+      setFormData = _d[1];
+
+  var _e = react_1.useState([]),
+      tanks = _e[0],
+      setTanks = _e[1];
+
+  react_1.useEffect(function () {
+    requestAllTanks(); //validating data if in edit mode
+
+    if (isEdit) {
+      //redirect to home if no data provided in context API
+      if (configs.editPumpObject.id < 0) {
+        history.replace('/');
+        return;
+      }
+
+      setFormData(configs.editPumpObject);
+      setConfig({
+        editPumpObject: AdminConfigProvider_1.editPumpDefaultObject
+      }); //hapus objek edit
+    }
+  }, []);
+
+  var handleAddNozzle = function handleAddNozzle() {
+    setFormData(function (prev) {
+      return __assign(__assign({}, prev), {
+        nozzles: __spreadArray(__spreadArray([], prev.nozzles), [{
+          id: -1,
+          tankId: tanks[0].id,
+          totalizator: 0
+        }])
+      });
+    });
+  };
+
+  var handleFormChange = function handleFormChange(n, name, value) {
+    setFormData(function (prev) {
+      return __assign(__assign({}, prev), {
+        nozzles: prev.nozzles.map(function (nozzle, i) {
+          var _a;
+
+          if (i !== n) return nozzle;
+          return __assign(__assign({}, nozzle), (_a = {}, _a[name] = value, _a));
+        })
+      });
+    });
+  };
+
+  var handleDeleteNozzle = function handleDeleteNozzle(n) {
+    setFormData(function (prev) {
+      return __assign(__assign({}, prev), {
+        nozzles: prev.nozzles.filter(function (nozzle, i) {
+          return i !== n;
+        })
+      });
+    });
+  };
+
+  var handleDeletePump = function handleDeletePump() {
+    //TODO: Tambah konfirmasi dengan password
+    setLoading(true);
+    AdminAxios_1["default"]({
+      method: 'post',
+      url: '/pump/delete',
+      data: {
+        id: formData.id
+        /*password: */
+
+      }
+    }).then(function (result) {
+      var data = result.data;
+      console.log(data);
+      enqueueSnackbar("Pompa berhasil dihapus", {
+        variant: 'warning'
+      });
+      history.replace('/pompa');
+    })["catch"](function (error) {
+      var errorMessage = error.pesan ? error.pesan : "Terjadi kesalahan pada pengaturan request ini. Silakan hubungi admin.";
+
+      if (error.response) {
+        //Error caused from the server
+        console.log(error.response);
+        var errorCode = error.response.status;
+
+        switch (errorCode) {
+          case 401:
+            {
+              errorMessage = "Password Salah";
+            }
+            break;
+        }
+      } //you can show error notification here
+
+
+      enqueueSnackbar(errorMessage, {
+        variant: "error"
+      });
+    });
+  };
+
+  var handleSave = function handleSave() {
+    setLoading(true);
+    AdminAxios_1["default"]({
+      method: 'post',
+      url: isEdit ? '/pump/edit' : '/pump/add',
+      data: formData
+    }).then(function (result) {
+      // setFormErrors({}) todo: set form errors
+      var data = result.data;
+      enqueueSnackbar("Pompa berhasil di" + (isEdit ? 'edit' : 'tambahkan'), {
+        variant: 'success'
+      });
+      history.push('/pompa');
+    })["catch"](function (error) {
+      var errorMessage = error.pesan ? error.pesan : "Terjadi kesalahan pada pengaturan request ini. Silakan hubungi admin.";
+
+      if (error.response) {
+        //Error caused from the server
+        console.log(error.response);
+        var errorCode = error.response.status;
+
+        switch (errorCode) {
+          case 422:
+            {//todo: add form errors
+              // setFormErrors(error.response.data.errors)
+            }
+            break;
+        }
+      } //you can show error notification here
+
+
+      enqueueSnackbar(errorMessage, {
+        variant: "error"
+      });
+    })["finally"](function () {
+      return setLoading(false);
+    });
+  };
+
+  var requestAllTanks = function requestAllTanks() {
+    setLoading(true);
+    AdminAxios_1["default"]({
+      method: 'get',
+      url: '/tank/getAll'
+    }).then(function (result) {
+      var data = result.data;
+      setTanks(data.map(function (tank) {
+        return {
+          id: tank.id,
+          name: tank.name,
+          product: tank.product,
+          productId: tank.productId,
+          stock: tank.stock
+        };
+      }));
+    })["catch"](function (error) {
+      var errorMessage = error.pesan ? error.pesan : "Terjadi kesalahan pada pengaturan request ini. Silakan hubungi Admin.";
+      enqueueSnackbar(errorMessage, {
+        variant: "error"
+      });
+    })["finally"](function () {
+      return setLoading(false);
+    });
+  };
+
+  return react_1["default"].createElement("div", {
+    className: "tw-w-full tw-flex tw-flex-col tw-gap-2"
+  }, formData.nozzles.map(function (nozzle, i) {
+    return react_1["default"].createElement("div", {
+      className: "tw-border tw-border-black tw-rounded-md tw-flex tw-flex-col tw-gap-1"
+    }, react_1["default"].createElement("p", null, "Nozzle ", i + 1), react_1["default"].createElement("p", null, "Produk"), react_1["default"].createElement("select", {
+      name: "",
+      value: nozzle.tankId,
+      onChange: function onChange(e) {
+        return handleFormChange(i, "tankId", e.target.value);
+      }
+    }, tanks.map(function (tank) {
+      return react_1["default"].createElement("option", {
+        value: tank.id
+      }, tank.name);
+    })), react_1["default"].createElement("p", null, "Totalisator"), react_1["default"].createElement("input", {
+      className: "tw-border tw-border-black tw-p-1",
+      type: "number",
+      value: nozzle.totalizator,
+      onChange: function onChange(e) {
+        return handleFormChange(i, "totalizator", e.target.value);
+      }
+    }), react_1["default"].createElement("span", {
+      className: "",
+      onClick: function onClick() {
+        return handleDeleteNozzle(i);
+      }
+    }, "Hapus"));
+  }), react_1["default"].createElement("div", {
+    className: "tw-border tw-border-black",
+    onClick: handleAddNozzle
+  }, "Tambah Nozzle"), react_1["default"].createElement("div", {
+    className: "tw-border tw-border-black tw-bg-red-300 " + (!isEdit && 'tw-hidden'),
+    onClick: handleDeletePump
+  }, "Hapus Pompa"), react_1["default"].createElement("div", {
+    className: "tw-border tw-border-black tw-bg-green-300",
+    onClick: handleSave
+  }, "Simpan"));
+}
+
+exports.default = FormPump;
+
+/***/ }),
+
+/***/ "./resources/js/RoyalSPBU/pages/adminPages/pumps/Pumps.tsx":
+/*!*****************************************************************!*\
+  !*** ./resources/js/RoyalSPBU/pages/adminPages/pumps/Pumps.tsx ***!
+  \*****************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  Object.defineProperty(o, k2, {
+    enumerable: true,
+    get: function get() {
+      return m[k];
+    }
+  });
+} : function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  o[k2] = m[k];
+});
+
+var __setModuleDefault = this && this.__setModuleDefault || (Object.create ? function (o, v) {
+  Object.defineProperty(o, "default", {
+    enumerable: true,
+    value: v
+  });
+} : function (o, v) {
+  o["default"] = v;
+});
+
+var __importStar = this && this.__importStar || function (mod) {
+  if (mod && mod.__esModule) return mod;
+  var result = {};
+  if (mod != null) for (var k in mod) {
+    if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+  }
+
+  __setModuleDefault(result, mod);
+
+  return result;
+};
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var react_router_1 = __webpack_require__(/*! react-router */ "./node_modules/react-router/esm/react-router.js");
+
+var notistack_1 = __webpack_require__(/*! notistack */ "./node_modules/notistack/dist/notistack.esm.js");
+
+var AdminConfigProvider_1 = __webpack_require__(/*! ../../../providers/AdminConfigProvider */ "./resources/js/RoyalSPBU/providers/AdminConfigProvider.tsx");
+
+var AdminAxios_1 = __importDefault(__webpack_require__(/*! ../../../utils/AdminAxios */ "./resources/js/RoyalSPBU/utils/AdminAxios.ts"));
+
+function Products() {
+  var history = react_router_1.useHistory();
+  var enqueueSnackbar = notistack_1.useSnackbar().enqueueSnackbar;
+
+  var _a = AdminConfigProvider_1.useAdminConfig(),
+      configs = _a.configs,
+      setConfig = _a.setConfig;
+
+  var _b = react_1.useState([]),
+      pumps = _b[0],
+      setPumps = _b[1];
+
+  var _c = react_1.useState(true),
+      isLoading = _c[0],
+      setLoading = _c[1];
+
+  var requestAllPumps = function requestAllPumps() {
+    setLoading(true);
+    AdminAxios_1["default"]({
+      method: 'get',
+      url: '/pump/getAll'
+    }).then(function (result) {
+      var data = result.data;
+      setPumps(data.map(function (pump) {
+        return {
+          id: pump.id,
+          nozzles: pump.nozzles
+        };
+      }));
+    })["catch"](function (error) {
+      var errorMessage = error.pesan ? error.pesan : "Terjadi kesalahan pada pengaturan request ini. Silakan hubungi Admin.";
+      enqueueSnackbar(errorMessage, {
+        variant: "error"
+      });
+    })["finally"](function () {
+      return setLoading(false);
+    });
+  };
+
+  react_1.useEffect(function () {
+    requestAllPumps();
+  }, []);
+
+  var handleEditPump = function handleEditPump(pump) {
+    setConfig({
+      editPumpObject: pump
+    });
+    history.push('/pompa/edit');
+  };
+
+  return react_1["default"].createElement("div", {
+    className: "tw-flex tw-flex-col"
+  }, isLoading ? react_1["default"].createElement("span", null, "Loading...") : pumps.length > 0 ? pumps.map(function (pump, i) {
+    return react_1["default"].createElement("div", {
+      key: pump.id,
+      className: "tw-w-full tw-border tw-border-black tw-rounded-lg tw-p-4 tw-flex tw-flex-col",
+      onClick: function onClick() {
+        return handleEditPump(pump);
+      }
+    }, react_1["default"].createElement("p", null, "Nomor Pompa : ", i + 1));
+  }) : react_1["default"].createElement("span", null, "Belum ada pompa"), react_1["default"].createElement("div", {
+    className: "tw-w-full tw-border tw-border-black tw-rounded-lg tw-p-4 tw-flex tw-flex-col",
+    onClick: function onClick() {
+      return history.push('/pompa/tambah');
+    }
+  }, "Tambah pompa"));
 }
 
 exports.default = Products;
@@ -8252,6 +8801,12 @@ function Tanks() {
               errorMessage = "Password Salah";
             }
             break;
+
+          case 403:
+            {
+              errorMessage = error.response.data.message;
+            }
+            break;
         }
       } //you can show error notification here
 
@@ -8259,6 +8814,8 @@ function Tanks() {
       enqueueSnackbar(errorMessage, {
         variant: "error"
       });
+    })["finally"](function () {
+      return setLoading(false);
     });
   };
 
@@ -9221,7 +9778,7 @@ var __importStar = this && this.__importStar || function (mod) {
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.useAdminConfig = exports.AdminConfigContext = exports.editTankDefaultObject = exports.editProductDefaultObject = exports.editUserDefaultObject = void 0;
+exports.useAdminConfig = exports.AdminConfigContext = exports.editPumpDefaultObject = exports.editTankDefaultObject = exports.editProductDefaultObject = exports.editUserDefaultObject = void 0;
 
 var react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 
@@ -9243,11 +9800,16 @@ exports.editTankDefaultObject = {
   productId: -1,
   stock: 0
 };
+exports.editPumpDefaultObject = {
+  id: -1,
+  nozzles: []
+};
 var contextDefaultValues = {
   configs: {
     editUserObject: exports.editUserDefaultObject,
     editProductObject: exports.editProductDefaultObject,
-    editTankObject: exports.editTankDefaultObject
+    editTankObject: exports.editTankDefaultObject,
+    editPumpObject: exports.editPumpDefaultObject
   },
   setConfig: function setConfig() {}
 };
@@ -9541,7 +10103,11 @@ var Tanks_1 = __importDefault(__webpack_require__(/*! ../pages/adminPages/tanks/
 
 var FormTank_1 = __importDefault(__webpack_require__(/*! ../pages/adminPages/tanks/FormTank */ "./resources/js/RoyalSPBU/pages/adminPages/tanks/FormTank.tsx"));
 
-var Scan_1 = __importDefault(__webpack_require__(/*! ../pages/adminPages/presence/Scan */ "./resources/js/RoyalSPBU/pages/adminPages/presence/Scan.tsx"));
+var Pumps_1 = __importDefault(__webpack_require__(/*! ../pages/adminPages/pumps/Pumps */ "./resources/js/RoyalSPBU/pages/adminPages/pumps/Pumps.tsx"));
+
+var FormPump_1 = __importDefault(__webpack_require__(/*! ../pages/adminPages/pumps/FormPump */ "./resources/js/RoyalSPBU/pages/adminPages/pumps/FormPump.tsx"));
+
+var Presence_1 = __importDefault(__webpack_require__(/*! ../pages/adminPages/presence/Presence */ "./resources/js/RoyalSPBU/pages/adminPages/presence/Presence.tsx"));
 
 var types_1 = __webpack_require__(/*! ../types */ "./resources/js/RoyalSPBU/types.ts");
 
@@ -9588,9 +10154,21 @@ var AdminRoutes = function AdminRoutes() {
     exact: true,
     component: FormTank_1["default"]
   }, {
-    path: '/scan',
+    path: '/presensi',
     exact: true,
-    component: Scan_1["default"]
+    component: Presence_1["default"]
+  }, {
+    path: '/pompa',
+    exact: true,
+    component: Pumps_1["default"]
+  }, {
+    path: '/pompa/tambah',
+    exact: true,
+    component: FormPump_1["default"]
+  }, {
+    path: '/pompa/edit',
+    exact: true,
+    component: FormPump_1["default"]
   }]; // todo: desain page not found
 
   var NotFoundRoute = function NotFoundRoute() {

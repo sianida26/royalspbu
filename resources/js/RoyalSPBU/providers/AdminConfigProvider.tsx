@@ -22,11 +22,17 @@ export const editTankDefaultObject = {
     stock: 0,
 }
 
+export const editPumpDefaultObject = {
+    id: -1,
+    nozzles: [],
+}
+
 const contextDefaultValues: AdminConfigContextState = {
     configs: {
         editUserObject: editUserDefaultObject,
         editProductObject: editProductDefaultObject,
         editTankObject: editTankDefaultObject,
+        editPumpObject: editPumpDefaultObject,
     },
     setConfig: () => {}
 }

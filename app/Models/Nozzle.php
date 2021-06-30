@@ -7,10 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Casts\AsCollection;
 
-class Tank extends Model
+class Nozzle extends Model
 {
-    use HasFactory;
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $guarded = [];
 
@@ -18,11 +17,11 @@ class Tank extends Model
         'history' => AsCollection::class,
     ];
 
-    public function product(){
-        return $this->belongsTo(Product::class);
+    public function tank(){
+        return $this->belongsTo(Tank::class);
     }
 
-    public function nozzles(){
-        return $this->hasMany(Nozzle::class);
+    public function pump(){
+        return $this->belongsTo(Pump::class);
     }
 }
