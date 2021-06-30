@@ -16,7 +16,7 @@ import EditProduct from '../pages/adminPages/products/EditProduct'
 
 import Tanks from '../pages/adminPages/tanks/Tanks'
 import FormTank from '../pages/adminPages/tanks/FormTank'
-import Upload from '../pages/adminPages/Upload'
+import Scan from '../pages/adminPages/presence/Scan'
 
 import { Roles } from '../types'
 
@@ -75,6 +75,11 @@ const AdminRoutes = () => {
             exact: true,
             component: FormTank,
         },
+        {
+            path: '/scan',
+            exact: true,
+            component: Scan,
+        }
     ]
 
     // todo: desain page not found

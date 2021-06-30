@@ -7028,6 +7028,402 @@ exports.default = Home;
 
 /***/ }),
 
+/***/ "./resources/js/RoyalSPBU/pages/adminPages/presence/Scan.tsx":
+/*!*******************************************************************!*\
+  !*** ./resources/js/RoyalSPBU/pages/adminPages/presence/Scan.tsx ***!
+  \*******************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+ //referensi qr code scanner : https://github.com/zbar-wasm/demo/blob/master/src/index.js
+
+var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, generator) {
+  function adopt(value) {
+    return value instanceof P ? value : new P(function (resolve) {
+      resolve(value);
+    });
+  }
+
+  return new (P || (P = Promise))(function (resolve, reject) {
+    function fulfilled(value) {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function rejected(value) {
+      try {
+        step(generator["throw"](value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function step(result) {
+      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+    }
+
+    step((generator = generator.apply(thisArg, _arguments || [])).next());
+  });
+};
+
+var __generator = this && this.__generator || function (thisArg, body) {
+  var _ = {
+    label: 0,
+    sent: function sent() {
+      if (t[0] & 1) throw t[1];
+      return t[1];
+    },
+    trys: [],
+    ops: []
+  },
+      f,
+      y,
+      t,
+      g;
+  return g = {
+    next: verb(0),
+    "throw": verb(1),
+    "return": verb(2)
+  }, typeof Symbol === "function" && (g[Symbol.iterator] = function () {
+    return this;
+  }), g;
+
+  function verb(n) {
+    return function (v) {
+      return step([n, v]);
+    };
+  }
+
+  function step(op) {
+    if (f) throw new TypeError("Generator is already executing.");
+
+    while (_) {
+      try {
+        if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+        if (y = 0, t) op = [op[0] & 2, t.value];
+
+        switch (op[0]) {
+          case 0:
+          case 1:
+            t = op;
+            break;
+
+          case 4:
+            _.label++;
+            return {
+              value: op[1],
+              done: false
+            };
+
+          case 5:
+            _.label++;
+            y = op[1];
+            op = [0];
+            continue;
+
+          case 7:
+            op = _.ops.pop();
+
+            _.trys.pop();
+
+            continue;
+
+          default:
+            if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
+              _ = 0;
+              continue;
+            }
+
+            if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
+              _.label = op[1];
+              break;
+            }
+
+            if (op[0] === 6 && _.label < t[1]) {
+              _.label = t[1];
+              t = op;
+              break;
+            }
+
+            if (t && _.label < t[2]) {
+              _.label = t[2];
+
+              _.ops.push(op);
+
+              break;
+            }
+
+            if (t[2]) _.ops.pop();
+
+            _.trys.pop();
+
+            continue;
+        }
+
+        op = body.call(thisArg, _);
+      } catch (e) {
+        op = [6, e];
+        y = 0;
+      } finally {
+        f = t = 0;
+      }
+    }
+
+    if (op[0] & 5) throw op[1];
+    return {
+      value: op[0] ? op[1] : void 0,
+      done: true
+    };
+  }
+};
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var zbar_wasm_1 = __webpack_require__(/*! zbar.wasm */ "./node_modules/zbar.wasm/dist/index.js");
+
+function Scan() {
+  var _this = this;
+
+  var _a = react_1["default"].useState(true),
+      isScanning = _a[0],
+      setScanning = _a[1];
+
+  var _b = react_1["default"].useState(''),
+      qrValue = _b[0],
+      setQrValue = _b[1];
+
+  var videoElement = react_1["default"].useRef(null);
+  var canvasElement = react_1["default"].useRef(null);
+  react_1["default"].useEffect(function () {
+    main();
+  }, []);
+  react_1["default"].useLayoutEffect(function () {
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    return function () {
+      return window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  var handleResize = function handleResize() {
+    var width = document.documentElement.clientWidth;
+    var height = document.documentElement.clientHeight;
+    videoElement.current.width = width;
+    videoElement.current.height = height;
+    canvasElement.current.width = videoElement.current.videoWidth;
+    canvasElement.current.height = videoElement.current.videoHeight;
+
+    if (width / videoElement.current.videoWidth < height / videoElement.current.videoHeight) {
+      canvasElement.current.style.width = '100vw';
+      canvasElement.current.style.height = 'auto';
+    } else {
+      canvasElement.current.style.width = 'auto';
+      canvasElement.current.style.height = '100vh';
+    }
+  };
+
+  var main = function main() {
+    return __awaiter(_this, void 0, void 0, function () {
+      var sleep, e_1;
+      return __generator(this, function (_a) {
+        switch (_a.label) {
+          case 0:
+            sleep = function sleep(ms) {
+              return new Promise(function (r) {
+                return setTimeout(r, ms);
+              });
+            };
+
+            _a.label = 1;
+
+          case 1:
+            _a.trys.push([1, 7,, 8]);
+
+            return [4
+            /*yield*/
+            , init()];
+
+          case 2:
+            _a.sent();
+
+            _a.label = 3;
+
+          case 3:
+            if (!isScanning) return [3
+            /*break*/
+            , 6];
+            return [4
+            /*yield*/
+            , scan()];
+
+          case 4:
+            _a.sent();
+
+            return [4
+            /*yield*/
+            , sleep(800)];
+
+          case 5:
+            _a.sent();
+
+            return [3
+            /*break*/
+            , 3];
+
+          case 6:
+            return [3
+            /*break*/
+            , 8];
+
+          case 7:
+            e_1 = _a.sent();
+            console.log('error get camera: ' + e_1);
+            console.error(e_1);
+            return [3
+            /*break*/
+            , 8];
+
+          case 8:
+            return [2
+            /*return*/
+            ];
+        }
+      });
+    });
+  };
+
+  var init = function init() {
+    return __awaiter(_this, void 0, void 0, function () {
+      var mediaStream;
+      return __generator(this, function (_a) {
+        switch (_a.label) {
+          case 0:
+            return [4
+            /*yield*/
+            , navigator.mediaDevices.getUserMedia({
+              audio: false,
+              video: {
+                facingMode: 'environment',
+                width: {
+                  max: 640
+                },
+                height: {
+                  min: 640
+                }
+              }
+            })];
+
+          case 1:
+            mediaStream = _a.sent();
+            videoElement.current.srcObject = mediaStream;
+            videoElement.current.setAttribute('playsinline', '');
+            videoElement.current.play();
+            return [4
+            /*yield*/
+            , new Promise(function (r) {
+              return videoElement.current.onloadedmetadata = r;
+            })];
+
+          case 2:
+            _a.sent();
+
+            handleResize();
+            return [2
+            /*return*/
+            ];
+        }
+      });
+    });
+  };
+
+  var scan = function scan() {
+    return __awaiter(_this, void 0, void 0, function () {
+      var width, height, context, imgData, res;
+      return __generator(this, function (_a) {
+        switch (_a.label) {
+          case 0:
+            width = videoElement.current.videoWidth;
+            height = videoElement.current.videoHeight;
+            canvasElement.current.width = width;
+            canvasElement.current.height = height;
+            context = canvasElement.current.getContext('2d');
+            context === null || context === void 0 ? void 0 : context.drawImage(videoElement.current, 0, 0, width, height);
+            imgData = context === null || context === void 0 ? void 0 : context.getImageData(0, 0, width, height);
+            return [4
+            /*yield*/
+            , zbar_wasm_1.scanImageData(imgData)];
+
+          case 1:
+            res = _a.sent();
+            render(res);
+            return [2
+            /*return*/
+            ];
+        }
+      });
+    });
+  };
+
+  var render = function render(symbols) {
+    var _a;
+
+    var context = (_a = canvasElement.current) === null || _a === void 0 ? void 0 : _a.getContext('2d');
+
+    if (context == null || context == undefined) {
+      console.log('context in render is null!');
+      return;
+    }
+
+    var width = canvasElement.current.width;
+    var height = canvasElement.current.height;
+    context.clearRect(0, 0, width, height);
+
+    for (var i = 0; i < symbols.length; ++i) {
+      var sym = symbols[i];
+      var points = sym.points;
+      context.beginPath();
+
+      for (var j = 0; j < points.length; ++j) {
+        var _b = points[j],
+            x = _b.x,
+            y = _b.y;
+        if (j == 0) context.moveTo(x, y);else context.lineTo(x, y);
+      }
+
+      context.closePath();
+      context.stroke();
+      context.fillText('#' + i, points[0].x, points[0].y - 10); // setQrValue(sym.decode())
+
+      console.log('horee' + sym.decode());
+    }
+  };
+
+  return react_1["default"].createElement("div", null, react_1["default"].createElement("video", {
+    className: "tw-block tw-absolute",
+    ref: videoElement
+  }), react_1["default"].createElement("canvas", {
+    ref: canvasElement,
+    className: "tw-block tw-absolute tw-top-0 tw-left-0 tw-right-0 tw-bottom-0 tw-m-auto"
+  }));
+}
+
+exports.default = Scan;
+
+/***/ }),
+
 /***/ "./resources/js/RoyalSPBU/pages/adminPages/products/AddProduct.tsx":
 /*!*************************************************************************!*\
   !*** ./resources/js/RoyalSPBU/pages/adminPages/products/AddProduct.tsx ***!
@@ -9145,6 +9541,8 @@ var Tanks_1 = __importDefault(__webpack_require__(/*! ../pages/adminPages/tanks/
 
 var FormTank_1 = __importDefault(__webpack_require__(/*! ../pages/adminPages/tanks/FormTank */ "./resources/js/RoyalSPBU/pages/adminPages/tanks/FormTank.tsx"));
 
+var Scan_1 = __importDefault(__webpack_require__(/*! ../pages/adminPages/presence/Scan */ "./resources/js/RoyalSPBU/pages/adminPages/presence/Scan.tsx"));
+
 var types_1 = __webpack_require__(/*! ../types */ "./resources/js/RoyalSPBU/types.ts");
 
 var AdminRoutes = function AdminRoutes() {
@@ -9189,6 +9587,10 @@ var AdminRoutes = function AdminRoutes() {
     path: '/tanks/edit',
     exact: true,
     component: FormTank_1["default"]
+  }, {
+    path: '/scan',
+    exact: true,
+    component: Scan_1["default"]
   }]; // todo: desain page not found
 
   var NotFoundRoute = function NotFoundRoute() {
@@ -10080,6 +10482,21 @@ function supportedValue(property, value) {
 
 
 
+
+/***/ }),
+
+/***/ "./node_modules/zbar.wasm/dist/zbar.wasm.bin":
+/*!***************************************************!*\
+  !*** ./node_modules/zbar.wasm/dist/zbar.wasm.bin ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (__webpack_require__.p + "919afea9035a50020a842aba55b2024a.bin");
 
 /***/ }),
 
@@ -50757,6 +51174,465 @@ function valueEqual(a, b) {
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (valueEqual);
 
 
+/***/ }),
+
+/***/ "./node_modules/zbar.wasm/dist/CppObject.js":
+/*!**************************************************!*\
+  !*** ./node_modules/zbar.wasm/dist/CppObject.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.CppObject = void 0;
+class CppObject {
+    constructor(ptr, inst) {
+        this.ptr = ptr;
+        this.inst = inst;
+    }
+    checkAlive() {
+        if (this.ptr)
+            return;
+        throw Error('Call after destroyed');
+    }
+    getPointer() {
+        this.checkAlive();
+        return this.ptr;
+    }
+}
+exports.CppObject = CppObject;
+//# sourceMappingURL=CppObject.js.map
+
+/***/ }),
+
+/***/ "./node_modules/zbar.wasm/dist/Image.js":
+/*!**********************************************!*\
+  !*** ./node_modules/zbar.wasm/dist/Image.js ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Image = void 0;
+const CppObject_1 = __webpack_require__(/*! ./CppObject */ "./node_modules/zbar.wasm/dist/CppObject.js");
+const Symbol_1 = __webpack_require__(/*! ./Symbol */ "./node_modules/zbar.wasm/dist/Symbol.js");
+const instance_1 = __webpack_require__(/*! ./instance */ "./node_modules/zbar.wasm/dist/instance.js");
+class Image extends CppObject_1.CppObject {
+    static async createFromGrayBuffer(width, height, dataBuf, sequence_num = 0) {
+        const inst = await instance_1.getInstance();
+        const heap = new Uint8Array(inst.memory.buffer);
+        const data = new Uint8Array(dataBuf);
+        const len = width * height;
+        if (len !== data.byteLength) {
+            throw Error('dataBuf does not match width and height');
+        }
+        const buf = inst.malloc(len);
+        heap.set(data, buf);
+        const ptr = inst.Image_create(width, height, 0x30303859 /* Y800 */, buf, len, sequence_num);
+        return new this(ptr, inst);
+    }
+    static async createFromRGBABuffer(width, height, dataBuf, sequence_num = 0) {
+        const inst = await instance_1.getInstance();
+        const heap = new Uint8Array(inst.memory.buffer);
+        const data = new Uint8Array(dataBuf);
+        const len = width * height;
+        if (len * 4 !== data.byteLength) {
+            throw Error('dataBuf does not match width and height');
+        }
+        const buf = inst.malloc(len);
+        for (let i = 0; i < len; ++i) {
+            const r = data[i * 4];
+            const g = data[i * 4 + 1];
+            const b = data[i * 4 + 2];
+            heap[buf + i] = (r * 19595 + g * 38469 + b * 7472) >> 16;
+        }
+        const ptr = inst.Image_create(width, height, 0x30303859 /* Y800 */, buf, len, sequence_num);
+        return new this(ptr, inst);
+    }
+    destroy() {
+        this.checkAlive();
+        this.inst.Image_destory(this.ptr);
+        this.ptr = 0;
+    }
+    getSymbols() {
+        this.checkAlive();
+        const res = this.inst.Image_get_symbols(this.ptr);
+        return Symbol_1.Symbol.createSymbolsFromPtr(res, this.inst.memory.buffer);
+    }
+}
+exports.Image = Image;
+//# sourceMappingURL=Image.js.map
+
+/***/ }),
+
+/***/ "./node_modules/zbar.wasm/dist/ImageScanner.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/zbar.wasm/dist/ImageScanner.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ImageScanner = void 0;
+const CppObject_1 = __webpack_require__(/*! ./CppObject */ "./node_modules/zbar.wasm/dist/CppObject.js");
+const instance_1 = __webpack_require__(/*! ./instance */ "./node_modules/zbar.wasm/dist/instance.js");
+const Symbol_1 = __webpack_require__(/*! ./Symbol */ "./node_modules/zbar.wasm/dist/Symbol.js");
+class ImageScanner extends CppObject_1.CppObject {
+    static async create() {
+        const inst = await instance_1.getInstance();
+        const ptr = inst.ImageScanner_create();
+        return new this(ptr, inst);
+    }
+    destroy() {
+        this.checkAlive();
+        this.inst.ImageScanner_destory(this.ptr);
+        this.ptr = 0;
+    }
+    setConfig(sym, conf, value) {
+        this.checkAlive();
+        return this.inst.ImageScanner_set_config(this.ptr, sym, conf, value);
+    }
+    enableCache(enable = true) {
+        this.checkAlive();
+        this.inst.ImageScanner_enable_cache(this.ptr, enable);
+    }
+    recycleImage(image) {
+        this.checkAlive();
+        this.inst.ImageScanner_recycle_image(this.ptr, image.getPointer());
+    }
+    getResults() {
+        this.checkAlive();
+        const res = this.inst.ImageScanner_get_results(this.ptr);
+        return Symbol_1.Symbol.createSymbolsFromPtr(res, this.inst.memory.buffer);
+    }
+    scan(image) {
+        this.checkAlive();
+        return this.inst.ImageScanner_scan(this.ptr, image.getPointer());
+    }
+}
+exports.ImageScanner = ImageScanner;
+//# sourceMappingURL=ImageScanner.js.map
+
+/***/ }),
+
+/***/ "./node_modules/zbar.wasm/dist/Symbol.js":
+/*!***********************************************!*\
+  !*** ./node_modules/zbar.wasm/dist/Symbol.js ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.Symbol = void 0;
+const enum_1 = __webpack_require__(/*! ./enum */ "./node_modules/zbar.wasm/dist/enum.js");
+class TypePointer {
+    constructor(ptr, buf) {
+        this.ptr = ptr;
+        this.ptr32 = ptr >> 2;
+        this.buf = buf;
+        this.HEAP8 = new Int8Array(buf);
+        this.HEAPU32 = new Uint32Array(buf);
+        this.HEAP32 = new Int32Array(buf);
+    }
+}
+class SymbolPtr extends TypePointer {
+    get type() {
+        return this.HEAPU32[this.ptr32];
+    }
+    get data() {
+        const len = this.HEAPU32[this.ptr32 + 2];
+        const ptr = this.HEAPU32[this.ptr32 + 3];
+        return Int8Array.from(this.HEAP8.subarray(ptr, ptr + len));
+    }
+    get points() {
+        const len = this.HEAPU32[this.ptr32 + 5];
+        const ptr = this.HEAPU32[this.ptr32 + 6];
+        const ptr32 = ptr >> 2;
+        const res = [];
+        for (let i = 0; i < len; ++i) {
+            const x = this.HEAP32[ptr32 + i * 2];
+            const y = this.HEAP32[ptr32 + i * 2 + 1];
+            res.push({ x, y });
+        }
+        return res;
+    }
+    get next() {
+        const ptr = this.HEAPU32[this.ptr32 + 8];
+        if (!ptr)
+            return null;
+        return new SymbolPtr(ptr, this.buf);
+    }
+    get time() {
+        return this.HEAPU32[this.ptr32 + 10];
+    }
+    get cacheCount() {
+        return this.HEAP32[this.ptr32 + 11];
+    }
+    get quality() {
+        return this.HEAP32[this.ptr32 + 12];
+    }
+}
+class SymbolSetPtr extends TypePointer {
+    get head() {
+        const ptr = this.HEAPU32[this.ptr32 + 2];
+        if (!ptr)
+            return null;
+        return new SymbolPtr(ptr, this.buf);
+    }
+}
+class Symbol {
+    constructor(ptr) {
+        this.type = ptr.type;
+        this.typeName = enum_1.ZBarSymbolType[this.type];
+        this.data = ptr.data;
+        this.points = ptr.points;
+        this.time = ptr.time;
+        this.cacheCount = ptr.cacheCount;
+        this.quality = ptr.quality;
+    }
+    static createSymbolsFromPtr(ptr, buf) {
+        if (ptr == 0)
+            return [];
+        const set = new SymbolSetPtr(ptr, buf);
+        let symbol = set.head;
+        const res = [];
+        while (symbol !== null) {
+            res.push(new Symbol(symbol));
+            symbol = symbol.next;
+        }
+        return res;
+    }
+    decode(encoding) {
+        const decoder = new TextDecoder(encoding);
+        return decoder.decode(this.data);
+    }
+}
+exports.Symbol = Symbol;
+//# sourceMappingURL=Symbol.js.map
+
+/***/ }),
+
+/***/ "./node_modules/zbar.wasm/dist/enum.js":
+/*!*********************************************!*\
+  !*** ./node_modules/zbar.wasm/dist/enum.js ***!
+  \*********************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ZBarConfigType = exports.ZBarSymbolType = void 0;
+var ZBarSymbolType;
+(function (ZBarSymbolType) {
+    ZBarSymbolType[ZBarSymbolType["ZBAR_NONE"] = 0] = "ZBAR_NONE"; /**< no symbol decoded */
+    ZBarSymbolType[ZBarSymbolType["ZBAR_PARTIAL"] = 1] = "ZBAR_PARTIAL"; /**< intermediate status */
+    ZBarSymbolType[ZBarSymbolType["ZBAR_EAN8"] = 8] = "ZBAR_EAN8"; /**< EAN-8 */
+    ZBarSymbolType[ZBarSymbolType["ZBAR_UPCE"] = 9] = "ZBAR_UPCE"; /**< UPC-E */
+    ZBarSymbolType[ZBarSymbolType["ZBAR_ISBN10"] = 10] = "ZBAR_ISBN10"; /**< ISBN-10 (from EAN-13). @since 0.4 */
+    ZBarSymbolType[ZBarSymbolType["ZBAR_UPCA"] = 12] = "ZBAR_UPCA"; /**< UPC-A */
+    ZBarSymbolType[ZBarSymbolType["ZBAR_EAN13"] = 13] = "ZBAR_EAN13"; /**< EAN-13 */
+    ZBarSymbolType[ZBarSymbolType["ZBAR_ISBN13"] = 14] = "ZBAR_ISBN13"; /**< ISBN-13 (from EAN-13). @since 0.4 */
+    ZBarSymbolType[ZBarSymbolType["ZBAR_I25"] = 25] = "ZBAR_I25"; /**< Interleaved 2 of 5. @since 0.4 */
+    ZBarSymbolType[ZBarSymbolType["ZBAR_CODE39"] = 39] = "ZBAR_CODE39"; /**< Code 39. @since 0.4 */
+    ZBarSymbolType[ZBarSymbolType["ZBAR_PDF417"] = 57] = "ZBAR_PDF417"; /**< PDF417. @since 0.6 */
+    ZBarSymbolType[ZBarSymbolType["ZBAR_QRCODE"] = 64] = "ZBAR_QRCODE"; /**< QR Code. @since 0.10 */
+    ZBarSymbolType[ZBarSymbolType["ZBAR_CODE128"] = 128] = "ZBAR_CODE128"; /**< Code 128 */
+    ZBarSymbolType[ZBarSymbolType["ZBAR_SYMBOL"] = 255] = "ZBAR_SYMBOL"; /**< mask for base symbol type */
+    ZBarSymbolType[ZBarSymbolType["ZBAR_ADDON2"] = 512] = "ZBAR_ADDON2"; /**< 2-digit add-on flag */
+    ZBarSymbolType[ZBarSymbolType["ZBAR_ADDON5"] = 1280] = "ZBAR_ADDON5"; /**< 5-digit add-on flag */
+    ZBarSymbolType[ZBarSymbolType["ZBAR_ADDON"] = 1792] = "ZBAR_ADDON"; /**< add-on flag mask */
+})(ZBarSymbolType = exports.ZBarSymbolType || (exports.ZBarSymbolType = {}));
+var ZBarConfigType;
+(function (ZBarConfigType) {
+    ZBarConfigType[ZBarConfigType["ZBAR_CFG_ENABLE"] = 0] = "ZBAR_CFG_ENABLE"; /**< enable symbology/feature */
+    ZBarConfigType[ZBarConfigType["ZBAR_CFG_ADD_CHECK"] = 1] = "ZBAR_CFG_ADD_CHECK"; /**< enable check digit when optional */
+    ZBarConfigType[ZBarConfigType["ZBAR_CFG_EMIT_CHECK"] = 2] = "ZBAR_CFG_EMIT_CHECK"; /**< return check digit when present */
+    ZBarConfigType[ZBarConfigType["ZBAR_CFG_ASCII"] = 3] = "ZBAR_CFG_ASCII"; /**< enable full ASCII character set */
+    ZBarConfigType[ZBarConfigType["ZBAR_CFG_NUM"] = 4] = "ZBAR_CFG_NUM"; /**< number of boolean decoder configs */
+    ZBarConfigType[ZBarConfigType["ZBAR_CFG_MIN_LEN"] = 32] = "ZBAR_CFG_MIN_LEN"; /**< minimum data length for valid decode */
+    ZBarConfigType[ZBarConfigType["ZBAR_CFG_MAX_LEN"] = 33] = "ZBAR_CFG_MAX_LEN"; /**< maximum data length for valid decode */
+    ZBarConfigType[ZBarConfigType["ZBAR_CFG_UNCERTAINTY"] = 64] = "ZBAR_CFG_UNCERTAINTY"; /**< required video consistency frames */
+    ZBarConfigType[ZBarConfigType["ZBAR_CFG_POSITION"] = 128] = "ZBAR_CFG_POSITION"; /**< enable scanner to collect position data */
+    ZBarConfigType[ZBarConfigType["ZBAR_CFG_X_DENSITY"] = 256] = "ZBAR_CFG_X_DENSITY"; /**< image scanner vertical scan density */
+    ZBarConfigType[ZBarConfigType["ZBAR_CFG_Y_DENSITY"] = 257] = "ZBAR_CFG_Y_DENSITY"; /**< image scanner horizontal scan density */
+})(ZBarConfigType = exports.ZBarConfigType || (exports.ZBarConfigType = {}));
+//# sourceMappingURL=enum.js.map
+
+/***/ }),
+
+/***/ "./node_modules/zbar.wasm/dist/index.js":
+/*!**********************************************!*\
+  !*** ./node_modules/zbar.wasm/dist/index.js ***!
+  \**********************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !exports.hasOwnProperty(p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+__exportStar(__webpack_require__(/*! ./Image */ "./node_modules/zbar.wasm/dist/Image.js"), exports);
+__exportStar(__webpack_require__(/*! ./ImageScanner */ "./node_modules/zbar.wasm/dist/ImageScanner.js"), exports);
+__exportStar(__webpack_require__(/*! ./module */ "./node_modules/zbar.wasm/dist/module.js"), exports);
+__exportStar(__webpack_require__(/*! ./Symbol */ "./node_modules/zbar.wasm/dist/Symbol.js"), exports);
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+
+/***/ "./node_modules/zbar.wasm/dist/instance.js":
+/*!*************************************************!*\
+  !*** ./node_modules/zbar.wasm/dist/instance.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getMemoryGrowTimestamp = exports.getInstance = void 0;
+const load_1 = __webpack_require__(/*! ./load */ "./node_modules/zbar.wasm/dist/load-browser.js");
+let inst = null;
+let HEAP32 = new Int32Array();
+const clock_gettime = (clk_id, tp) => {
+    const now = Date.now();
+    HEAP32[tp >> 2] = (now / 1e3) | 0;
+    HEAP32[(tp + 4) >> 2] = ((now % 1e3) * 1e3 * 1e3) | 0;
+    return 0;
+};
+let lastGrowTimestamp = 0;
+const emscripten_notify_memory_growth = (idx) => {
+    if (lastGrowTimestamp) {
+        console.info('zbar.wasm: Memory Grow: ', inst.memory.buffer.byteLength);
+    }
+    lastGrowTimestamp = Date.now();
+    HEAP32 = new Int32Array(inst.memory.buffer);
+};
+const importObj = {
+    env: {
+        clock_gettime,
+        emscripten_notify_memory_growth
+    }
+};
+let instPromise = (async () => {
+    const res = await load_1.loadWasmInstance(importObj);
+    if (!res) {
+        throw Error('WASM was not loaded');
+    }
+    inst = res.exports;
+    emscripten_notify_memory_growth(0);
+    return inst;
+})();
+exports.getInstance = async () => {
+    return await instPromise;
+};
+exports.getMemoryGrowTimestamp = () => {
+    return lastGrowTimestamp;
+};
+//# sourceMappingURL=instance.js.map
+
+/***/ }),
+
+/***/ "./node_modules/zbar.wasm/dist/load-browser.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/zbar.wasm/dist/load-browser.js ***!
+  \*****************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.loadWasmInstance = void 0;
+/**
+ * Webpack File-loader will break when the extension is .wasm.
+ * Changing the extension is a workaround. And because of this
+ * |instantiateStreaming| is always failed due to wrong MIME type.
+ * see https://github.com/webpack/webpack/issues/6725
+ */
+// import wasmBinaryFile from './zbar.wasm';
+const zbar_wasm_bin_1 = __importDefault(__webpack_require__(/*! ./zbar.wasm.bin */ "./node_modules/zbar.wasm/dist/zbar.wasm.bin"));
+exports.loadWasmInstance = async (importObj) => {
+    // try {
+    //   const output = await WebAssembly.instantiateStreaming(
+    //     fetch(wasmBinaryFile),
+    //     importObj
+    //   );
+    //   return output.instance;
+    // } catch (err) {
+    //   console.error('Wasm streaming compile failed: ' + err);
+    //   console.error('Falling back to ArrayBuffer instantiation');
+    // }
+    const res = await fetch(zbar_wasm_bin_1.default);
+    if (!res['ok']) {
+        console.error('Failed to load wasm binary file at ' + zbar_wasm_bin_1.default);
+        return null;
+    }
+    const binary = await res.arrayBuffer();
+    const output = await WebAssembly.instantiate(binary, importObj);
+    return output.instance;
+};
+//# sourceMappingURL=load-browser.js.map
+
+/***/ }),
+
+/***/ "./node_modules/zbar.wasm/dist/module.js":
+/*!***********************************************!*\
+  !*** ./node_modules/zbar.wasm/dist/module.js ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.scanImageData = exports.scanRGBABuffer = exports.scanGrayBuffer = exports.getDefaultScanner = void 0;
+const Image_1 = __webpack_require__(/*! ./Image */ "./node_modules/zbar.wasm/dist/Image.js");
+const ImageScanner_1 = __webpack_require__(/*! ./ImageScanner */ "./node_modules/zbar.wasm/dist/ImageScanner.js");
+const defaultScannerPromise = ImageScanner_1.ImageScanner.create();
+exports.getDefaultScanner = async () => {
+    return await defaultScannerPromise;
+};
+const scanImage = async (image, scanner) => {
+    if (scanner === undefined) {
+        scanner = await defaultScannerPromise;
+    }
+    const res = scanner.scan(image);
+    if (res < 0) {
+        throw Error('Scan Failed');
+    }
+    if (res === 0)
+        return [];
+    return image.getSymbols();
+};
+exports.scanGrayBuffer = async (buffer, width, height, scanner) => {
+    const image = await Image_1.Image.createFromGrayBuffer(width, height, buffer);
+    const res = await scanImage(image, scanner);
+    image.destroy();
+    return res;
+};
+exports.scanRGBABuffer = async (buffer, width, height, scanner) => {
+    const image = await Image_1.Image.createFromRGBABuffer(width, height, buffer);
+    const res = await scanImage(image, scanner);
+    image.destroy();
+    return res;
+};
+exports.scanImageData = async (image, scanner) => {
+    return await exports.scanRGBABuffer(image.data.buffer, image.width, image.height, scanner);
+};
+//# sourceMappingURL=module.js.map
+
 /***/ })
 
 /******/ 	});
@@ -50870,6 +51746,11 @@ function valueEqual(a, b) {
 /******/ 			}
 /******/ 			Object.defineProperty(exports, '__esModule', { value: true });
 /******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/publicPath */
+/******/ 	(() => {
+/******/ 		__webpack_require__.p = "/";
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/jsonp chunk loading */
