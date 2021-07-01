@@ -7033,6 +7033,372 @@ exports.default = Home;
 
 /***/ }),
 
+/***/ "./resources/js/RoyalSPBU/pages/adminPages/permissions/FormPermission.tsx":
+/*!********************************************************************************!*\
+  !*** ./resources/js/RoyalSPBU/pages/adminPages/permissions/FormPermission.tsx ***!
+  \********************************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __assign = this && this.__assign || function () {
+  __assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+
+      for (var p in s) {
+        if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+      }
+    }
+
+    return t;
+  };
+
+  return __assign.apply(this, arguments);
+};
+
+var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  Object.defineProperty(o, k2, {
+    enumerable: true,
+    get: function get() {
+      return m[k];
+    }
+  });
+} : function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  o[k2] = m[k];
+});
+
+var __setModuleDefault = this && this.__setModuleDefault || (Object.create ? function (o, v) {
+  Object.defineProperty(o, "default", {
+    enumerable: true,
+    value: v
+  });
+} : function (o, v) {
+  o["default"] = v;
+});
+
+var __importStar = this && this.__importStar || function (mod) {
+  if (mod && mod.__esModule) return mod;
+  var result = {};
+  if (mod != null) for (var k in mod) {
+    if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+  }
+
+  __setModuleDefault(result, mod);
+
+  return result;
+};
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var notistack_1 = __webpack_require__(/*! notistack */ "./node_modules/notistack/dist/notistack.esm.js");
+
+var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+
+var AdminConfigProvider_1 = __webpack_require__(/*! ../../../providers/AdminConfigProvider */ "./resources/js/RoyalSPBU/providers/AdminConfigProvider.tsx");
+
+var AdminAxios_1 = __importDefault(__webpack_require__(/*! ../../../utils/AdminAxios */ "./resources/js/RoyalSPBU/utils/AdminAxios.ts"));
+
+function FormPermission() {
+  var _a;
+
+  var isEdit = ((_a = location.pathname.split('/').pop()) === null || _a === void 0 ? void 0 : _a.toLowerCase()) === "edit";
+  var enqueueSnackbar = notistack_1.useSnackbar().enqueueSnackbar;
+  var history = react_router_dom_1.useHistory();
+
+  var _b = AdminConfigProvider_1.useAdminConfig(),
+      configs = _b.configs,
+      setConfig = _b.setConfig;
+
+  var _c = react_1.useState(AdminConfigProvider_1.editPermissionDefaultObject),
+      formData = _c[0],
+      setFormData = _c[1];
+
+  react_1.useEffect(function () {
+    //validating data if in edit mode
+    if (isEdit) {
+      //redirect to home if no data provided in context API
+      if (configs.editPermissionObject.id < 0) {
+        history.replace('/');
+        return;
+      }
+
+      setFormData(configs.editPermissionObject);
+      setConfig({
+        editPermissionObject: AdminConfigProvider_1.editPermissionDefaultObject
+      }); //hapus objek edit
+    }
+  }, []);
+
+  var handleFormChange = function handleFormChange(name, value) {
+    setFormData(function (prev) {
+      var _a;
+
+      return __assign(__assign({}, prev), (_a = {}, _a[name] = value, _a));
+    });
+  };
+
+  var handleSave = function handleSave() {
+    AdminAxios_1["default"]({
+      method: 'post',
+      url: isEdit ? '/permission/edit' : '/permission/add',
+      data: formData
+    }).then(function (result) {
+      // setFormErrors({}) todo: set form errors
+      var data = result.data;
+      enqueueSnackbar("Permission berhasil di" + (isEdit ? 'edit' : 'tambahkan'), {
+        variant: 'success'
+      });
+      history.push('/permissions');
+    })["catch"](function (error) {
+      var errorMessage = error.pesan ? error.pesan : "Terjadi kesalahan pada pengaturan request ini. Silakan hubungi admin.";
+
+      if (error.response) {
+        //Error caused from the server
+        console.log(error.response);
+        var errorCode = error.response.status;
+
+        switch (errorCode) {
+          case 422:
+            {//todo: add form errors
+              // setFormErrors(error.response.data.errors)
+            }
+            break;
+        }
+      } //you can show error notification here
+
+
+      enqueueSnackbar(errorMessage, {
+        variant: "error"
+      });
+    });
+  };
+
+  return react_1["default"].createElement("div", {
+    className: "tw-w-full tw-flex tw-flex-col tw-gap-2"
+  }, react_1["default"].createElement("p", null, "Nama Permission"), react_1["default"].createElement("input", {
+    className: "tw-border tw-border-black tw-rounded-lg tw-p-2",
+    value: formData.name,
+    onChange: function onChange(e) {
+      return handleFormChange("name", e.target.value);
+    }
+  }), react_1["default"].createElement("div", {
+    className: "tw-border tw-border-black tw-bg-green-300",
+    onClick: handleSave
+  }, "Simpan"));
+}
+
+exports.default = FormPermission;
+
+/***/ }),
+
+/***/ "./resources/js/RoyalSPBU/pages/adminPages/permissions/Permissions.tsx":
+/*!*****************************************************************************!*\
+  !*** ./resources/js/RoyalSPBU/pages/adminPages/permissions/Permissions.tsx ***!
+  \*****************************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  Object.defineProperty(o, k2, {
+    enumerable: true,
+    get: function get() {
+      return m[k];
+    }
+  });
+} : function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  o[k2] = m[k];
+});
+
+var __setModuleDefault = this && this.__setModuleDefault || (Object.create ? function (o, v) {
+  Object.defineProperty(o, "default", {
+    enumerable: true,
+    value: v
+  });
+} : function (o, v) {
+  o["default"] = v;
+});
+
+var __importStar = this && this.__importStar || function (mod) {
+  if (mod && mod.__esModule) return mod;
+  var result = {};
+  if (mod != null) for (var k in mod) {
+    if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+  }
+
+  __setModuleDefault(result, mod);
+
+  return result;
+};
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var react_router_1 = __webpack_require__(/*! react-router */ "./node_modules/react-router/esm/react-router.js");
+
+var notistack_1 = __webpack_require__(/*! notistack */ "./node_modules/notistack/dist/notistack.esm.js");
+
+var AdminConfigProvider_1 = __webpack_require__(/*! ../../../providers/AdminConfigProvider */ "./resources/js/RoyalSPBU/providers/AdminConfigProvider.tsx");
+
+var AdminAxios_1 = __importDefault(__webpack_require__(/*! ../../../utils/AdminAxios */ "./resources/js/RoyalSPBU/utils/AdminAxios.ts")); //TODO: desain halaman ini
+
+
+function Permissions() {
+  var history = react_router_1.useHistory();
+  var enqueueSnackbar = notistack_1.useSnackbar().enqueueSnackbar;
+
+  var _a = AdminConfigProvider_1.useAdminConfig(),
+      configs = _a.configs,
+      setConfig = _a.setConfig;
+
+  var _b = react_1.useState([]),
+      permissions = _b[0],
+      setPermissions = _b[1];
+
+  var _c = react_1.useState(true),
+      isLoading = _c[0],
+      setLoading = _c[1];
+
+  var requestAllPermissions = function requestAllPermissions() {
+    setLoading(true);
+    AdminAxios_1["default"]({
+      method: 'get',
+      url: '/permission/getAll'
+    }).then(function (result) {
+      var data = result.data;
+      setPermissions(data.map(function (permission) {
+        return {
+          id: permission.id,
+          name: permission.name
+        };
+      }));
+    })["catch"](function (error) {
+      var errorMessage = error.pesan ? error.pesan : "Terjadi kesalahan pada pengaturan request ini. Silakan hubungi Admin.";
+      enqueueSnackbar(errorMessage, {
+        variant: "error"
+      });
+    })["finally"](function () {
+      return setLoading(false);
+    });
+  };
+
+  react_1.useEffect(function () {
+    requestAllPermissions();
+  }, []);
+
+  var handleEditPermission = function handleEditPermission(permission) {
+    setConfig({
+      editPermissionObject: permission
+    });
+    history.push('/permissions/edit');
+  };
+
+  var handleDeletePermission = function handleDeletePermission(permission) {
+    //TODO: Tambah konfirmasi dengan password
+    setLoading(true);
+    AdminAxios_1["default"]({
+      method: 'post',
+      url: '/permission/delete',
+      data: {
+        id: permission.id
+        /*password: */
+
+      }
+    }).then(function (result) {
+      var data = result.data;
+      console.log(data); //todo: delete console
+
+      enqueueSnackbar("Permission " + permission.name + " berhasil dihapus", {
+        variant: 'warning'
+      });
+      requestAllPermissions();
+    })["catch"](function (error) {
+      var errorMessage = error.pesan ? error.pesan : "Terjadi kesalahan pada pengaturan request ini. Silakan hubungi admin.";
+
+      if (error.response) {
+        //Error caused from the server
+        console.log(error.response);
+        var errorCode = error.response.status;
+
+        switch (errorCode) {
+          case 401:
+            {
+              errorMessage = "Password Salah";
+            }
+            break;
+
+          case 403:
+            {
+              errorMessage = error.response.data.message;
+            }
+            break;
+        }
+      } //you can show error notification here
+
+
+      enqueueSnackbar(errorMessage, {
+        variant: "error"
+      });
+    })["finally"](function () {
+      return setLoading(false);
+    });
+  };
+
+  return react_1["default"].createElement("div", {
+    className: "tw-flex tw-flex-col"
+  }, react_1["default"].createElement("button", {
+    className: "tw-border tw-border-black tw-py-2",
+    onClick: function onClick() {
+      return history.push('/permissions/tambah');
+    }
+  }, "Tambah Permission"), isLoading ? react_1["default"].createElement("span", null, "Loading...") : permissions.length > 0 ? permissions.map(function (permission) {
+    return react_1["default"].createElement("div", {
+      key: permission.id,
+      className: "tw-w-full tw-border tw-border-black tw-rounded-lg tw-p-4 tw-flex tw-flex-col"
+    }, react_1["default"].createElement("p", null, "Nama Permission : ", permission.name), react_1["default"].createElement("div", {
+      className: "tw-flex tw-justify-around"
+    }, react_1["default"].createElement("span", {
+      onClick: function onClick() {
+        return handleEditPermission(permission);
+      }
+    }, "Edit"), react_1["default"].createElement("span", {
+      onClick: function onClick() {
+        return handleDeletePermission(permission);
+      }
+    }, "Delete")));
+  }) : react_1["default"].createElement("span", null, "Belum ada permission"));
+}
+
+exports.default = Permissions;
+
+/***/ }),
+
 /***/ "./resources/js/RoyalSPBU/pages/adminPages/presence/Presence.tsx":
 /*!***********************************************************************!*\
   !*** ./resources/js/RoyalSPBU/pages/adminPages/presence/Presence.tsx ***!
@@ -8410,6 +8776,455 @@ exports.default = Products;
 
 /***/ }),
 
+/***/ "./resources/js/RoyalSPBU/pages/adminPages/roles/FormRole.tsx":
+/*!********************************************************************!*\
+  !*** ./resources/js/RoyalSPBU/pages/adminPages/roles/FormRole.tsx ***!
+  \********************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __assign = this && this.__assign || function () {
+  __assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+
+      for (var p in s) {
+        if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+      }
+    }
+
+    return t;
+  };
+
+  return __assign.apply(this, arguments);
+};
+
+var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  Object.defineProperty(o, k2, {
+    enumerable: true,
+    get: function get() {
+      return m[k];
+    }
+  });
+} : function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  o[k2] = m[k];
+});
+
+var __setModuleDefault = this && this.__setModuleDefault || (Object.create ? function (o, v) {
+  Object.defineProperty(o, "default", {
+    enumerable: true,
+    value: v
+  });
+} : function (o, v) {
+  o["default"] = v;
+});
+
+var __importStar = this && this.__importStar || function (mod) {
+  if (mod && mod.__esModule) return mod;
+  var result = {};
+  if (mod != null) for (var k in mod) {
+    if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+  }
+
+  __setModuleDefault(result, mod);
+
+  return result;
+};
+
+var __spreadArray = this && this.__spreadArray || function (to, from) {
+  for (var i = 0, il = from.length, j = to.length; i < il; i++, j++) {
+    to[j] = from[i];
+  }
+
+  return to;
+};
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var notistack_1 = __webpack_require__(/*! notistack */ "./node_modules/notistack/dist/notistack.esm.js");
+
+var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+
+var AdminConfigProvider_1 = __webpack_require__(/*! ../../../providers/AdminConfigProvider */ "./resources/js/RoyalSPBU/providers/AdminConfigProvider.tsx");
+
+var AdminAxios_1 = __importDefault(__webpack_require__(/*! ../../../utils/AdminAxios */ "./resources/js/RoyalSPBU/utils/AdminAxios.ts"));
+
+var helper_1 = __webpack_require__(/*! ../../../utils/helper */ "./resources/js/RoyalSPBU/utils/helper.ts");
+
+function FormRole() {
+  var _a;
+
+  var isEdit = ((_a = location.pathname.split('/').pop()) === null || _a === void 0 ? void 0 : _a.toLowerCase()) === "edit";
+  var enqueueSnackbar = notistack_1.useSnackbar().enqueueSnackbar;
+  var history = react_router_dom_1.useHistory();
+
+  var _b = AdminConfigProvider_1.useAdminConfig(),
+      configs = _b.configs,
+      setConfig = _b.setConfig;
+
+  var _c = react_1.useState(false),
+      isLoading = _c[0],
+      setLoading = _c[1];
+
+  var _d = react_1.useState(AdminConfigProvider_1.editRoleDefaultObject),
+      formData = _d[0],
+      setFormData = _d[1];
+
+  var _e = react_1.useState([]),
+      permissions = _e[0],
+      setPermissions = _e[1];
+
+  react_1.useEffect(function () {
+    requestAllPermissions(); //validating data if in edit mode
+
+    if (isEdit) {
+      //redirect to home if no data provided in context API
+      if (configs.editRoleObejct.id < 0) {
+        history.replace('/');
+        return;
+      }
+
+      setFormData({
+        id: configs.editRoleObejct.id,
+        name: configs.editRoleObejct.name,
+        permissions: configs.editRoleObejct.permissions.map(function (x) {
+          return x.id;
+        })
+      });
+      setConfig({
+        editRoleObejct: AdminConfigProvider_1.editRoleDefaultObject
+      }); //hapus objek edit
+    }
+  }, []);
+
+  var handleFormChange = function handleFormChange(name, value) {
+    setFormData(function (prev) {
+      var _a;
+
+      return __assign(__assign({}, prev), (_a = {}, _a[name] = value, _a));
+    });
+  };
+
+  var handlePermissionChange = function handlePermissionChange(id, isChecked) {
+    if (isChecked) {
+      setFormData(function (prev) {
+        return __assign(__assign({}, prev), {
+          permissions: helper_1.uniqueArray(__spreadArray(__spreadArray([], prev.permissions), [id]))
+        });
+      });
+    } else {
+      setFormData(function (prev) {
+        return __assign(__assign({}, prev), {
+          permissions: helper_1.uniqueArray(prev.permissions.filter(function (x) {
+            return x != id;
+          }))
+        });
+      });
+    }
+  };
+
+  var handleSave = function handleSave() {
+    AdminAxios_1["default"]({
+      method: 'post',
+      url: isEdit ? '/role/edit' : '/role/add',
+      data: formData
+    }).then(function (result) {
+      // setFormErrors({}) todo: set form errors
+      var data = result.data;
+      enqueueSnackbar("Role berhasil di" + (isEdit ? 'edit' : 'tambahkan'), {
+        variant: 'success'
+      });
+      history.push('/roles');
+    })["catch"](function (error) {
+      var errorMessage = error.pesan ? error.pesan : "Terjadi kesalahan pada pengaturan request ini. Silakan hubungi admin.";
+
+      if (error.response) {
+        //Error caused from the server
+        console.log(error.response);
+        var errorCode = error.response.status;
+
+        switch (errorCode) {
+          case 422:
+            {//todo: add form errors
+              // setFormErrors(error.response.data.errors)
+            }
+            break;
+        }
+      } //you can show error notification here
+
+
+      enqueueSnackbar(errorMessage, {
+        variant: "error"
+      });
+    });
+  };
+
+  var requestAllPermissions = function requestAllPermissions() {
+    setLoading(true);
+    AdminAxios_1["default"]({
+      method: 'get',
+      url: '/permission/getAll'
+    }).then(function (result) {
+      var data = result.data;
+      setPermissions(data.map(function (permission) {
+        return {
+          id: permission.id,
+          name: permission.name
+        };
+      }));
+    })["catch"](function (error) {
+      var errorMessage = error.pesan ? error.pesan : "Terjadi kesalahan pada pengaturan request ini. Silakan hubungi Admin.";
+      enqueueSnackbar(errorMessage, {
+        variant: "error"
+      });
+    })["finally"](function () {
+      return setLoading(false);
+    });
+  };
+
+  return react_1["default"].createElement("div", {
+    className: "tw-w-full tw-flex tw-flex-col tw-gap-2"
+  }, react_1["default"].createElement("p", null, "Nama Role"), react_1["default"].createElement("input", {
+    className: "tw-border tw-border-black tw-rounded-lg tw-p-2",
+    value: formData.name,
+    onChange: function onChange(e) {
+      return handleFormChange("name", e.target.value);
+    }
+  }), react_1["default"].createElement("p", {
+    className: "tw-font-semibold"
+  }, "Permissions"), isLoading ? react_1["default"].createElement("div", null, "Loading Permission...") : permissions.length > 0 ? react_1["default"].createElement("div", {
+    className: "tw-flex tw-flex-col tw-gap-1"
+  }, permissions.map(function (permission) {
+    return react_1["default"].createElement("div", null, react_1["default"].createElement("input", {
+      type: "checkbox",
+      value: permission.id,
+      id: "permission-" + permission.id,
+      checked: formData.permissions.includes(permission.id),
+      onChange: function onChange(e) {
+        return handlePermissionChange(permission.id, e.target.checked);
+      }
+    }), react_1["default"].createElement("label", {
+      htmlFor: "permission-" + permission.id
+    }, permission.name));
+  })) : react_1["default"].createElement("div", null, "Tidak ada permission"), react_1["default"].createElement("div", {
+    className: "tw-border tw-border-black tw-bg-green-300",
+    onClick: handleSave
+  }, "Simpan"));
+}
+
+exports.default = FormRole;
+
+/***/ }),
+
+/***/ "./resources/js/RoyalSPBU/pages/adminPages/roles/Roles.tsx":
+/*!*****************************************************************!*\
+  !*** ./resources/js/RoyalSPBU/pages/adminPages/roles/Roles.tsx ***!
+  \*****************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  Object.defineProperty(o, k2, {
+    enumerable: true,
+    get: function get() {
+      return m[k];
+    }
+  });
+} : function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  o[k2] = m[k];
+});
+
+var __setModuleDefault = this && this.__setModuleDefault || (Object.create ? function (o, v) {
+  Object.defineProperty(o, "default", {
+    enumerable: true,
+    value: v
+  });
+} : function (o, v) {
+  o["default"] = v;
+});
+
+var __importStar = this && this.__importStar || function (mod) {
+  if (mod && mod.__esModule) return mod;
+  var result = {};
+  if (mod != null) for (var k in mod) {
+    if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+  }
+
+  __setModuleDefault(result, mod);
+
+  return result;
+};
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var react_router_1 = __webpack_require__(/*! react-router */ "./node_modules/react-router/esm/react-router.js");
+
+var notistack_1 = __webpack_require__(/*! notistack */ "./node_modules/notistack/dist/notistack.esm.js");
+
+var AdminConfigProvider_1 = __webpack_require__(/*! ../../../providers/AdminConfigProvider */ "./resources/js/RoyalSPBU/providers/AdminConfigProvider.tsx");
+
+var AdminAxios_1 = __importDefault(__webpack_require__(/*! ../../../utils/AdminAxios */ "./resources/js/RoyalSPBU/utils/AdminAxios.ts")); //TODO: desain halaman ini
+
+
+function Roles() {
+  var history = react_router_1.useHistory();
+  var enqueueSnackbar = notistack_1.useSnackbar().enqueueSnackbar;
+
+  var _a = AdminConfigProvider_1.useAdminConfig(),
+      configs = _a.configs,
+      setConfig = _a.setConfig;
+
+  var _b = react_1.useState([]),
+      roles = _b[0],
+      setRoles = _b[1];
+
+  var _c = react_1.useState(true),
+      isLoading = _c[0],
+      setLoading = _c[1];
+
+  var requestAllRoles = function requestAllRoles() {
+    setLoading(true);
+    AdminAxios_1["default"]({
+      method: 'get',
+      url: '/role/getAll'
+    }).then(function (result) {
+      var data = result.data;
+      setRoles(data.map(function (role) {
+        return {
+          id: role.id,
+          name: role.name,
+          permissions: role.permissions
+        };
+      }));
+    })["catch"](function (error) {
+      var errorMessage = error.pesan ? error.pesan : "Terjadi kesalahan pada pengaturan request ini. Silakan hubungi Admin.";
+      enqueueSnackbar(errorMessage, {
+        variant: "error"
+      });
+    })["finally"](function () {
+      return setLoading(false);
+    });
+  };
+
+  react_1.useEffect(function () {
+    requestAllRoles();
+  }, []);
+
+  var handleEditRole = function handleEditRole(role) {
+    setConfig({
+      editRoleObejct: role
+    });
+    history.push('/roles/edit');
+  };
+
+  var handleDeleteRole = function handleDeleteRole(role) {
+    //TODO: Tambah konfirmasi dengan password
+    setLoading(true);
+    AdminAxios_1["default"]({
+      method: 'post',
+      url: '/role/delete',
+      data: {
+        id: role.id
+        /*password: */
+
+      }
+    }).then(function (result) {
+      var data = result.data;
+      console.log(data); //todo: delete console
+
+      enqueueSnackbar("Role " + role.name + " berhasil dihapus", {
+        variant: 'warning'
+      });
+      requestAllRoles();
+    })["catch"](function (error) {
+      var errorMessage = error.pesan ? error.pesan : "Terjadi kesalahan pada pengaturan request ini. Silakan hubungi admin.";
+
+      if (error.response) {
+        //Error caused from the server
+        console.log(error.response);
+        var errorCode = error.response.status;
+
+        switch (errorCode) {
+          case 401:
+            {
+              errorMessage = "Password Salah";
+            }
+            break;
+
+          case 403:
+            {
+              errorMessage = error.response.data.message;
+            }
+            break;
+        }
+      } //you can show error notification here
+
+
+      enqueueSnackbar(errorMessage, {
+        variant: "error"
+      });
+    })["finally"](function () {
+      return setLoading(false);
+    });
+  };
+
+  return react_1["default"].createElement("div", {
+    className: "tw-flex tw-flex-col"
+  }, react_1["default"].createElement("button", {
+    className: "tw-border tw-border-black tw-py-2",
+    onClick: function onClick() {
+      return history.push('/roles/tambah');
+    }
+  }, "Tambah Role"), isLoading ? react_1["default"].createElement("span", null, "Loading...") : roles.length > 0 ? roles.map(function (role) {
+    return react_1["default"].createElement("div", {
+      key: role.id,
+      className: "tw-w-full tw-border tw-border-black tw-rounded-lg tw-p-4 tw-flex tw-flex-col"
+    }, react_1["default"].createElement("p", null, "Nama Role : ", role.name), react_1["default"].createElement("p", null, "Jumlah permissions: ", role.permissions.length), react_1["default"].createElement("div", {
+      className: "tw-flex tw-justify-around"
+    }, react_1["default"].createElement("span", {
+      onClick: function onClick() {
+        return handleEditRole(role);
+      }
+    }, "Edit"), react_1["default"].createElement("span", {
+      onClick: function onClick() {
+        return handleDeleteRole(role);
+      }
+    }, "Hapus")));
+  }) : react_1["default"].createElement("span", null, "Belum ada role"));
+}
+
+exports.default = Roles;
+
+/***/ }),
+
 /***/ "./resources/js/RoyalSPBU/pages/adminPages/tanks/FormTank.tsx":
 /*!********************************************************************!*\
   !*** ./resources/js/RoyalSPBU/pages/adminPages/tanks/FormTank.tsx ***!
@@ -9778,7 +10593,7 @@ var __importStar = this && this.__importStar || function (mod) {
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.useAdminConfig = exports.AdminConfigContext = exports.editPumpDefaultObject = exports.editTankDefaultObject = exports.editProductDefaultObject = exports.editUserDefaultObject = void 0;
+exports.useAdminConfig = exports.AdminConfigContext = exports.editRoleDefaultObject = exports.editPermissionDefaultObject = exports.editPumpDefaultObject = exports.editTankDefaultObject = exports.editProductDefaultObject = exports.editUserDefaultObject = void 0;
 
 var react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 
@@ -9804,12 +10619,23 @@ exports.editPumpDefaultObject = {
   id: -1,
   nozzles: []
 };
+exports.editPermissionDefaultObject = {
+  id: -1,
+  name: ''
+};
+exports.editRoleDefaultObject = {
+  id: -1,
+  name: '',
+  permissions: []
+};
 var contextDefaultValues = {
   configs: {
     editUserObject: exports.editUserDefaultObject,
     editProductObject: exports.editProductDefaultObject,
     editTankObject: exports.editTankDefaultObject,
-    editPumpObject: exports.editPumpDefaultObject
+    editPumpObject: exports.editPumpDefaultObject,
+    editPermissionObject: exports.editPermissionDefaultObject,
+    editRoleObejct: exports.editRoleDefaultObject
   },
   setConfig: function setConfig() {}
 };
@@ -10093,6 +10919,12 @@ var AddUser_1 = __importDefault(__webpack_require__(/*! ../pages/adminPages/user
 
 var EditUser_1 = __importDefault(__webpack_require__(/*! ../pages/adminPages/users/EditUser */ "./resources/js/RoyalSPBU/pages/adminPages/users/EditUser.tsx"));
 
+var Permissions_1 = __importDefault(__webpack_require__(/*! ../pages/adminPages/permissions/Permissions */ "./resources/js/RoyalSPBU/pages/adminPages/permissions/Permissions.tsx"));
+
+var FormPermission_1 = __importDefault(__webpack_require__(/*! ../pages/adminPages/permissions/FormPermission */ "./resources/js/RoyalSPBU/pages/adminPages/permissions/FormPermission.tsx"));
+
+var Roles_1 = __importDefault(__webpack_require__(/*! ../pages/adminPages/roles/Roles */ "./resources/js/RoyalSPBU/pages/adminPages/roles/Roles.tsx"));
+
 var Products_1 = __importDefault(__webpack_require__(/*! ../pages/adminPages/products/Products */ "./resources/js/RoyalSPBU/pages/adminPages/products/Products.tsx"));
 
 var AddProduct_1 = __importDefault(__webpack_require__(/*! ../pages/adminPages/products/AddProduct */ "./resources/js/RoyalSPBU/pages/adminPages/products/AddProduct.tsx"));
@@ -10110,6 +10942,8 @@ var FormPump_1 = __importDefault(__webpack_require__(/*! ../pages/adminPages/pum
 var Presence_1 = __importDefault(__webpack_require__(/*! ../pages/adminPages/presence/Presence */ "./resources/js/RoyalSPBU/pages/adminPages/presence/Presence.tsx"));
 
 var types_1 = __webpack_require__(/*! ../types */ "./resources/js/RoyalSPBU/types.ts");
+
+var FormRole_1 = __importDefault(__webpack_require__(/*! ../pages/adminPages/roles/FormRole */ "./resources/js/RoyalSPBU/pages/adminPages/roles/FormRole.tsx"));
 
 var AdminRoutes = function AdminRoutes() {
   var auth = AuthProvider_1.useAuth().auth;
@@ -10169,6 +11003,30 @@ var AdminRoutes = function AdminRoutes() {
     path: '/pompa/edit',
     exact: true,
     component: FormPump_1["default"]
+  }, {
+    path: '/permissions',
+    exact: true,
+    component: Permissions_1["default"]
+  }, {
+    path: '/permissions/tambah',
+    exact: true,
+    component: FormPermission_1["default"]
+  }, {
+    path: '/permissions/edit',
+    exact: true,
+    component: FormPermission_1["default"]
+  }, {
+    path: '/roles',
+    exact: true,
+    component: Roles_1["default"]
+  }, {
+    path: '/roles/tambah',
+    exact: true,
+    component: FormRole_1["default"]
+  }, {
+    path: '/roles/edit',
+    exact: true,
+    component: FormRole_1["default"]
   }]; // todo: desain page not found
 
   var NotFoundRoute = function NotFoundRoute() {
@@ -10412,6 +11270,30 @@ exports.default = instance; //default template
 //     //you can show error notification here
 //     enqueueSnackbar(errorMessage,{variant:"error"});
 // });
+
+/***/ }),
+
+/***/ "./resources/js/RoyalSPBU/utils/helper.ts":
+/*!************************************************!*\
+  !*** ./resources/js/RoyalSPBU/utils/helper.ts ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.uniqueArray = void 0;
+
+var uniqueArray = function uniqueArray(arr) {
+  return arr.filter(function (x, i) {
+    return arr.indexOf(x) === i;
+  });
+};
+
+exports.uniqueArray = uniqueArray;
 
 /***/ }),
 

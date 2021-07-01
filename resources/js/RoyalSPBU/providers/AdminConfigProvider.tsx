@@ -27,12 +27,25 @@ export const editPumpDefaultObject = {
     nozzles: [],
 }
 
+export const editPermissionDefaultObject = {
+    id: -1,
+    name: '',
+}
+
+export const editRoleDefaultObject = {
+    id: -1,
+    name: '',
+    permissions: [],
+}
+
 const contextDefaultValues: AdminConfigContextState = {
     configs: {
         editUserObject: editUserDefaultObject,
         editProductObject: editProductDefaultObject,
         editTankObject: editTankDefaultObject,
         editPumpObject: editPumpDefaultObject,
+        editPermissionObject: editPermissionDefaultObject,
+        editRoleObejct: editRoleDefaultObject,
     },
     setConfig: () => {}
 }

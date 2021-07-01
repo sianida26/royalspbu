@@ -37,6 +37,17 @@ export interface NozzleObject{
     totalizator: number,
 }
 
+export interface IPermission{
+    id: number,
+    name: string,
+}
+
+export interface RoleObject{
+    id: number,
+    name: string,
+    permissions: IPermission[]
+}
+
 export interface IConfig {
 }
 
@@ -45,6 +56,8 @@ export interface IAdminConfig {
     editProductObject? : ProductObject
     editTankObject? : TankObject
     editPumpObject? : PumpObject
+    editPermissionObject? : IPermission
+    editRoleObejct? : RoleObject
 }
 
 export interface IAuth {

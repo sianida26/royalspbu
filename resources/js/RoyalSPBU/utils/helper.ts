@@ -1,0 +1,1 @@
+export const uniqueArray = <Type>(arr: Type[]) => arr.filter((x,i) => arr.indexOf(x) === i)

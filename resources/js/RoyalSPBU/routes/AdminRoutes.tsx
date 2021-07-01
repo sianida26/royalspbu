@@ -10,6 +10,11 @@ import Users from '../pages/adminPages/users/Users'
 import AddUser from '../pages/adminPages/users/AddUser'
 import EditUser from '../pages/adminPages/users/EditUser'
 
+import Permissions from '../pages/adminPages/permissions/Permissions'
+import FormPermission from '../pages/adminPages/permissions/FormPermission'
+
+import RolesPage from '../pages/adminPages/roles/Roles'
+
 import Products from '../pages/adminPages/products/Products'
 import AddProduct from '../pages/adminPages/products/AddProduct'
 import EditProduct from '../pages/adminPages/products/EditProduct'
@@ -23,6 +28,7 @@ import FormPump from '../pages/adminPages/pumps/FormPump'
 import Presence from '../pages/adminPages/presence/Presence'
 
 import { Roles } from '../types'
+import FormRole from '../pages/adminPages/roles/FormRole'
 
 const AdminRoutes = () => {
 
@@ -98,6 +104,36 @@ const AdminRoutes = () => {
             path: '/pompa/edit',
             exact: true,
             component: FormPump
+        },
+        {
+            path: '/permissions',
+            exact: true,
+            component: Permissions,
+        },
+        {
+            path: '/permissions/tambah',
+            exact: true,
+            component: FormPermission,
+        },
+        {
+            path: '/permissions/edit',
+            exact: true,
+            component: FormPermission,
+        },
+        {
+            path: '/roles',
+            exact: true,
+            component: RolesPage,
+        },
+        {
+            path: '/roles/tambah',
+            exact: true,
+            component: FormRole,
+        },
+        {
+            path: '/roles/edit',
+            exact: true,
+            component: FormRole,
         }
     ]
 
@@ -116,10 +152,6 @@ const AdminRoutes = () => {
                 }
                 <Route component={NotFoundRoute} />
             </Switch>
-            {/* <PrivateRoute path="/" exact><Home /></PrivateRoute>
-            <PrivateRoute path="/user" exact><Users /></PrivateRoute>
-            <PrivateRoute path="/user/tambahuser" exact><AddUser /></PrivateRoute>
-            <PrivateRoute path="/user/edituser" exact><EditUser /></PrivateRoute> */}
         </AdminConfigProvider>
     )
 }

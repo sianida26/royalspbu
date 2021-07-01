@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\TankController;
 use App\Http\Controllers\PumpController;
+use App\Http\Controllers\RolePermissionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,6 +33,20 @@ Route::prefix('admin')->group(function(){
         Route::post('/edit', [UserController::class, 'editUser']);
         Route::post('/delete', [UserController::class, 'deleteUser']);
         Route::post('/resetPassword', [UserController::class, 'resetUserPassword']);
+    });
+
+    Route::prefix('permission')->group(function(){
+        Route::get('/getAll', [RolePermissionController::class, 'getAllPermissions']);
+        Route::post('/add', [RolePermissionController::class, 'addPermission']);
+        Route::post('/edit', [RolePermissionController::class, 'editPermission']);
+        Route::post('/delete', [RolePermissionController::class, 'deletePermission']);
+    });
+
+    Route::prefix('role')->group(function(){
+        Route::get('/getAll', [RolePermissionController::class, 'getAllRoles']);
+        Route::post('/add', [RolePermissionController::class, 'addRole']);
+        Route::post('/edit', [RolePermissionController::class, 'editRole']);
+        Route::post('/delete', [RolePermissionController::class, 'deleteRole']);
     });
 
     Route::prefix('product')->group(function(){
