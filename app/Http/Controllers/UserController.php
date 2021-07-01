@@ -6,8 +6,10 @@ use Debugbar;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User;
 use Illuminate\Validation\Rule;
+
+use App\Models\User;
+use Spatie\Permission\Models\Role;
 
 /**
  * @group User Management
@@ -32,7 +34,20 @@ class UserController extends Controller
      * @bodyParam [].is_active boolean status aktif user
      */
     function getAllUser(Request $request){
-        return User::select(['id','name','username','is_active'])->get();
+        return User::all()->map(function($user){
+            $roleId = -1;
+            if ($user->roles->isNotEmpty()){
+                $role = $user->roles->first();
+                $roleId = $role->id;
+            }
+            return [
+                'id' => $user->id,
+                'name' => $user->name,
+                'username' => $user->username,
+                'isActive' => $user->is_active,
+                'roleId' => $roleId,
+            ];
+        });
     }
 
     /**
@@ -71,6 +86,7 @@ class UserController extends Controller
         $request->validate([
             'username' => ['required', 'unique:users,username'],
             'name' => ['required'],
+            'roleId' => ['required'],
             'password' => ['required', 'min:8'],
             'isActive' => ['required', 'boolean'],
         ], $messages);
@@ -81,6 +97,10 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
             'is_active' => $request->isActive,
         ]);
+
+        $role = Role::find($request->roleId);
+        $user->syncRoles([$role->name]);
+
         return $user->makeHidden(['created_at','updated_at','password']);
     }
 
@@ -125,6 +145,7 @@ class UserController extends Controller
             'id' => ['required', 'integer'],
             'username' => ['required', Rule::unique('users','username')->ignore($request->id)],
             'name' => ['required'],
+            'roleId' => ['required'],
             'isActive' => ['required', 'boolean'],
         ], $messages);
 
@@ -134,6 +155,10 @@ class UserController extends Controller
         $user->name = $request->name;
         $user->is_active = $request->isActive;
         $user->save();
+
+        $role = Role::find($request->roleId);
+        $user->syncRoles([$role->name]);
+
         return $user->makeHidden(['created_at','updated_at','password']);
     }
 
@@ -200,5 +225,9 @@ class UserController extends Controller
             'name' => $user->name,
             'message' => 'User berhasil direset password',
         ];
+    }
+
+    function getAllRoles(Request $request){
+        return Role::select('id','name')->get();
     }
 }

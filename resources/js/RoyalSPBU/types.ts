@@ -10,6 +10,7 @@ export interface UserObject{
     username: string,
     name: string,
     isActive: boolean,
+    roleId: number,
 }
 
 export interface ProductObject {

@@ -11,7 +11,8 @@ interface ServerResponse {
     id: number,
     username: string,
     name: string,
-    is_active: boolean,
+    roleId: number,
+    isActive: boolean,
 }
 
 //TODO: Hapus console
@@ -34,7 +35,8 @@ export default function Users() {
                 id: _user.id,
                 username: _user.username,
                 name: _user.name,
-                isActive: _user.is_active,
+                roleId: _user.roleId, //todo ubah
+                isActive: _user.isActive,
             })))
             setLoading(false)
         })

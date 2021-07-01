@@ -29,6 +29,7 @@ Route::post('/upload', [TankController::class, 'upload']);
 Route::prefix('admin')->group(function(){
     Route::prefix('user')->group(function(){
         Route::get('/getAll', [UserController::class, 'getAllUser'] );
+        Route::get('/getAllRoles', [UserController::class, 'getAllRoles']);
         Route::post('/add', [UserController::class, 'addUser'] );
         Route::post('/edit', [UserController::class, 'editUser']);
         Route::post('/delete', [UserController::class, 'deleteUser']);

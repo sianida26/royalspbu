@@ -11,6 +11,7 @@ interface FormObject {
     username: string,
     name: string,
     password: string,
+    roleId: number,
     isActive: boolean,
 }
 
@@ -25,6 +26,11 @@ interface Props {
     type: 'add' | 'edit'
 }
 
+interface RoleObject {
+    id: number,
+    name: string,
+}
+
 
 //TODO: ubah jadi password default. bukan input
 //TODO: hapus console
@@ -36,10 +42,13 @@ export default function FormUser(props: Props) {
     const history = useHistory()
     const {configs, setConfig} = useAdminConfig()
 
+    const [isLoading, setLoading] = useState(false)
+    const [roles, setRoles] = useState<RoleObject[]>([])
     const [formData, setFormData] = useState<FormObject>({
         id: -1,
         username: '',
         name: '',
+        roleId: -1,
         password: '',
         isActive: true,
     })
@@ -47,6 +56,7 @@ export default function FormUser(props: Props) {
 
     useEffect(() => {
         //validating user data if edit mode
+        requestAllRoles()
         if (props.type === "edit"){
             //redirect to home if no user data provided in context API
             if (configs.editUserObject!.id < 0){
@@ -98,6 +108,29 @@ export default function FormUser(props: Props) {
         });
     }
 
+    const requestAllRoles = () => {
+        setLoading(true)
+        axios({method:'get', url: '/user/getAllRoles'})
+        .then(result => { //handle success response
+            let data : RoleObject[] = result.data;
+            setRoles(data.map(role => ({
+                id: role.id,
+                name: role.name,
+            })))
+            if (!isEdit){
+                setFormData(prev => ({
+                    ...prev,
+                    roleId: data[0].id
+                }))
+            }
+        })
+        .catch(error =>{ //handle error response
+            let errorMessage = error.pesan ? error.pesan : "Terjadi kesalahan pada pengaturan request ini. Silakan hubungi Admin.";
+            enqueueSnackbar(errorMessage,{variant:"error"});
+        })
+        .finally(() => setLoading(false))
+    }
+
     return (
         <div className="tw-flex tw-flex-col tw-gap-4">
             <h1>Tambah User</h1>
@@ -110,6 +143,14 @@ export default function FormUser(props: Props) {
                 <p>Name</p>
                 <input name="name" value={formData.name} className={`${formErrors.name ? 'tw-border-b-2 tw-border-red-500' : 'tw-border-b'} tw-border-black`} onChange={(e) => handleFormChange("name",e.target.value)} />
                 <p className="tw-text-sm tw-text-red-500">{formErrors.name}</p>
+            </div>
+            <div>
+                <p>Role</p>
+                <select value={formData.roleId} onChange={(e) => handleFormChange('roleId',e.target.value)}>
+                    {
+                        roles.map(role => <option value={role.id}>{role.name}</option>)
+                    }
+                </select>
             </div>
             <div>
                 <p>Password</p>

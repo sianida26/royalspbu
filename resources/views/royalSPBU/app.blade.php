@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Royal SPBU</title>
     <link rel="stylesheet" href="{{asset('css/app.css')}}">
+    @laravelPWA
 </head>
 <body>
     <div id="root"></div>

@@ -9819,22 +9819,33 @@ function FormUser(props) {
       configs = _a.configs,
       setConfig = _a.setConfig;
 
-  var _b = react_1.useState({
+  var _b = react_1.useState(false),
+      isLoading = _b[0],
+      setLoading = _b[1];
+
+  var _c = react_1.useState([]),
+      roles = _c[0],
+      setRoles = _c[1];
+
+  var _d = react_1.useState({
     id: -1,
     username: '',
     name: '',
+    roleId: -1,
     password: '',
     isActive: true
   }),
-      formData = _b[0],
-      setFormData = _b[1];
+      formData = _d[0],
+      setFormData = _d[1];
 
-  var _c = react_1.useState({}),
-      formErrors = _c[0],
-      setFormErrors = _c[1];
+  var _e = react_1.useState({}),
+      formErrors = _e[0],
+      setFormErrors = _e[1];
 
   react_1.useEffect(function () {
     //validating user data if edit mode
+    requestAllRoles();
+
     if (props.type === "edit") {
       //redirect to home if no user data provided in context API
       if (configs.editUserObject.id < 0) {
@@ -9898,6 +9909,37 @@ function FormUser(props) {
     });
   };
 
+  var requestAllRoles = function requestAllRoles() {
+    setLoading(true);
+    AdminAxios_1["default"]({
+      method: 'get',
+      url: '/user/getAllRoles'
+    }).then(function (result) {
+      var data = result.data;
+      setRoles(data.map(function (role) {
+        return {
+          id: role.id,
+          name: role.name
+        };
+      }));
+
+      if (!isEdit) {
+        setFormData(function (prev) {
+          return __assign(__assign({}, prev), {
+            roleId: data[0].id
+          });
+        });
+      }
+    })["catch"](function (error) {
+      var errorMessage = error.pesan ? error.pesan : "Terjadi kesalahan pada pengaturan request ini. Silakan hubungi Admin.";
+      enqueueSnackbar(errorMessage, {
+        variant: "error"
+      });
+    })["finally"](function () {
+      return setLoading(false);
+    });
+  };
+
   return react_1["default"].createElement("div", {
     className: "tw-flex tw-flex-col tw-gap-4"
   }, react_1["default"].createElement("h1", null, "Tambah User"), react_1["default"].createElement("div", null, react_1["default"].createElement("p", null, "Username"), react_1["default"].createElement("input", {
@@ -9918,7 +9960,16 @@ function FormUser(props) {
     }
   }), react_1["default"].createElement("p", {
     className: "tw-text-sm tw-text-red-500"
-  }, formErrors.name)), react_1["default"].createElement("div", null, react_1["default"].createElement("p", null, "Password"), react_1["default"].createElement("input", {
+  }, formErrors.name)), react_1["default"].createElement("div", null, react_1["default"].createElement("p", null, "Role"), react_1["default"].createElement("select", {
+    value: formData.roleId,
+    onChange: function onChange(e) {
+      return handleFormChange('roleId', e.target.value);
+    }
+  }, roles.map(function (role) {
+    return react_1["default"].createElement("option", {
+      value: role.id
+    }, role.name);
+  }))), react_1["default"].createElement("div", null, react_1["default"].createElement("p", null, "Password"), react_1["default"].createElement("input", {
     name: "password",
     value: formData.password,
     className: (formErrors.password ? 'tw-border-b-2 tw-border-red-500' : 'tw-border-b') + " tw-border-black",
@@ -10043,7 +10094,8 @@ function Users() {
           id: _user.id,
           username: _user.username,
           name: _user.name,
-          isActive: _user.is_active
+          roleId: _user.roleId,
+          isActive: _user.isActive
         };
       }));
       setLoading(false);
@@ -10601,6 +10653,7 @@ exports.editUserDefaultObject = {
   id: -1,
   isActive: false,
   name: '',
+  roleId: -1,
   username: ''
 };
 exports.editProductDefaultObject = {
