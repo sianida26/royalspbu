@@ -2,12 +2,12 @@ import React from 'react'
 
 import QRCode from 'react-qr-code'
 import { useSnackbar } from 'notistack'
-
-import axios from '../../utils/oooperator'
+import { useAuth } from '../../providers/AuthProvider'
 
 export default function Absen() {
 
     const {enqueueSnackbar} = useSnackbar()
+    const {axios} = useAuth()
 
     const [loading, setLoading] = React.useState(true)
 

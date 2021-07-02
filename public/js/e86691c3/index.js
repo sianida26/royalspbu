@@ -6958,15 +6958,15 @@ Object.defineProperty(exports, "__esModule", ({
 
 var react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 
-var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+var RouteSwitch_1 = __importDefault(__webpack_require__(/*! ./components/RouteSwitch */ "./resources/js/RoyalSPBU/components/RouteSwitch.tsx"));
 
-var types_1 = __webpack_require__(/*! ./types */ "./resources/js/RoyalSPBU/types.ts");
+var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
 
 var AuthProvider_1 = __webpack_require__(/*! ./providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx");
 
 var Login_1 = __importDefault(__webpack_require__(/*! ./pages/guestPages/Login */ "./resources/js/RoyalSPBU/pages/guestPages/Login.tsx"));
 
-var Splash_1 = __importDefault(__webpack_require__(/*! ./pages/guestPages/Splash */ "./resources/js/RoyalSPBU/pages/guestPages/Splash.tsx"));
+var Splash_1 = __importDefault(__webpack_require__(/*! ./pages/Splash */ "./resources/js/RoyalSPBU/pages/Splash.tsx"));
 
 var DB_1 = __importDefault(__webpack_require__(/*! ./utils/DB */ "./resources/js/RoyalSPBU/utils/DB.ts"));
 
@@ -7018,29 +7018,340 @@ function App() {
     }), react_1["default"].createElement(react_router_dom_1.Redirect, {
       to: "/login"
     }));
-  };
+  }; // const OperatorRoutes = lazy(() => import ('./routes/OperatorRoutes'))
+  // const AdminRoutes = lazy(() => import ('./routes/AdminRoutes'))
+  // todo: desain page not found
 
-  var OperatorRoutes = react_1.lazy(function () {
-    return Promise.resolve().then(function () {
-      return __importStar(__webpack_require__(/*! ./routes/OperatorRoutes */ "./resources/js/RoyalSPBU/routes/OperatorRoutes.tsx"));
-    });
-  });
-  var AdminRoutes = react_1.lazy(function () {
-    return Promise.resolve().then(function () {
-      return __importStar(__webpack_require__(/*! ./routes/AdminRoutes */ "./resources/js/RoyalSPBU/routes/AdminRoutes.tsx"));
-    });
-  }); // todo: desain page not found
 
   var NotFoundRoute = function NotFoundRoute() {
     return react_1["default"].createElement("div", null, "Page Not Found");
   };
 
-  return react_1["default"].createElement(react_router_dom_1.BrowserRouter, null, react_1["default"].createElement(react_1.Suspense, {
-    fallback: react_1["default"].createElement("div", null, "Loading...")
-  }, auth.role === types_1.Roles.OPERATOR ? react_1["default"].createElement(OperatorRoutes, null) : auth.role === types_1.Roles.ADMIN || auth.role === types_1.Roles.DEVELOPER ? react_1["default"].createElement(AdminRoutes, null) : renderGuestRoutes()));
+  return isBooting ? react_1["default"].createElement(Splash_1["default"], null) : react_1["default"].createElement(react_1["default"].Fragment, null, react_1["default"].createElement(RouteSwitch_1["default"], null));
 }
 
 exports.default = App;
+
+/***/ }),
+
+/***/ "./resources/js/RoyalSPBU/components/AdminRoutes.tsx":
+/*!***********************************************************!*\
+  !*** ./resources/js/RoyalSPBU/components/AdminRoutes.tsx ***!
+  \***********************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+
+var AdminConfigProvider_1 = __importDefault(__webpack_require__(/*! ../providers/AdminConfigProvider */ "./resources/js/RoyalSPBU/providers/AdminConfigProvider.tsx"));
+
+var AuthProvider_1 = __webpack_require__(/*! ../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx");
+
+var types_1 = __webpack_require__(/*! ../types */ "./resources/js/RoyalSPBU/types.ts");
+
+var admin_1 = __importDefault(__webpack_require__(/*! ../routes/admin */ "./resources/js/RoyalSPBU/routes/admin.ts"));
+
+var NotFound_1 = __importDefault(__webpack_require__(/*! ../pages/NotFound */ "./resources/js/RoyalSPBU/pages/NotFound.tsx"));
+
+function AdminRoutes() {
+  var auth = AuthProvider_1.useAuth().auth;
+  return auth.role !== types_1.Roles.ADMIN ? react_1["default"].createElement(react_router_dom_1.Redirect, {
+    to: {
+      pathname: "/login",
+      state: {
+        from: location
+      }
+    }
+  }) : react_1["default"].createElement(AdminConfigProvider_1["default"], null, react_1["default"].createElement(react_router_dom_1.Switch, null, admin_1["default"].map(function (route, i) {
+    return react_1["default"].createElement(react_router_dom_1.Route, {
+      key: i,
+      path: route.path,
+      exact: !route.isNotExact,
+      component: route.component
+    });
+  }), react_1["default"].createElement(react_router_dom_1.Redirect, {
+    path: "/login",
+    to: "/"
+  }), react_1["default"].createElement(react_router_dom_1.Route, null, react_1["default"].createElement(NotFound_1["default"], null))));
+}
+
+exports.default = AdminRoutes;
+
+/***/ }),
+
+/***/ "./resources/js/RoyalSPBU/components/DeveloperRoutes.tsx":
+/*!***************************************************************!*\
+  !*** ./resources/js/RoyalSPBU/components/DeveloperRoutes.tsx ***!
+  \***************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+
+var AdminConfigProvider_1 = __importDefault(__webpack_require__(/*! ../providers/AdminConfigProvider */ "./resources/js/RoyalSPBU/providers/AdminConfigProvider.tsx"));
+
+var AuthProvider_1 = __webpack_require__(/*! ../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx");
+
+var types_1 = __webpack_require__(/*! ../types */ "./resources/js/RoyalSPBU/types.ts");
+
+var developer_1 = __importDefault(__webpack_require__(/*! ../routes/developer */ "./resources/js/RoyalSPBU/routes/developer.ts"));
+
+var NotFound_1 = __importDefault(__webpack_require__(/*! ../pages/NotFound */ "./resources/js/RoyalSPBU/pages/NotFound.tsx"));
+
+function DeveloperRoutes() {
+  var auth = AuthProvider_1.useAuth().auth;
+  return auth.role !== types_1.Roles.DEVELOPER ? react_1["default"].createElement(react_router_dom_1.Redirect, {
+    to: {
+      pathname: "/login",
+      state: {
+        from: location
+      }
+    }
+  }) : react_1["default"].createElement(AdminConfigProvider_1["default"], null, react_1["default"].createElement(react_router_dom_1.Switch, null, developer_1["default"].map(function (route, i) {
+    return react_1["default"].createElement(react_router_dom_1.Route, {
+      key: i,
+      path: route.path,
+      exact: !route.isNotExact,
+      component: route.component
+    });
+  }), react_1["default"].createElement(react_router_dom_1.Route, null, react_1["default"].createElement(NotFound_1["default"], null))));
+}
+
+exports.default = DeveloperRoutes;
+
+/***/ }),
+
+/***/ "./resources/js/RoyalSPBU/components/GuestRoutes.tsx":
+/*!***********************************************************!*\
+  !*** ./resources/js/RoyalSPBU/components/GuestRoutes.tsx ***!
+  \***********************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+
+var AuthProvider_1 = __webpack_require__(/*! ../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx");
+
+var guest_1 = __importDefault(__webpack_require__(/*! ../routes/guest */ "./resources/js/RoyalSPBU/routes/guest.ts"));
+
+var NotFound_1 = __importDefault(__webpack_require__(/*! ../pages/NotFound */ "./resources/js/RoyalSPBU/pages/NotFound.tsx"));
+
+function GuestRoutes() {
+  var auth = AuthProvider_1.useAuth().auth;
+  return auth.role !== undefined ? react_1["default"].createElement(react_router_dom_1.Redirect, {
+    to: {
+      pathname: "/",
+      state: {
+        from: location
+      }
+    }
+  }) : react_1["default"].createElement(react_router_dom_1.Switch, null, guest_1["default"].map(function (route, i) {
+    return react_1["default"].createElement(react_router_dom_1.Route, {
+      key: i,
+      path: route.path,
+      exact: !route.isNotExact,
+      component: route.component
+    });
+  }), react_1["default"].createElement(react_router_dom_1.Redirect, {
+    path: "/",
+    to: "/login",
+    exact: true
+  }), react_1["default"].createElement(react_router_dom_1.Route, null, react_1["default"].createElement(NotFound_1["default"], null)));
+}
+
+exports.default = GuestRoutes;
+
+/***/ }),
+
+/***/ "./resources/js/RoyalSPBU/components/OperatorRoutes.tsx":
+/*!**************************************************************!*\
+  !*** ./resources/js/RoyalSPBU/components/OperatorRoutes.tsx ***!
+  \**************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+
+var operator_1 = __importDefault(__webpack_require__(/*! ../routes/operator */ "./resources/js/RoyalSPBU/routes/operator.ts"));
+
+var AuthProvider_1 = __webpack_require__(/*! ../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx");
+
+var types_1 = __webpack_require__(/*! ../types */ "./resources/js/RoyalSPBU/types.ts");
+
+var NotFound_1 = __importDefault(__webpack_require__(/*! ../pages/NotFound */ "./resources/js/RoyalSPBU/pages/NotFound.tsx"));
+
+function OperatorRoutes() {
+  var auth = AuthProvider_1.useAuth().auth;
+  return auth.role !== types_1.Roles.OPERATOR ? react_1["default"].createElement(react_router_dom_1.Redirect, {
+    to: {
+      pathname: "/login",
+      state: {
+        from: location
+      }
+    }
+  }) : react_1["default"].createElement(react_router_dom_1.Switch, null, operator_1["default"].map(function (route, i) {
+    return react_1["default"].createElement(react_router_dom_1.Route, {
+      key: i,
+      path: route.path,
+      exact: !route.isNotExact,
+      component: route.component
+    });
+  }), react_1["default"].createElement(react_router_dom_1.Route, null, react_1["default"].createElement(NotFound_1["default"], null)));
+}
+
+exports.default = OperatorRoutes;
+
+/***/ }),
+
+/***/ "./resources/js/RoyalSPBU/components/RouteSwitch.tsx":
+/*!***********************************************************!*\
+  !*** ./resources/js/RoyalSPBU/components/RouteSwitch.tsx ***!
+  \***********************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  Object.defineProperty(o, k2, {
+    enumerable: true,
+    get: function get() {
+      return m[k];
+    }
+  });
+} : function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  o[k2] = m[k];
+});
+
+var __setModuleDefault = this && this.__setModuleDefault || (Object.create ? function (o, v) {
+  Object.defineProperty(o, "default", {
+    enumerable: true,
+    value: v
+  });
+} : function (o, v) {
+  o["default"] = v;
+});
+
+var __importStar = this && this.__importStar || function (mod) {
+  if (mod && mod.__esModule) return mod;
+  var result = {};
+  if (mod != null) for (var k in mod) {
+    if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+  }
+
+  __setModuleDefault(result, mod);
+
+  return result;
+};
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+
+var AuthProvider_1 = __webpack_require__(/*! ../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx");
+
+var types_1 = __webpack_require__(/*! ../types */ "./resources/js/RoyalSPBU/types.ts");
+
+var GuestRoutes_1 = __importDefault(__webpack_require__(/*! ./GuestRoutes */ "./resources/js/RoyalSPBU/components/GuestRoutes.tsx"));
+
+var Splash_1 = __importDefault(__webpack_require__(/*! ../pages/Splash */ "./resources/js/RoyalSPBU/pages/Splash.tsx"));
+
+function RouteSwitch() {
+  // const adminRoutes = React.lazy(() => import('../routes/AdminRoutes'))
+  var AdminRoutes = react_1["default"].lazy(function () {
+    return Promise.resolve().then(function () {
+      return __importStar(__webpack_require__(/*! ./AdminRoutes */ "./resources/js/RoyalSPBU/components/AdminRoutes.tsx"));
+    });
+  });
+  var DeveloperRoutes = react_1["default"].lazy(function () {
+    return Promise.resolve().then(function () {
+      return __importStar(__webpack_require__(/*! ./DeveloperRoutes */ "./resources/js/RoyalSPBU/components/DeveloperRoutes.tsx"));
+    });
+  });
+  var OperatorRoutes = react_1["default"].lazy(function () {
+    return Promise.resolve().then(function () {
+      return __importStar(__webpack_require__(/*! ./OperatorRoutes */ "./resources/js/RoyalSPBU/components/OperatorRoutes.tsx"));
+    });
+  });
+  var auth = AuthProvider_1.useAuth().auth;
+  return react_1["default"].createElement(react_router_dom_1.BrowserRouter, null, react_1["default"].createElement(react_1["default"].Suspense, {
+    fallback: react_1["default"].createElement(Splash_1["default"], null)
+  }, // auth.role === Roles.OPERATOR ? <OperatorRoutes />
+  // : auth.role === Roles.ADMIN || auth.role === Roles.DEVELOPER ? <AdminRoutes />
+  // : renderGuestRoutes()
+  // routes.map(route => <Route path={route.path} exact={route.exact} component={route.component} />)
+  auth.role === types_1.Roles.DEVELOPER ? react_1["default"].createElement(DeveloperRoutes, null) : auth.role === types_1.Roles.ADMIN ? react_1["default"].createElement(AdminRoutes, null) : auth.role === types_1.Roles.OPERATOR ? react_1["default"].createElement(OperatorRoutes, null) : react_1["default"].createElement(GuestRoutes_1["default"], null)));
+}
+
+exports.default = RouteSwitch;
 
 /***/ }),
 
@@ -7078,6 +7389,138 @@ var AuthProvider_1 = __importDefault(__webpack_require__(/*! ./providers/AuthPro
 react_dom_1.render(react_1["default"].createElement(notistack_1.SnackbarProvider, {
   maxSnack: 3
 }, react_1["default"].createElement(ConfigProvider_1["default"], null, react_1["default"].createElement(AuthProvider_1["default"], null, react_1["default"].createElement(App_1["default"], null)))), document.getElementById('root'));
+
+/***/ }),
+
+/***/ "./resources/js/RoyalSPBU/pages/Logout.tsx":
+/*!*************************************************!*\
+  !*** ./resources/js/RoyalSPBU/pages/Logout.tsx ***!
+  \*************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+
+var AuthProvider_1 = __webpack_require__(/*! ../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx");
+
+var oooperator_1 = __importDefault(__webpack_require__(/*! ../utils/oooperator */ "./resources/js/RoyalSPBU/utils/oooperator.ts"));
+
+var DB_1 = __importDefault(__webpack_require__(/*! ../utils/DB */ "./resources/js/RoyalSPBU/utils/DB.ts"));
+
+function Logout() {
+  var history = react_router_dom_1.useHistory();
+  var db = new DB_1["default"]();
+
+  var _a = AuthProvider_1.useAuth(),
+      auth = _a.auth,
+      setAuthState = _a.setAuthState;
+
+  react_1["default"].useEffect(function () {
+    oooperator_1["default"]({
+      method: 'get',
+      url: '/logout'
+    });
+    var authObject = {
+      name: '',
+      role: undefined,
+      username: '',
+      token: ''
+    };
+    setAuthState(authObject);
+    db.auth.put({
+      key: 'auth_token',
+      value: authObject.token
+    });
+    db.auth.put({
+      key: 'name',
+      value: authObject.name
+    });
+    db.auth.put({
+      key: 'username',
+      value: authObject.username
+    });
+    db.auth.put({
+      key: 'role',
+      value: authObject.role
+    });
+    history.replace('/');
+  });
+  return react_1["default"].createElement("div", null);
+}
+
+exports.default = Logout;
+
+/***/ }),
+
+/***/ "./resources/js/RoyalSPBU/pages/NotFound.tsx":
+/*!***************************************************!*\
+  !*** ./resources/js/RoyalSPBU/pages/NotFound.tsx ***!
+  \***************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+function NotFound() {
+  return react_1["default"].createElement("div", null, "Page Not Found");
+}
+
+exports.default = NotFound;
+
+/***/ }),
+
+/***/ "./resources/js/RoyalSPBU/pages/Splash.tsx":
+/*!*************************************************!*\
+  !*** ./resources/js/RoyalSPBU/pages/Splash.tsx ***!
+  \*************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+function Splash() {
+  return react_1["default"].createElement("div", null, "Ini splash");
+}
+
+exports.default = Splash;
 
 /***/ }),
 
@@ -10437,35 +10880,6 @@ exports.default = Login;
 
 /***/ }),
 
-/***/ "./resources/js/RoyalSPBU/pages/guestPages/Splash.tsx":
-/*!************************************************************!*\
-  !*** ./resources/js/RoyalSPBU/pages/guestPages/Splash.tsx ***!
-  \************************************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
-};
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-
-var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-
-function Splash() {
-  return react_1["default"].createElement("div", null, "Ini splash");
-}
-
-exports.default = Splash;
-
-/***/ }),
-
 /***/ "./resources/js/RoyalSPBU/pages/operatorPages/Absen.tsx":
 /*!**************************************************************!*\
   !*** ./resources/js/RoyalSPBU/pages/operatorPages/Absen.tsx ***!
@@ -10491,10 +10905,11 @@ var react_qr_code_1 = __importDefault(__webpack_require__(/*! react-qr-code */ "
 
 var notistack_1 = __webpack_require__(/*! notistack */ "./node_modules/notistack/dist/notistack.esm.js");
 
-var oooperator_1 = __importDefault(__webpack_require__(/*! ../../utils/oooperator */ "./resources/js/RoyalSPBU/utils/oooperator.ts"));
+var AuthProvider_1 = __webpack_require__(/*! ../../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx");
 
 function Absen() {
   var enqueueSnackbar = notistack_1.useSnackbar().enqueueSnackbar;
+  var axios = AuthProvider_1.useAuth().axios;
 
   var _a = react_1["default"].useState(true),
       loading = _a[0],
@@ -10505,7 +10920,7 @@ function Absen() {
   }, []);
 
   var requestPresenceToken = function requestPresenceToken() {
-    oooperator_1["default"]({
+    axios({
       method: 'get',
       url: '/getPresenceToken'
     }).then(function (result) {
@@ -11043,10 +11458,10 @@ exports.default = ConfigProvider;
 
 /***/ }),
 
-/***/ "./resources/js/RoyalSPBU/routes/AdminRoutes.tsx":
-/*!*******************************************************!*\
-  !*** ./resources/js/RoyalSPBU/routes/AdminRoutes.tsx ***!
-  \*******************************************************/
+/***/ "./resources/js/RoyalSPBU/routes/admin.ts":
+/*!************************************************!*\
+  !*** ./resources/js/RoyalSPBU/routes/admin.ts ***!
+  \************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -11061,14 +11476,6 @@ var __importDefault = this && this.__importDefault || function (mod) {
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-
-var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-
-var AdminConfigProvider_1 = __importDefault(__webpack_require__(/*! ../providers/AdminConfigProvider */ "./resources/js/RoyalSPBU/providers/AdminConfigProvider.tsx"));
-
-var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
-
-var AuthProvider_1 = __webpack_require__(/*! ../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx");
 
 var Home_1 = __importDefault(__webpack_require__(/*! ../pages/adminPages/Home */ "./resources/js/RoyalSPBU/pages/adminPages/Home.tsx"));
 
@@ -11100,127 +11507,143 @@ var FormPump_1 = __importDefault(__webpack_require__(/*! ../pages/adminPages/pum
 
 var Presence_1 = __importDefault(__webpack_require__(/*! ../pages/adminPages/presence/Presence */ "./resources/js/RoyalSPBU/pages/adminPages/presence/Presence.tsx"));
 
-var types_1 = __webpack_require__(/*! ../types */ "./resources/js/RoyalSPBU/types.ts");
-
 var FormRole_1 = __importDefault(__webpack_require__(/*! ../pages/adminPages/roles/FormRole */ "./resources/js/RoyalSPBU/pages/adminPages/roles/FormRole.tsx"));
 
-var AdminRoutes = function AdminRoutes() {
-  var auth = AuthProvider_1.useAuth().auth;
-  var routes = [{
-    path: '/',
-    exact: true,
-    component: Home_1["default"]
-  }, {
-    path: '/user',
-    exact: true,
-    component: Users_1["default"]
-  }, {
-    path: '/user/tambahuser',
-    exact: true,
-    component: AddUser_1["default"]
-  }, {
-    path: '/user/edituser',
-    exact: true,
-    component: EditUser_1["default"]
-  }, {
-    path: '/products',
-    exact: true,
-    component: Products_1["default"]
-  }, {
-    path: '/products/tambah',
-    exact: true,
-    component: AddProduct_1["default"]
-  }, {
-    path: '/products/edit',
-    exact: true,
-    component: EditProduct_1["default"]
-  }, {
-    path: '/tanks',
-    exact: true,
-    component: Tanks_1["default"]
-  }, {
-    path: '/tanks/tambah',
-    exact: true,
-    component: FormTank_1["default"]
-  }, {
-    path: '/tanks/edit',
-    exact: true,
-    component: FormTank_1["default"]
-  }, {
-    path: '/presensi',
-    exact: true,
-    component: Presence_1["default"]
-  }, {
-    path: '/pompa',
-    exact: true,
-    component: Pumps_1["default"]
-  }, {
-    path: '/pompa/tambah',
-    exact: true,
-    component: FormPump_1["default"]
-  }, {
-    path: '/pompa/edit',
-    exact: true,
-    component: FormPump_1["default"]
-  }, {
-    path: '/permissions',
-    exact: true,
-    component: Permissions_1["default"]
-  }, {
-    path: '/permissions/tambah',
-    exact: true,
-    component: FormPermission_1["default"]
-  }, {
-    path: '/permissions/edit',
-    exact: true,
-    component: FormPermission_1["default"]
-  }, {
-    path: '/roles',
-    exact: true,
-    component: Roles_1["default"]
-  }, {
-    path: '/roles/tambah',
-    exact: true,
-    component: FormRole_1["default"]
-  }, {
-    path: '/roles/edit',
-    exact: true,
-    component: FormRole_1["default"]
-  }]; // todo: desain page not found
+var Logout_1 = __importDefault(__webpack_require__(/*! ../pages/Logout */ "./resources/js/RoyalSPBU/pages/Logout.tsx"));
 
-  var NotFoundRoute = function NotFoundRoute() {
-    return react_1["default"].createElement("div", null, "Page Not Found");
-  };
-
-  return auth.role !== types_1.Roles.ADMIN && auth.role !== types_1.Roles.DEVELOPER ? react_1["default"].createElement(react_router_dom_1.Redirect, {
-    to: {
-      pathname: "/login",
-      state: {
-        from: location
-      }
-    }
-  }) : react_1["default"].createElement(AdminConfigProvider_1["default"], null, react_1["default"].createElement(react_router_dom_1.Switch, null, routes.map(function (route) {
-    return react_1["default"].createElement(react_router_dom_1.Route, {
-      path: route.path,
-      exact: route.exact,
-      component: route.component
-    });
-  }), react_1["default"].createElement(react_router_dom_1.Redirect, {
-    path: "/login",
-    to: "/"
-  }), react_1["default"].createElement(react_router_dom_1.Route, {
-    component: NotFoundRoute
-  })));
-};
-
-exports.default = react_router_dom_1.withRouter(AdminRoutes);
+var routes = [{
+  path: '/',
+  component: Home_1["default"]
+}, {
+  path: '/logout',
+  component: Logout_1["default"]
+}, {
+  path: '/user',
+  component: Users_1["default"]
+}, {
+  path: '/user/tambahuser',
+  component: AddUser_1["default"]
+}, {
+  path: '/user/edituser',
+  component: EditUser_1["default"]
+}, {
+  path: '/products',
+  component: Products_1["default"]
+}, {
+  path: '/products/tambah',
+  component: AddProduct_1["default"]
+}, {
+  path: '/products/edit',
+  component: EditProduct_1["default"]
+}, {
+  path: '/tanks',
+  component: Tanks_1["default"]
+}, {
+  path: '/tanks/tambah',
+  component: FormTank_1["default"]
+}, {
+  path: '/tanks/edit',
+  component: FormTank_1["default"]
+}, {
+  path: '/presensi',
+  component: Presence_1["default"]
+}, {
+  path: '/pompa',
+  component: Pumps_1["default"]
+}, {
+  path: '/pompa/tambah',
+  component: FormPump_1["default"]
+}, {
+  path: '/pompa/edit',
+  component: FormPump_1["default"]
+}, {
+  path: '/permissions',
+  component: Permissions_1["default"]
+}, {
+  path: '/permissions/tambah',
+  component: FormPermission_1["default"]
+}, {
+  path: '/permissions/edit',
+  component: FormPermission_1["default"]
+}, {
+  path: '/roles',
+  component: Roles_1["default"]
+}, {
+  path: '/roles/tambah',
+  component: FormRole_1["default"]
+}, {
+  path: '/roles/edit',
+  component: FormRole_1["default"]
+}];
+exports.default = routes;
 
 /***/ }),
 
-/***/ "./resources/js/RoyalSPBU/routes/OperatorRoutes.tsx":
-/*!**********************************************************!*\
-  !*** ./resources/js/RoyalSPBU/routes/OperatorRoutes.tsx ***!
-  \**********************************************************/
+/***/ "./resources/js/RoyalSPBU/routes/developer.ts":
+/*!****************************************************!*\
+  !*** ./resources/js/RoyalSPBU/routes/developer.ts ***!
+  \****************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __spreadArray = this && this.__spreadArray || function (to, from) {
+  for (var i = 0, il = from.length, j = to.length; i < il; i++, j++) {
+    to[j] = from[i];
+  }
+
+  return to;
+};
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var Permissions_1 = __importDefault(__webpack_require__(/*! ../pages/adminPages/permissions/Permissions */ "./resources/js/RoyalSPBU/pages/adminPages/permissions/Permissions.tsx"));
+
+var FormPermission_1 = __importDefault(__webpack_require__(/*! ../pages/adminPages/permissions/FormPermission */ "./resources/js/RoyalSPBU/pages/adminPages/permissions/FormPermission.tsx"));
+
+var Roles_1 = __importDefault(__webpack_require__(/*! ../pages/adminPages/roles/Roles */ "./resources/js/RoyalSPBU/pages/adminPages/roles/Roles.tsx"));
+
+var FormRole_1 = __importDefault(__webpack_require__(/*! ../pages/adminPages/roles/FormRole */ "./resources/js/RoyalSPBU/pages/adminPages/roles/FormRole.tsx"));
+
+var admin_1 = __importDefault(__webpack_require__(/*! ./admin */ "./resources/js/RoyalSPBU/routes/admin.ts"));
+
+var routes = __spreadArray(__spreadArray([], admin_1["default"]), [{
+  path: '/permissions',
+  component: Permissions_1["default"]
+}, {
+  path: '/permissions/tambah',
+  component: FormPermission_1["default"]
+}, {
+  path: '/permissions/edit',
+  component: FormPermission_1["default"]
+}, {
+  path: '/roles',
+  component: Roles_1["default"]
+}, {
+  path: '/roles/tambah',
+  component: FormRole_1["default"]
+}, {
+  path: '/roles/edit',
+  component: FormRole_1["default"]
+}]);
+
+exports.default = routes;
+
+/***/ }),
+
+/***/ "./resources/js/RoyalSPBU/routes/guest.ts":
+/*!************************************************!*\
+  !*** ./resources/js/RoyalSPBU/routes/guest.ts ***!
+  \************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -11236,58 +11659,52 @@ Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 
-var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var Login_1 = __importDefault(__webpack_require__(/*! ../pages/guestPages/Login */ "./resources/js/RoyalSPBU/pages/guestPages/Login.tsx"));
 
-var AdminConfigProvider_1 = __importDefault(__webpack_require__(/*! ../providers/AdminConfigProvider */ "./resources/js/RoyalSPBU/providers/AdminConfigProvider.tsx"));
+var routes = [{
+  path: '/login',
+  component: Login_1["default"]
+}];
+exports.default = routes;
 
-var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+/***/ }),
 
-var AuthProvider_1 = __webpack_require__(/*! ../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx");
+/***/ "./resources/js/RoyalSPBU/routes/operator.ts":
+/*!***************************************************!*\
+  !*** ./resources/js/RoyalSPBU/routes/operator.ts ***!
+  \***************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
-var types_1 = __webpack_require__(/*! ../types */ "./resources/js/RoyalSPBU/types.ts");
+"use strict";
+
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
 
 var Home_1 = __importDefault(__webpack_require__(/*! ../pages/operatorPages/Home */ "./resources/js/RoyalSPBU/pages/operatorPages/Home.tsx"));
 
 var Absen_1 = __importDefault(__webpack_require__(/*! ../pages/operatorPages/Absen */ "./resources/js/RoyalSPBU/pages/operatorPages/Absen.tsx"));
 
-var AdminRoutes = function AdminRoutes() {
-  var auth = AuthProvider_1.useAuth().auth;
-  var routes = [{
-    path: '/',
-    exact: true,
-    component: Home_1["default"]
-  }, {
-    path: '/absen',
-    exact: true,
-    component: Absen_1["default"]
-  }]; // todo: desain page not found
+var Logout_1 = __importDefault(__webpack_require__(/*! ../pages/Logout */ "./resources/js/RoyalSPBU/pages/Logout.tsx"));
 
-  var NotFoundRoute = function NotFoundRoute() {
-    return react_1["default"].createElement("div", null, "Page Not Found");
-  };
-
-  return auth.role !== types_1.Roles.OPERATOR ? react_1["default"].createElement(react_router_dom_1.Redirect, {
-    to: {
-      pathname: "/login",
-      state: {
-        from: location
-      }
-    }
-  }) : react_1["default"].createElement(AdminConfigProvider_1["default"], null, react_1["default"].createElement(react_router_dom_1.Switch, null, routes.map(function (route) {
-    return react_1["default"].createElement(react_router_dom_1.Route, {
-      path: route.path,
-      exact: route.exact,
-      component: route.component
-    });
-  }), react_1["default"].createElement(react_router_dom_1.Redirect, {
-    path: "/login",
-    to: "/"
-  }), react_1["default"].createElement(react_router_dom_1.Route, {
-    component: NotFoundRoute
-  })));
-};
-
-exports.default = react_router_dom_1.withRouter(AdminRoutes);
+var routes = [{
+  path: '/',
+  component: Home_1["default"]
+}, {
+  path: '/absen',
+  component: Absen_1["default"]
+}, {
+  path: '/logout',
+  component: Logout_1["default"]
+}];
+exports.default = routes;
 
 /***/ }),
 

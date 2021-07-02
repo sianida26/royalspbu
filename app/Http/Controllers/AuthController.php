@@ -36,4 +36,13 @@ class AuthController extends Controller
             abort(422, 'username atau password salah');
         }
     }
+
+    public function logout(Request $request){
+
+        if ($request->user() !== null){
+            $request->user()->token()->revoke();
+            return 'ok';
+        }
+        abort(404);
+    }
 }

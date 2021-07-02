@@ -1,4 +1,5 @@
 import React, {lazy, Suspense, useState, useEffect} from 'react'
+import RouteSwitch from './components/RouteSwitch'
 
 import {
     BrowserRouter as Router,
@@ -7,14 +8,14 @@ import {
     Route,
 } from 'react-router-dom'
 
-import PrivateRoute from './components/PrivateRoute'
-import GuestRoute from './components/GuestRoute'
+// import PrivateRoute from './components/PrivateRoute'
+// import GuestRoute from './components/GuestRoute'
 
 import { Roles } from './types'
 import { useAuth } from './providers/AuthProvider'
 
 import Login from './pages/guestPages/Login'
-import Splash from './pages/guestPages/Splash'
+import Splash from './pages/Splash'
 
 import DB from './utils/DB'
 
@@ -54,8 +55,8 @@ export default function App() {
         )
     }
 
-    const OperatorRoutes = lazy(() => import ('./routes/OperatorRoutes'))
-    const AdminRoutes = lazy(() => import ('./routes/AdminRoutes'))
+    // const OperatorRoutes = lazy(() => import ('./routes/OperatorRoutes'))
+    // const AdminRoutes = lazy(() => import ('./routes/AdminRoutes'))
 
     // todo: desain page not found
     const NotFoundRoute = () => {
@@ -64,17 +65,9 @@ export default function App() {
         )
     }
 
-    return (
-        <Router>
-            {/* <Switch> */}
-                <Suspense fallback={<div>Loading...</div>}>
-                    {
-                        auth.role === Roles.OPERATOR ? <OperatorRoutes />
-                        : auth.role === Roles.ADMIN || auth.role === Roles.DEVELOPER ? <AdminRoutes />
-                        : renderGuestRoutes()
-                    }
-                </Suspense>
-            {/* </Switch> */}
-        </Router>
+    return isBooting? <Splash /> : (
+        <>
+            <RouteSwitch />
+        </>
     )
 }

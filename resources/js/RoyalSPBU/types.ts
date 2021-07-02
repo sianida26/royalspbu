@@ -1,4 +1,5 @@
 import { AxiosInstance } from "axios"
+import React, { ReactElement } from "react"
 
 export enum Roles {
     OPERATOR = 'operator',
@@ -68,6 +69,12 @@ export interface IAuth {
     username?   : string
     role?       : Roles | undefined
     token?      : string
+}
+
+export interface IRoute {
+    path : string,
+    isNotExact?: boolean,
+    component: React.FC
 }
 
 export type ConfigContextState = {
