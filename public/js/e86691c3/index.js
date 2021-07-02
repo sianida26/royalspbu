@@ -7194,12 +7194,6 @@ var __importStar = this && this.__importStar || function (mod) {
   return result;
 };
 
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
-};
-
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
@@ -7212,7 +7206,7 @@ var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_mod
 
 var AdminConfigProvider_1 = __webpack_require__(/*! ../../../providers/AdminConfigProvider */ "./resources/js/RoyalSPBU/providers/AdminConfigProvider.tsx");
 
-var AdminAxios_1 = __importDefault(__webpack_require__(/*! ../../../utils/AdminAxios */ "./resources/js/RoyalSPBU/utils/AdminAxios.ts"));
+var AuthProvider_1 = __webpack_require__(/*! ../../../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx");
 
 function FormPermission() {
   var _a;
@@ -7229,6 +7223,7 @@ function FormPermission() {
       formData = _c[0],
       setFormData = _c[1];
 
+  var axios = AuthProvider_1.useAuth().axios;
   react_1.useEffect(function () {
     //validating data if in edit mode
     if (isEdit) {
@@ -7254,9 +7249,9 @@ function FormPermission() {
   };
 
   var handleSave = function handleSave() {
-    AdminAxios_1["default"]({
+    axios({
       method: 'post',
-      url: isEdit ? '/permission/edit' : '/permission/add',
+      url: isEdit ? '/admin/permission/edit' : '/admin/permission/add',
       data: formData
     }).then(function (result) {
       // setFormErrors({}) todo: set form errors
@@ -7350,12 +7345,6 @@ var __importStar = this && this.__importStar || function (mod) {
   return result;
 };
 
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
-};
-
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
@@ -7368,7 +7357,7 @@ var notistack_1 = __webpack_require__(/*! notistack */ "./node_modules/notistack
 
 var AdminConfigProvider_1 = __webpack_require__(/*! ../../../providers/AdminConfigProvider */ "./resources/js/RoyalSPBU/providers/AdminConfigProvider.tsx");
 
-var AdminAxios_1 = __importDefault(__webpack_require__(/*! ../../../utils/AdminAxios */ "./resources/js/RoyalSPBU/utils/AdminAxios.ts")); //TODO: desain halaman ini
+var AuthProvider_1 = __webpack_require__(/*! ../../../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx"); //TODO: desain halaman ini
 
 
 function Permissions() {
@@ -7387,11 +7376,13 @@ function Permissions() {
       isLoading = _c[0],
       setLoading = _c[1];
 
+  var axios = AuthProvider_1.useAuth().axios;
+
   var requestAllPermissions = function requestAllPermissions() {
     setLoading(true);
-    AdminAxios_1["default"]({
+    axios({
       method: 'get',
-      url: '/permission/getAll'
+      url: '/admin/permission/getAll'
     }).then(function (result) {
       var data = result.data;
       setPermissions(data.map(function (permission) {
@@ -7424,9 +7415,9 @@ function Permissions() {
   var handleDeletePermission = function handleDeletePermission(permission) {
     //TODO: Tambah konfirmasi dengan password
     setLoading(true);
-    AdminAxios_1["default"]({
+    axios({
       method: 'post',
-      url: '/permission/delete',
+      url: '/admin/permission/delete',
       data: {
         id: permission.id
         /*password: */
@@ -8108,12 +8099,6 @@ var __importStar = this && this.__importStar || function (mod) {
   return result;
 };
 
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
-};
-
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
@@ -8126,7 +8111,7 @@ var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_mod
 
 var AdminConfigProvider_1 = __webpack_require__(/*! ../../../providers/AdminConfigProvider */ "./resources/js/RoyalSPBU/providers/AdminConfigProvider.tsx");
 
-var AdminAxios_1 = __importDefault(__webpack_require__(/*! ../../../utils/AdminAxios */ "./resources/js/RoyalSPBU/utils/AdminAxios.ts"));
+var AuthProvider_1 = __webpack_require__(/*! ../../../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx");
 
 function FormProduct(props) {
   var isEdit = props.type === "edit";
@@ -8136,6 +8121,8 @@ function FormProduct(props) {
   var _a = AdminConfigProvider_1.useAdminConfig(),
       configs = _a.configs,
       setConfig = _a.setConfig;
+
+  var axios = AuthProvider_1.useAuth().axios;
 
   var _b = react_1.useState(AdminConfigProvider_1.editProductDefaultObject),
       formData = _b[0],
@@ -8170,9 +8157,9 @@ function FormProduct(props) {
   };
 
   var handleFormSubmit = function handleFormSubmit() {
-    AdminAxios_1["default"]({
+    axios({
       method: 'post',
-      url: isEdit ? '/product/edit' : '/product/add',
+      url: isEdit ? '/admin/product/edit' : '/admin/product/add',
       data: formData
     }).then(function (result) {
       setFormErrors({});
@@ -8280,12 +8267,6 @@ var __importStar = this && this.__importStar || function (mod) {
   return result;
 };
 
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
-};
-
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
@@ -8298,7 +8279,7 @@ var notistack_1 = __webpack_require__(/*! notistack */ "./node_modules/notistack
 
 var AdminConfigProvider_1 = __webpack_require__(/*! ../../../providers/AdminConfigProvider */ "./resources/js/RoyalSPBU/providers/AdminConfigProvider.tsx");
 
-var AdminAxios_1 = __importDefault(__webpack_require__(/*! ../../../utils/AdminAxios */ "./resources/js/RoyalSPBU/utils/AdminAxios.ts"));
+var AuthProvider_1 = __webpack_require__(/*! ../../../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx");
 
 function Products() {
   var history = react_router_1.useHistory();
@@ -8307,6 +8288,8 @@ function Products() {
   var _a = AdminConfigProvider_1.useAdminConfig(),
       configs = _a.configs,
       setConfig = _a.setConfig;
+
+  var axios = AuthProvider_1.useAuth().axios;
 
   var _b = react_1.useState([]),
       products = _b[0],
@@ -8318,9 +8301,9 @@ function Products() {
 
   var requestAllProducts = function requestAllProducts() {
     setLoading(true);
-    AdminAxios_1["default"]({
+    axios({
       method: 'get',
-      url: '/product/getAll'
+      url: '/admin/product/getAll'
     }).then(function (result) {
       var data = result.data;
       setProducts(data.map(function (_product) {
@@ -8354,9 +8337,9 @@ function Products() {
   var handleDeleteProduct = function handleDeleteProduct(x) {
     //TODO: Tambah konfirmasi dengan password
     setLoading(true);
-    AdminAxios_1["default"]({
+    axios({
       method: 'post',
-      url: '/product/delete',
+      url: '/admin/product/delete',
       data: {
         id: x.id
         /*password: */
@@ -8497,12 +8480,6 @@ var __spreadArray = this && this.__spreadArray || function (to, from) {
   return to;
 };
 
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
-};
-
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
@@ -8515,7 +8492,7 @@ var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_mod
 
 var AdminConfigProvider_1 = __webpack_require__(/*! ../../../providers/AdminConfigProvider */ "./resources/js/RoyalSPBU/providers/AdminConfigProvider.tsx");
 
-var AdminAxios_1 = __importDefault(__webpack_require__(/*! ../../../utils/AdminAxios */ "./resources/js/RoyalSPBU/utils/AdminAxios.ts"));
+var AuthProvider_1 = __webpack_require__(/*! ../../../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx");
 
 function FormPump() {
   var _a;
@@ -8527,6 +8504,8 @@ function FormPump() {
   var _b = AdminConfigProvider_1.useAdminConfig(),
       configs = _b.configs,
       setConfig = _b.setConfig;
+
+  var axios = AuthProvider_1.useAuth().axios;
 
   var _c = react_1.useState(false),
       loading = _c[0],
@@ -8595,9 +8574,9 @@ function FormPump() {
   var handleDeletePump = function handleDeletePump() {
     //TODO: Tambah konfirmasi dengan password
     setLoading(true);
-    AdminAxios_1["default"]({
+    axios({
       method: 'post',
-      url: '/pump/delete',
+      url: '/admin/pump/delete',
       data: {
         id: formData.id
         /*password: */
@@ -8636,9 +8615,9 @@ function FormPump() {
 
   var handleSave = function handleSave() {
     setLoading(true);
-    AdminAxios_1["default"]({
+    axios({
       method: 'post',
-      url: isEdit ? '/pump/edit' : '/pump/add',
+      url: isEdit ? '/admin/pump/edit' : '/admin/pump/add',
       data: formData
     }).then(function (result) {
       // setFormErrors({}) todo: set form errors
@@ -8675,9 +8654,9 @@ function FormPump() {
 
   var requestAllTanks = function requestAllTanks() {
     setLoading(true);
-    AdminAxios_1["default"]({
+    axios({
       method: 'get',
-      url: '/tank/getAll'
+      url: '/admin/tank/getAll'
     }).then(function (result) {
       var data = result.data;
       setTanks(data.map(function (tank) {
@@ -8786,12 +8765,6 @@ var __importStar = this && this.__importStar || function (mod) {
   return result;
 };
 
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
-};
-
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
@@ -8804,7 +8777,7 @@ var notistack_1 = __webpack_require__(/*! notistack */ "./node_modules/notistack
 
 var AdminConfigProvider_1 = __webpack_require__(/*! ../../../providers/AdminConfigProvider */ "./resources/js/RoyalSPBU/providers/AdminConfigProvider.tsx");
 
-var AdminAxios_1 = __importDefault(__webpack_require__(/*! ../../../utils/AdminAxios */ "./resources/js/RoyalSPBU/utils/AdminAxios.ts"));
+var AuthProvider_1 = __webpack_require__(/*! ../../../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx");
 
 function Products() {
   var history = react_router_1.useHistory();
@@ -8813,6 +8786,8 @@ function Products() {
   var _a = AdminConfigProvider_1.useAdminConfig(),
       configs = _a.configs,
       setConfig = _a.setConfig;
+
+  var axios = AuthProvider_1.useAuth().axios;
 
   var _b = react_1.useState([]),
       pumps = _b[0],
@@ -8824,9 +8799,9 @@ function Products() {
 
   var requestAllPumps = function requestAllPumps() {
     setLoading(true);
-    AdminAxios_1["default"]({
+    axios({
       method: 'get',
-      url: '/pump/getAll'
+      url: '/admin/pump/getAll'
     }).then(function (result) {
       var data = result.data;
       setPumps(data.map(function (pump) {
@@ -8945,12 +8920,6 @@ var __spreadArray = this && this.__spreadArray || function (to, from) {
   return to;
 };
 
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
-};
-
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
@@ -8963,7 +8932,7 @@ var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_mod
 
 var AdminConfigProvider_1 = __webpack_require__(/*! ../../../providers/AdminConfigProvider */ "./resources/js/RoyalSPBU/providers/AdminConfigProvider.tsx");
 
-var AdminAxios_1 = __importDefault(__webpack_require__(/*! ../../../utils/AdminAxios */ "./resources/js/RoyalSPBU/utils/AdminAxios.ts"));
+var AuthProvider_1 = __webpack_require__(/*! ../../../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx");
 
 var helper_1 = __webpack_require__(/*! ../../../utils/helper */ "./resources/js/RoyalSPBU/utils/helper.ts");
 
@@ -8990,6 +8959,7 @@ function FormRole() {
       permissions = _e[0],
       setPermissions = _e[1];
 
+  var axios = AuthProvider_1.useAuth().axios;
   react_1.useEffect(function () {
     requestAllPermissions(); //validating data if in edit mode
 
@@ -9040,9 +9010,9 @@ function FormRole() {
   };
 
   var handleSave = function handleSave() {
-    AdminAxios_1["default"]({
+    axios({
       method: 'post',
-      url: isEdit ? '/role/edit' : '/role/add',
+      url: isEdit ? '/admin/role/edit' : '/admin/role/add',
       data: formData
     }).then(function (result) {
       // setFormErrors({}) todo: set form errors
@@ -9077,7 +9047,7 @@ function FormRole() {
 
   var requestAllPermissions = function requestAllPermissions() {
     setLoading(true);
-    AdminAxios_1["default"]({
+    axios({
       method: 'get',
       url: '/permission/getAll'
     }).then(function (result) {
@@ -9175,12 +9145,6 @@ var __importStar = this && this.__importStar || function (mod) {
   return result;
 };
 
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
-};
-
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
@@ -9193,7 +9157,7 @@ var notistack_1 = __webpack_require__(/*! notistack */ "./node_modules/notistack
 
 var AdminConfigProvider_1 = __webpack_require__(/*! ../../../providers/AdminConfigProvider */ "./resources/js/RoyalSPBU/providers/AdminConfigProvider.tsx");
 
-var AdminAxios_1 = __importDefault(__webpack_require__(/*! ../../../utils/AdminAxios */ "./resources/js/RoyalSPBU/utils/AdminAxios.ts")); //TODO: desain halaman ini
+var AuthProvider_1 = __webpack_require__(/*! ../../../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx"); //TODO: desain halaman ini
 
 
 function Roles() {
@@ -9212,11 +9176,13 @@ function Roles() {
       isLoading = _c[0],
       setLoading = _c[1];
 
+  var axios = AuthProvider_1.useAuth().axios;
+
   var requestAllRoles = function requestAllRoles() {
     setLoading(true);
-    AdminAxios_1["default"]({
+    axios({
       method: 'get',
-      url: '/role/getAll'
+      url: '/admin/role/getAll'
     }).then(function (result) {
       var data = result.data;
       setRoles(data.map(function (role) {
@@ -9250,9 +9216,9 @@ function Roles() {
   var handleDeleteRole = function handleDeleteRole(role) {
     //TODO: Tambah konfirmasi dengan password
     setLoading(true);
-    AdminAxios_1["default"]({
+    axios({
       method: 'post',
-      url: '/role/delete',
+      url: '/admin/role/delete',
       data: {
         id: role.id
         /*password: */
@@ -9386,12 +9352,6 @@ var __importStar = this && this.__importStar || function (mod) {
   return result;
 };
 
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
-};
-
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
@@ -9404,7 +9364,7 @@ var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_mod
 
 var AdminConfigProvider_1 = __webpack_require__(/*! ../../../providers/AdminConfigProvider */ "./resources/js/RoyalSPBU/providers/AdminConfigProvider.tsx");
 
-var AdminAxios_1 = __importDefault(__webpack_require__(/*! ../../../utils/AdminAxios */ "./resources/js/RoyalSPBU/utils/AdminAxios.ts"));
+var AuthProvider_1 = __webpack_require__(/*! ../../../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx");
 
 function FormTank() {
   var _a;
@@ -9433,6 +9393,7 @@ function FormTank() {
       loading = _f[0],
       setLoading = _f[1];
 
+  var axios = AuthProvider_1.useAuth().axios;
   react_1.useEffect(function () {
     //validating data if in edit mode
     requestProducts();
@@ -9461,9 +9422,9 @@ function FormTank() {
 
   var handleFormSubmit = function handleFormSubmit() {
     setLoading(true);
-    AdminAxios_1["default"]({
+    axios({
       method: 'post',
-      url: isEdit ? '/tank/edit' : '/tank/add',
+      url: isEdit ? '/admin/tank/edit' : '/admin/tank/add',
       data: formData
     }).then(function (result) {
       setFormErrors({});
@@ -9500,9 +9461,9 @@ function FormTank() {
 
   var requestProducts = function requestProducts() {
     setLoading(true);
-    AdminAxios_1["default"]({
+    axios({
       method: 'get',
-      url: '/product/getAll'
+      url: '/admin/product/getAll'
     }).then(function (result) {
       var data = result.data;
       setProducts(data.map(function (_product) {
@@ -9613,12 +9574,6 @@ var __importStar = this && this.__importStar || function (mod) {
   return result;
 };
 
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
-};
-
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
@@ -9631,7 +9586,7 @@ var notistack_1 = __webpack_require__(/*! notistack */ "./node_modules/notistack
 
 var AdminConfigProvider_1 = __webpack_require__(/*! ../../../providers/AdminConfigProvider */ "./resources/js/RoyalSPBU/providers/AdminConfigProvider.tsx");
 
-var AdminAxios_1 = __importDefault(__webpack_require__(/*! ../../../utils/AdminAxios */ "./resources/js/RoyalSPBU/utils/AdminAxios.ts"));
+var AuthProvider_1 = __webpack_require__(/*! ../../../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx");
 
 function Tanks() {
   var history = react_router_1.useHistory();
@@ -9649,11 +9604,13 @@ function Tanks() {
       isLoading = _c[0],
       setLoading = _c[1];
 
+  var axios = AuthProvider_1.useAuth().axios;
+
   var requestAllTanks = function requestAllTanks() {
     setLoading(true);
-    AdminAxios_1["default"]({
+    axios({
       method: 'get',
-      url: '/tank/getAll'
+      url: '/admin/tank/getAll'
     }).then(function (result) {
       var data = result.data;
       setTanks(data.map(function (tank) {
@@ -9689,9 +9646,9 @@ function Tanks() {
   var handleDeleteTank = function handleDeleteTank(x) {
     //TODO: Tambah konfirmasi dengan password
     setLoading(true);
-    AdminAxios_1["default"]({
+    axios({
       method: 'post',
-      url: '/tank/delete',
+      url: '/admin/tank/delete',
       data: {
         id: x.id
         /*password: */
@@ -9890,12 +9847,6 @@ var __importStar = this && this.__importStar || function (mod) {
   return result;
 };
 
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
-};
-
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
@@ -9908,7 +9859,7 @@ var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_mod
 
 var AdminConfigProvider_1 = __webpack_require__(/*! ../../../providers/AdminConfigProvider */ "./resources/js/RoyalSPBU/providers/AdminConfigProvider.tsx");
 
-var AdminAxios_1 = __importDefault(__webpack_require__(/*! ../../../utils/AdminAxios */ "./resources/js/RoyalSPBU/utils/AdminAxios.ts")); //TODO: ubah jadi password default. bukan input
+var AuthProvider_1 = __webpack_require__(/*! ../../../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx"); //TODO: ubah jadi password default. bukan input
 //TODO: hapus console
 
 
@@ -9944,6 +9895,7 @@ function FormUser(props) {
       formErrors = _e[0],
       setFormErrors = _e[1];
 
+  var axios = AuthProvider_1.useAuth().axios;
   react_1.useEffect(function () {
     //validating user data if edit mode
     requestAllRoles();
@@ -9973,9 +9925,9 @@ function FormUser(props) {
   };
 
   var handleFormSubmit = function handleFormSubmit() {
-    AdminAxios_1["default"]({
+    axios({
       method: 'post',
-      url: isEdit ? '/user/edit' : '/user/add',
+      url: isEdit ? '/admin/user/edit' : '/admin/user/add',
       data: formData
     }).then(function (result) {
       var _a;
@@ -10013,9 +9965,9 @@ function FormUser(props) {
 
   var requestAllRoles = function requestAllRoles() {
     setLoading(true);
-    AdminAxios_1["default"]({
+    axios({
       method: 'get',
-      url: '/user/getAllRoles'
+      url: '/admin/user/getAllRoles'
     }).then(function (result) {
       var data = result.data;
       setRoles(data.map(function (role) {
@@ -10146,12 +10098,6 @@ var __importStar = this && this.__importStar || function (mod) {
   return result;
 };
 
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
-};
-
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
@@ -10164,7 +10110,7 @@ var notistack_1 = __webpack_require__(/*! notistack */ "./node_modules/notistack
 
 var AdminConfigProvider_1 = __webpack_require__(/*! ../../../providers/AdminConfigProvider */ "./resources/js/RoyalSPBU/providers/AdminConfigProvider.tsx");
 
-var AdminAxios_1 = __importDefault(__webpack_require__(/*! ../../../utils/AdminAxios */ "./resources/js/RoyalSPBU/utils/AdminAxios.ts")); //TODO: Hapus console
+var AuthProvider_1 = __webpack_require__(/*! ../../../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx"); //TODO: Hapus console
 
 
 function Users() {
@@ -10184,11 +10130,13 @@ function Users() {
       isLoading = _c[0],
       setLoading = _c[1];
 
+  var axios = AuthProvider_1.useAuth().axios;
+
   var requestListUser = function requestListUser() {
     setLoading(true);
-    AdminAxios_1["default"]({
+    axios({
       method: 'get',
-      url: '/user/getAll'
+      url: '/admin/user/getAll'
     }).then(function (result) {
       var data = result.data;
       setUsers(data.map(function (_user) {
@@ -10222,9 +10170,9 @@ function Users() {
 
   var handleDeleteUser = function handleDeleteUser(x) {
     //TODO: Tambah konfirmasi dengan password
-    AdminAxios_1["default"]({
+    axios({
       method: 'post',
-      url: '/user/delete',
+      url: '/admin/user/delete',
       data: {
         id: x.id
         /*password: */
@@ -10263,9 +10211,9 @@ function Users() {
 
   var handleResetPassword = function handleResetPassword(x) {
     //TODO: Tambah konfirmasi dengan password
-    AdminAxios_1["default"]({
+    axios({
       method: 'post',
-      url: '/user/resetPassword',
+      url: '/admin/user/resetPassword',
       data: {
         id: x.id
         /*password: */
@@ -10543,7 +10491,7 @@ var react_qr_code_1 = __importDefault(__webpack_require__(/*! react-qr-code */ "
 
 var notistack_1 = __webpack_require__(/*! notistack */ "./node_modules/notistack/dist/notistack.esm.js");
 
-var OperatorAxios_1 = __importDefault(__webpack_require__(/*! ../../utils/OperatorAxios */ "./resources/js/RoyalSPBU/utils/OperatorAxios.ts"));
+var oooperator_1 = __importDefault(__webpack_require__(/*! ../../utils/oooperator */ "./resources/js/RoyalSPBU/utils/oooperator.ts"));
 
 function Absen() {
   var enqueueSnackbar = notistack_1.useSnackbar().enqueueSnackbar;
@@ -10557,7 +10505,7 @@ function Absen() {
   }, []);
 
   var requestPresenceToken = function requestPresenceToken() {
-    OperatorAxios_1["default"]({
+    oooperator_1["default"]({
       method: 'get',
       url: '/getPresenceToken'
     }).then(function (result) {
@@ -10843,7 +10791,7 @@ exports.useAuth = exports.AuthContext = void 0;
 
 var react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 
-var DB_1 = __importDefault(__webpack_require__(/*! ../utils/DB */ "./resources/js/RoyalSPBU/utils/DB.ts"));
+var axios_1 = __importDefault(__webpack_require__(/*! axios */ "./node_modules/axios/index.js"));
 
 var authDefaultValues = {
   auth: {
@@ -10852,6 +10800,7 @@ var authDefaultValues = {
     role: undefined,
     token: ''
   },
+  axios: axios_1["default"].create(),
   setAuthState: function setAuthState() {}
 };
 exports.AuthContext = react_1.createContext(authDefaultValues);
@@ -10869,7 +10818,108 @@ var AuthProvider = function AuthProvider(_a) {
       auth = _b[0],
       _setState = _b[1];
 
-  var db = new DB_1["default"](); // console.log(db.auth.get({key: 'auth_token'}))
+  var axiosInstance = axios_1["default"].create({
+    baseURL: '/api/',
+    timeout: 20000
+  });
+  var TIMEOUT_MESSAGE = "Ups. Permintaan ke server terputus. Coba lagi";
+  var token = auth.token;
+  axiosInstance.interceptors.request.use(function (config) {
+    //Do something before request is sent
+    config.headers = {
+      accept: 'application/json',
+      Authorization: 'Bearer ' + token
+    };
+    return config;
+  }, function (error) {
+    //Do something with request error
+    if (error.code === "ECONNABORTED") {
+      error.pesan = TIMEOUT_MESSAGE;
+    } else {
+      error.pesan = "Ups. Terjadi error. code: " + error.code;
+    }
+
+    return Promise.reject(error);
+  });
+  axiosInstance.interceptors.response.use(function (response) {
+    //Any status code that lie within the range of 2xx cause this function to trigger
+    //Do something with response data
+    return response;
+  }, function (error) {
+    //Any status codes that falls outside the range of 2xx cause this function to trigger
+    //Do something with response error
+    var pesan = "error";
+
+    if (error.code === "ECONNABORTED") {
+      //Handle timeout error
+      pesan = TIMEOUT_MESSAGE;
+    } else if (error.code) {
+      //Handle other request error
+      pesan = "Ups. Terjadi error. code: " + error.code;
+    } else {
+      //handle response error
+      var errorCode = error.response.status;
+
+      switch (errorCode) {
+        case 400:
+          pesan = "Terjadi error saat mengirim (400)";
+          break;
+
+        case 401:
+          {
+            console.log('haaai');
+            pesan = "Sesi login anda habis.";
+
+            _setState(authDefaultValues.auth);
+
+            break;
+          }
+
+        case 403:
+          pesan = "Anda tidak memiliki akses untuk ini";
+          break;
+
+        case 404:
+          pesan = "URL / sesuatu yang dicari tidak ada";
+          break;
+
+        case 405:
+          pesan = "Metode request ini tidak diizinkan";
+          break;
+
+        case 408:
+          pesan = TIMEOUT_MESSAGE;
+          break;
+
+        case 409:
+          pesan = "Terjadi konflik. Mungkin data yang anda kirim sudah ada.";
+          break;
+
+        case 419:
+          pesan = "Token CSRF Anda hilang. silakan logout kemudian login kembali";
+          break;
+
+        case 422:
+          pesan = "Ada data yang tidak sesuai. Silakan periksa kembali";
+          break;
+
+        case 429:
+          pesan = "Anda terlalu banyak melakukan request ini";
+          break;
+
+        case Math.floor(errorCode / 100) === 5:
+          //server error
+          pesan = "Ups. Terjadi error di dalam server. silakan coba lagi nanti (" + errorCode + ")";
+          break;
+
+        default:
+          pesan = "Ups. terjadi error (" + errorCode + ")";
+      }
+    }
+
+    error.pesan = pesan;
+    return Promise.reject(error);
+  });
 
   var setAuthState = function setAuthState(newState) {
     return _setState(function (state) {
@@ -10880,6 +10930,7 @@ var AuthProvider = function AuthProvider(_a) {
   return react_1["default"].createElement(exports.AuthContext.Provider, {
     value: {
       auth: auth,
+      axios: axiosInstance,
       setAuthState: setAuthState
     }
   }, children);
@@ -11264,167 +11315,6 @@ var Roles;
 
 /***/ }),
 
-/***/ "./resources/js/RoyalSPBU/utils/AdminAxios.ts":
-/*!****************************************************!*\
-  !*** ./resources/js/RoyalSPBU/utils/AdminAxios.ts ***!
-  \****************************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
-};
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-
-var axios_1 = __importDefault(__webpack_require__(/*! axios */ "./node_modules/axios/index.js"));
-
-var DB_1 = __importDefault(__webpack_require__(/*! ./DB */ "./resources/js/RoyalSPBU/utils/DB.ts"));
-
-var instance = axios_1["default"].create({
-  baseURL: '/api/admin/',
-  timeout: 20000
-});
-var TIMEOUT_MESSAGE = "Ups. Permintaan ke server terputus. Coba lagi";
-var db = new DB_1["default"]();
-var token = '';
-db.getAuthToken().then(function (result) {
-  return token = result === null || result === void 0 ? void 0 : result.value;
-});
-instance.interceptors.request.use(function (config) {
-  //Do something before request is sent
-  config.headers = {
-    accept: 'application/json',
-    Authorization: 'Bearer ' + token
-  };
-  return config;
-}, function (error) {
-  //Do something with request error
-  if (error.code === "ECONNABORTED") {
-    error.pesan = TIMEOUT_MESSAGE;
-  } else {
-    error.pesan = "Ups. Terjadi error. code: " + error.code;
-  }
-
-  return Promise.reject(error);
-});
-instance.interceptors.response.use(function (response) {
-  //Any status code that lie within the range of 2xx cause this function to trigger
-  //Do something with response data
-  return response;
-}, function (error) {
-  //Any status codes that falls outside the range of 2xx cause this function to trigger
-  //Do something with response error
-  var pesan = "error";
-
-  if (error.code === "ECONNABORTED") {
-    //Handle timeout error
-    pesan = TIMEOUT_MESSAGE;
-  } else if (error.code) {
-    //Handle other request error
-    pesan = "Ups. Terjadi error. code: " + error.code;
-  } else {
-    //handle response error
-    var errorCode = error.response.status;
-
-    switch (errorCode) {
-      case 400:
-        pesan = "Terjadi error saat mengirim (400)";
-        break;
-
-      case 401:
-        pesan = "Sesi login anda habis.";
-        break;
-
-      case 403:
-        pesan = "Anda tidak memiliki akses untuk ini";
-        break;
-
-      case 404:
-        pesan = "URL / sesuatu yang dicari tidak ada";
-        break;
-
-      case 405:
-        pesan = "Metode request ini tidak diizinkan";
-        break;
-
-      case 408:
-        pesan = TIMEOUT_MESSAGE;
-        break;
-
-      case 409:
-        pesan = "Terjadi konflik. Mungkin data yang anda kirim sudah ada.";
-        break;
-
-      case 419:
-        pesan = "Token CSRF Anda hilang. silakan logout kemudian login kembali";
-        break;
-
-      case 422:
-        pesan = "Ada data yang tidak sesuai. Silakan periksa kembali";
-        break;
-
-      case 429:
-        pesan = "Anda terlalu banyak melakukan request ini";
-        break;
-
-      case Math.floor(errorCode / 100) === 5:
-        //server error
-        pesan = "Ups. Terjadi error di dalam server. silakan coba lagi nanti (" + errorCode + ")";
-        break;
-
-      default:
-        pesan = "Ups. terjadi error (" + errorCode + ")";
-    }
-  }
-
-  error.pesan = pesan;
-  return Promise.reject(error);
-});
-exports.default = instance; //default template
-// axios({method:'get', url: '/getUserDetail'})
-// .then(result => { //handle success response
-//     let data = result.data;
-// })
-// .catch(error =>{ //handle error response
-//     let errorMessage = error.pesan ? error.pesan : "Terjadi kesalahan pada pengaturan request ini. Silakan hubungi Admin.";
-//     if (error.request){
-//         //Request was made but no response was received
-//     } else if (error.response){
-//         //Error caused from the server
-//         let errorCode = error.response.status
-//         switch(errorCode){
-//             case 400: /*bad request*/ break; 
-//             case 401: /*Unauthorized*/ break;
-//             case 403: /*Forbidden*/ break;
-//             case 404: /*not found*/ break; 
-//             case 405: /*method not allowed*/ break; 
-//             case 408: /*Request timed out*/ break;
-//             case 409: /*Conflict*/ break;
-//             case 419: /*Page expired, CSRF token missing*/ break;
-//             case 422: /*Validation failed*/ break;
-//             case 429: /*Too Many Request */ break;
-//             case (Math.floor(errorCode/100) === 5): //server error
-//                 errorMessage=`Ups. Terjadi error di dalam server. silakan coba lagi nanti (${errorCode})`;
-//                 break; 
-//             default: /* Other errors */
-//                 errorMessage=`Ups. terjadi error (${errorCode})`;
-//         }
-//     } else {
-//         //Something happened in setting up the request that triggered an Error
-//     }
-//     //you can show error notification here
-//     enqueueSnackbar(errorMessage,{variant:"error"});
-// });
-
-/***/ }),
-
 /***/ "./resources/js/RoyalSPBU/utils/DB.ts":
 /*!********************************************!*\
   !*** ./resources/js/RoyalSPBU/utils/DB.ts ***!
@@ -11501,10 +11391,34 @@ exports.default = DB;
 
 /***/ }),
 
-/***/ "./resources/js/RoyalSPBU/utils/OperatorAxios.ts":
-/*!*******************************************************!*\
-  !*** ./resources/js/RoyalSPBU/utils/OperatorAxios.ts ***!
-  \*******************************************************/
+/***/ "./resources/js/RoyalSPBU/utils/helper.ts":
+/*!************************************************!*\
+  !*** ./resources/js/RoyalSPBU/utils/helper.ts ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.uniqueArray = void 0;
+
+var uniqueArray = function uniqueArray(arr) {
+  return arr.filter(function (x, i) {
+    return arr.indexOf(x) === i;
+  });
+};
+
+exports.uniqueArray = uniqueArray;
+
+/***/ }),
+
+/***/ "./resources/js/RoyalSPBU/utils/oooperator.ts":
+/*!****************************************************!*\
+  !*** ./resources/js/RoyalSPBU/utils/oooperator.ts ***!
+  \****************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -11659,30 +11573,6 @@ exports.default = instance; //default template
 //     //you can show error notification here
 //     enqueueSnackbar(errorMessage,{variant:"error"});
 // });
-
-/***/ }),
-
-/***/ "./resources/js/RoyalSPBU/utils/helper.ts":
-/*!************************************************!*\
-  !*** ./resources/js/RoyalSPBU/utils/helper.ts ***!
-  \************************************************/
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports.uniqueArray = void 0;
-
-var uniqueArray = function uniqueArray(arr) {
-  return arr.filter(function (x, i) {
-    return arr.indexOf(x) === i;
-  });
-};
-
-exports.uniqueArray = uniqueArray;
 
 /***/ }),
 

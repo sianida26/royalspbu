@@ -3,8 +3,7 @@ import {useSnackbar} from 'notistack'
 import {useHistory} from 'react-router-dom'
 import { useAdminConfig, editUserDefaultObject } from '../../../providers/AdminConfigProvider'
 
-
-import axios from '../../../utils/AdminAxios'
+import {useAuth} from '../../../providers/AuthProvider'
 
 interface FormObject {
     id: number,
@@ -53,6 +52,7 @@ export default function FormUser(props: Props) {
         isActive: true,
     })
     const [formErrors, setFormErrors] = useState<FormErrors>({})
+    const {axios} = useAuth()
 
     useEffect(() => {
         //validating user data if edit mode
@@ -83,7 +83,7 @@ export default function FormUser(props: Props) {
     }
 
     const handleFormSubmit = () => {
-        axios({method:'post', url: isEdit?  '/user/edit' :'/user/add', data: formData})
+        axios({method:'post', url: isEdit?  '/admin/user/edit' :'/admin/user/add', data: formData})
         .then(result => { //handle success response
             setFormErrors({})
             let data = result.data;
@@ -110,7 +110,7 @@ export default function FormUser(props: Props) {
 
     const requestAllRoles = () => {
         setLoading(true)
-        axios({method:'get', url: '/user/getAllRoles'})
+        axios({method:'get', url: '/admin/user/getAllRoles'})
         .then(result => { //handle success response
             let data : RoleObject[] = result.data;
             setRoles(data.map(role => ({

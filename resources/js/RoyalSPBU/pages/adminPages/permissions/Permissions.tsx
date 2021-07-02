@@ -4,7 +4,7 @@ import { useSnackbar } from 'notistack'
 import { useAdminConfig } from '../../../providers/AdminConfigProvider'
 
 
-import axios from  '../../../utils/AdminAxios'
+import { useAuth } from '../../../providers/AuthProvider'
 import {IPermission, ProductObject} from '../../../types'
 
 
@@ -24,10 +24,11 @@ export default function Permissions() {
 
     const [permissions, setPermissions] = useState<ServerResponse[]>([])
     const [isLoading, setLoading] = useState(true)
+    const {axios} = useAuth()
 
     const requestAllPermissions = () => {
         setLoading(true)
-        axios({method:'get', url: '/permission/getAll'})
+        axios({method:'get', url: '/admin/permission/getAll'})
         .then(result => { //handle success response
             let data : ServerResponse[] = result.data;
             setPermissions(data.map(permission => ({
@@ -54,7 +55,7 @@ export default function Permissions() {
     const handleDeletePermission = (permission: IPermission) => {
         //TODO: Tambah konfirmasi dengan password
         setLoading(true)
-        axios({method:'post', url: '/permission/delete', data: {id: permission.id, /*password: */}})
+        axios({method:'post', url: '/admin/permission/delete', data: {id: permission.id, /*password: */}})
         .then(result => { //handle success response
             let data = result.data;
             console.log(data); //todo: delete console

@@ -3,8 +3,7 @@ import { useHistory } from 'react-router'
 import { useSnackbar } from 'notistack'
 import { useAdminConfig } from '../../../providers/AdminConfigProvider'
 
-
-import axios from  '../../../utils/AdminAxios'
+import { useAuth } from '../../../providers/AuthProvider'
 import {TankObject} from '../../../types'
 
 
@@ -25,10 +24,11 @@ export default function Tanks() {
 
     const [tanks, setTanks] = useState<ServerResponse[]>([])
     const [isLoading, setLoading] = useState(true)
+    const {axios} = useAuth()
 
     const requestAllTanks = () => {
         setLoading(true)
-        axios({method:'get', url: '/tank/getAll'})
+        axios({method:'get', url: '/admin/tank/getAll'})
         .then(result => { //handle success response
             let data : ServerResponse[] = result.data;
             setTanks(data.map(tank => ({
@@ -58,7 +58,7 @@ export default function Tanks() {
     const handleDeleteTank = (x: TankObject) => {
         //TODO: Tambah konfirmasi dengan password
         setLoading(true)
-        axios({method:'post', url: '/tank/delete', data: {id: x.id, /*password: */}})
+        axios({method:'post', url: '/admin/tank/delete', data: {id: x.id, /*password: */}})
         .then(result => { //handle success response
             let data = result.data;
             console.log(data);

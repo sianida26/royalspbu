@@ -3,7 +3,7 @@ import {useSnackbar} from 'notistack'
 import {useHistory} from 'react-router-dom'
 import { useAdminConfig, editPermissionDefaultObject, editRoleDefaultObject } from '../../../providers/AdminConfigProvider'
 
-import axios from '../../../utils/AdminAxios'
+import { useAuth } from '../../../providers/AuthProvider'
 import { IPermission, RoleObject } from '../../../types'
 import { uniqueArray } from '../../../utils/helper'
 
@@ -27,6 +27,7 @@ export default function FormRole() {
     const [isLoading, setLoading] = useState(false)
     const [formData, setFormData] = useState<FormObject>(editRoleDefaultObject)
     const [permissions, setPermissions] = useState<IPermission[]>([])
+    const {axios} = useAuth()
 
     useEffect(() => {
         requestAllPermissions()
@@ -70,7 +71,7 @@ export default function FormRole() {
     }
 
     const handleSave = () => {
-        axios({method:'post', url: isEdit?  '/role/edit' :'/role/add', data: formData})
+        axios({method:'post', url: isEdit?  '/admin/role/edit' :'/admin/role/add', data: formData})
         .then(result => { //handle success response
             // setFormErrors({}) todo: set form errors
             let data = result.data;

@@ -5,7 +5,7 @@ import { useSnackbar } from 'notistack'
 import { useAdminConfig } from '../../../providers/AdminConfigProvider'
 import { UserObject } from '../../../types'
 
-import axios from '../../../utils/AdminAxios'
+import {useAuth} from '../../../providers/AuthProvider'
 
 interface ServerResponse {
     id: number,
@@ -25,10 +25,11 @@ export default function Users() {
     //useState Hooks
     const [users, setUsers] = useState<UserObject[]>([])
     const [isLoading, setLoading] = useState(true)
+    const {axios} = useAuth()
 
     const requestListUser = () => {
         setLoading(true)
-        axios({method:'get', url: '/user/getAll'})
+        axios({method:'get', url: '/admin/user/getAll'})
         .then(result => { //handle success response
             let data : ServerResponse[] = result.data;
             setUsers(data.map(_user => ({
@@ -59,7 +60,7 @@ export default function Users() {
 
     const handleDeleteUser = (x: UserObject) => {
         //TODO: Tambah konfirmasi dengan password
-        axios({method:'post', url: '/user/delete', data: {id: x.id, /*password: */}})
+        axios({method:'post', url: '/admin/user/delete', data: {id: x.id, /*password: */}})
         .then(result => { //handle success response
             let data = result.data;
             console.log(data);
@@ -85,7 +86,7 @@ export default function Users() {
 
     const handleResetPassword = (x: UserObject) => {
         //TODO: Tambah konfirmasi dengan password
-        axios({method:'post', url: '/user/resetPassword', data: {id: x.id, /*password: */}})
+        axios({method:'post', url: '/admin/user/resetPassword', data: {id: x.id, /*password: */}})
         .then(result => { //handle success response
             let data = result.data;
             console.log(data);

@@ -3,7 +3,7 @@ import {useSnackbar} from 'notistack'
 import {useHistory} from 'react-router-dom'
 import { useAdminConfig, editTankDefaultObject, editPumpDefaultObject } from '../../../providers/AdminConfigProvider'
 
-import axios from '../../../utils/AdminAxios'
+import { useAuth } from '../../../providers/AuthProvider'
 import { NozzleObject, PumpObject, TankObject } from '../../../types'
 
 interface TankServerResponse {
@@ -20,6 +20,7 @@ export default function FormPump() {
     const {enqueueSnackbar} = useSnackbar()
     const history = useHistory()
     const {configs, setConfig} = useAdminConfig()
+    const {axios} = useAuth()
 
     const [loading, setLoading] = useState(false)
     const [formData, setFormData] = useState<PumpObject>(editPumpDefaultObject)
@@ -78,7 +79,7 @@ export default function FormPump() {
     const handleDeletePump = () => {
         //TODO: Tambah konfirmasi dengan password
         setLoading(true)
-        axios({method:'post', url: '/pump/delete', data: {id: formData.id, /*password: */}})
+        axios({method:'post', url: '/admin/pump/delete', data: {id: formData.id, /*password: */}})
         .then(result => { //handle success response
             let data = result.data;
             console.log(data);
@@ -104,7 +105,7 @@ export default function FormPump() {
 
     const handleSave = () => {
         setLoading(true)
-        axios({method:'post', url: isEdit?  '/pump/edit' :'/pump/add', data: formData})
+        axios({method:'post', url: isEdit?  '/admin/pump/edit' :'/admin/pump/add', data: formData})
         .then(result => { //handle success response
             // setFormErrors({}) todo: set form errors
             let data = result.data;
@@ -132,7 +133,7 @@ export default function FormPump() {
 
     const requestAllTanks = () => {
         setLoading(true)
-        axios({method:'get', url: '/tank/getAll'})
+        axios({method:'get', url: '/admin/tank/getAll'})
         .then(result => { //handle success response
             let data : TankServerResponse[] = result.data;
             setTanks(data.map(tank => ({

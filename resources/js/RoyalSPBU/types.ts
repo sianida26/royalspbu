@@ -1,3 +1,5 @@
+import { AxiosInstance } from "axios"
+
 export enum Roles {
     OPERATOR = 'operator',
     SUPERVISOR = 'supervisor',
@@ -80,5 +82,6 @@ export type AdminConfigContextState = {
 
 export type AuthContextState = {
     auth: IAuth
+    axios: AxiosInstance
     setAuthState: (newState: IAuth) => void
 }

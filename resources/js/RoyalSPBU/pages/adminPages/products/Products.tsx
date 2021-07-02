@@ -3,8 +3,7 @@ import { useHistory } from 'react-router'
 import { useSnackbar } from 'notistack'
 import { useAdminConfig } from '../../../providers/AdminConfigProvider'
 
-
-import axios from  '../../../utils/AdminAxios'
+import { useAuth } from '../../../providers/AuthProvider'
 import {ProductObject} from '../../../types'
 
 
@@ -20,13 +19,14 @@ export default function Products() {
     const {enqueueSnackbar} = useSnackbar()
 
     const {configs, setConfig} = useAdminConfig()
+    const {axios} = useAuth()
 
     const [products, setProducts] = useState<ServerResponse[]>([])
     const [isLoading, setLoading] = useState(true)
 
     const requestAllProducts = () => {
         setLoading(true)
-        axios({method:'get', url: '/product/getAll'})
+        axios({method:'get', url: '/admin/product/getAll'})
         .then(result => { //handle success response
             let data : ServerResponse[] = result.data;
             setProducts(data.map(_product => ({
@@ -54,7 +54,7 @@ export default function Products() {
     const handleDeleteProduct = (x: ProductObject) => {
         //TODO: Tambah konfirmasi dengan password
         setLoading(true)
-        axios({method:'post', url: '/product/delete', data: {id: x.id, /*password: */}})
+        axios({method:'post', url: '/admin/product/delete', data: {id: x.id, /*password: */}})
         .then(result => { //handle success response
             let data = result.data;
             console.log(data);

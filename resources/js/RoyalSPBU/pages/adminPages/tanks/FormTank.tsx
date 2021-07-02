@@ -4,8 +4,7 @@ import {useHistory} from 'react-router-dom'
 import { useAdminConfig, editTankDefaultObject } from '../../../providers/AdminConfigProvider'
 import { TankObject } from '../../../types'
 
-
-import axios from '../../../utils/AdminAxios'
+import {useAuth} from '../../../providers/AuthProvider'
 
 interface FormErrors {
     name?: string,
@@ -35,6 +34,7 @@ export default function FormTank() {
     const [formErrors, setFormErrors] = useState<FormErrors>({})
     const [products, setProducts] = useState<ProductObject[]>([])
     const [loading, setLoading] = useState(false)
+    const {axios} = useAuth()
 
     useEffect(() => {
         //validating data if in edit mode
@@ -63,7 +63,7 @@ export default function FormTank() {
 
     const handleFormSubmit = () => {
         setLoading(true)
-        axios({method:'post', url: isEdit?  '/tank/edit' :'/tank/add', data: formData})
+        axios({method:'post', url: isEdit?  '/admin/tank/edit' :'/admin/tank/add', data: formData})
         .then(result => { //handle success response
             setFormErrors({})
             let data = result.data;
@@ -90,7 +90,7 @@ export default function FormTank() {
 
     const requestProducts = () => {
         setLoading(true)
-        axios({method:'get', url: '/product/getAll'})
+        axios({method:'get', url: '/admin/product/getAll'})
         .then(result => { //handle success response
             let data : ServerResponse[] = result.data;
             setProducts(data.map(_product => ({

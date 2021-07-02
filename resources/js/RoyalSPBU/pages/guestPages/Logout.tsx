@@ -2,7 +2,7 @@ import React from 'react'
 import { useHistory } from 'react-router-dom'
 
 import {useAuth} from '../../providers/AuthProvider'
-import axios from '../../utils/OperatorAxios'
+import axios from '../../utils/oooperator'
 import DB from '../../utils/DB'
 
 export default function Logout() {

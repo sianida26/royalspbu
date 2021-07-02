@@ -4,8 +4,7 @@ import {useHistory} from 'react-router-dom'
 import { useAdminConfig, editProductDefaultObject } from '../../../providers/AdminConfigProvider'
 import { ProductObject } from '../../../types'
 
-
-import axios from '../../../utils/AdminAxios'
+import { useAuth } from '../../../providers/AuthProvider'
 
 interface FormErrors {
     name?: string,
@@ -23,6 +22,7 @@ export default function FormProduct(props: Props) {
     const {enqueueSnackbar} = useSnackbar()
     const history = useHistory()
     const {configs, setConfig} = useAdminConfig()
+    const {axios} = useAuth()
 
     const [formData, setFormData] = useState<ProductObject>(editProductDefaultObject)
     const [formErrors, setFormErrors] = useState<FormErrors>({})
@@ -52,7 +52,7 @@ export default function FormProduct(props: Props) {
     }
 
     const handleFormSubmit = () => {
-        axios({method:'post', url: isEdit?  '/product/edit' :'/product/add', data: formData})
+        axios({method:'post', url: isEdit?  '/admin/product/edit' :'/admin/product/add', data: formData})
         .then(result => { //handle success response
             setFormErrors({})
             let data = result.data;

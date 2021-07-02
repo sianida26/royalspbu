@@ -3,7 +3,7 @@ import React from 'react'
 import QRCode from 'react-qr-code'
 import { useSnackbar } from 'notistack'
 
-import axios from '../../utils/OperatorAxios'
+import axios from '../../utils/oooperator'
 
 export default function Absen() {
 

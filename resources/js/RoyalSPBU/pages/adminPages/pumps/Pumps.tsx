@@ -4,7 +4,7 @@ import { useSnackbar } from 'notistack'
 import { useAdminConfig } from '../../../providers/AdminConfigProvider'
 
 
-import axios from  '../../../utils/AdminAxios'
+import { useAuth } from '../../../providers/AuthProvider'
 import {ProductObject, PumpObject} from '../../../types'
 
 interface Nozzle {
@@ -24,13 +24,14 @@ export default function Products() {
     const {enqueueSnackbar} = useSnackbar()
 
     const {configs, setConfig} = useAdminConfig()
+    const {axios} = useAuth()
 
     const [pumps, setPumps] = useState<ServerResponse[]>([])
     const [isLoading, setLoading] = useState(true)
 
     const requestAllPumps = () => {
         setLoading(true)
-        axios({method:'get', url: '/pump/getAll'})
+        axios({method:'get', url: '/admin/pump/getAll'})
         .then(result => { //handle success response
             let data : ServerResponse[] = result.data;
             setPumps(data.map(pump => ({

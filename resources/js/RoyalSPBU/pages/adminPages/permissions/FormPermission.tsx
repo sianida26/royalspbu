@@ -2,8 +2,9 @@ import React, {useState, useEffect} from 'react'
 import {useSnackbar} from 'notistack'
 import {useHistory} from 'react-router-dom'
 import { useAdminConfig, editTankDefaultObject, editPumpDefaultObject, editPermissionDefaultObject } from '../../../providers/AdminConfigProvider'
+import { useAuth } from '../../../providers/AuthProvider'
 
-import axios from '../../../utils/AdminAxios'
+// import axios from '../../../utils/aaaadmin'
 import { IPermission } from '../../../types'
 
 export default function FormPermission() {
@@ -13,6 +14,7 @@ export default function FormPermission() {
     const history = useHistory()
     const {configs, setConfig} = useAdminConfig()
     const [formData, setFormData] = useState<IPermission>(editPermissionDefaultObject)
+    const {axios} = useAuth()
 
     useEffect(() => {
         //validating data if in edit mode
@@ -37,7 +39,7 @@ export default function FormPermission() {
     }
 
     const handleSave = () => {
-        axios({method:'post', url: isEdit?  '/permission/edit' :'/permission/add', data: formData})
+        axios({method:'post', url: isEdit?  '/admin/permission/edit' :'/admin/permission/add', data: formData})
         .then(result => { //handle success response
             // setFormErrors({}) todo: set form errors
             let data = result.data;

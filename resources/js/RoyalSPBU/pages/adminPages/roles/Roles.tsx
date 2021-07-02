@@ -4,7 +4,7 @@ import { useSnackbar } from 'notistack'
 import { useAdminConfig } from '../../../providers/AdminConfigProvider'
 
 
-import axios from  '../../../utils/AdminAxios'
+import { useAuth } from '../../../providers/AuthProvider'
 import {IPermission, RoleObject} from '../../../types'
 
 
@@ -25,10 +25,11 @@ export default function Roles() {
 
     const [roles, setRoles] = useState<ServerResponse[]>([])
     const [isLoading, setLoading] = useState(true)
+    const {axios} = useAuth()
 
     const requestAllRoles = () => {
         setLoading(true)
-        axios({method:'get', url: '/role/getAll'})
+        axios({method:'get', url: '/admin/role/getAll'})
         .then(result => { //handle success response
             let data : ServerResponse[] = result.data;
             setRoles(data.map(role => ({
@@ -56,7 +57,7 @@ export default function Roles() {
     const handleDeleteRole = (role: RoleObject) => {
         //TODO: Tambah konfirmasi dengan password
         setLoading(true)
-        axios({method:'post', url: '/role/delete', data: {id: role.id, /*password: */}})
+        axios({method:'post', url: '/admin/role/delete', data: {id: role.id, /*password: */}})
         .then(result => { //handle success response
             let data = result.data;
             console.log(data); //todo: delete console
