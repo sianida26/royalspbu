@@ -1,4 +1,4 @@
-import React, {lazy, Suspense} from 'react'
+import React, {lazy, Suspense, useState, useEffect} from 'react'
 
 import {
     BrowserRouter as Router,
@@ -14,14 +14,38 @@ import { Roles } from './types'
 import { useAuth } from './providers/AuthProvider'
 
 import Login from './pages/guestPages/Login'
+import Splash from './pages/guestPages/Splash'
+
+import DB from './utils/DB'
 
 export default function App() {
 
-    const {auth} = useAuth()
+    const {auth, setAuthState} = useAuth()
+
+    const db = new DB()
+
+    const [isBooting, setBooting] = useState(true)
+
+    useEffect(() => {
+        boot()
+    }, [])
+
+    const boot = async () => {
+        db.auth.bulkGet(['auth_token', 'name', 'username', 'role'])
+            .then(([token, name, username, role]) => {
+                setAuthState({
+                    name: name?.value || '',
+                    username: username?.value || '',
+                    role: role?.value || undefined,
+                    token: token?.value || ''
+                })
+                setBooting(false)
+            })
+    }
 
     const renderGuestRoutes = () => {
 
-        return (
+        return isBooting ? <Splash /> :  (
             <Switch>
                 <Route path="/login" exact component={Login} />
                 <Redirect to="/login" />

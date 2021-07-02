@@ -22,18 +22,6 @@ const AuthProvider: FC = ({children}) => {
     const db = new DB()
     // console.log(db.auth.get({key: 'auth_token'}))
     
-    useEffect(() => {
-        db.auth.bulkGet(['auth_token', 'name', 'username', 'role'])
-            .then(([token, name, username, role]) => {
-                setAuthState({
-                    name: name?.value || '',
-                    username: username?.value || '',
-                    role: role?.value || undefined,
-                    token: token?.value || ''
-                })
-            })
-    },[])
-    
     const setAuthState = (newState: IAuth) => _setState(state => {
         return {
             ...state,

@@ -6803,6 +6803,149 @@ var __importStar = this && this.__importStar || function (mod) {
   return result;
 };
 
+var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, generator) {
+  function adopt(value) {
+    return value instanceof P ? value : new P(function (resolve) {
+      resolve(value);
+    });
+  }
+
+  return new (P || (P = Promise))(function (resolve, reject) {
+    function fulfilled(value) {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function rejected(value) {
+      try {
+        step(generator["throw"](value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function step(result) {
+      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+    }
+
+    step((generator = generator.apply(thisArg, _arguments || [])).next());
+  });
+};
+
+var __generator = this && this.__generator || function (thisArg, body) {
+  var _ = {
+    label: 0,
+    sent: function sent() {
+      if (t[0] & 1) throw t[1];
+      return t[1];
+    },
+    trys: [],
+    ops: []
+  },
+      f,
+      y,
+      t,
+      g;
+  return g = {
+    next: verb(0),
+    "throw": verb(1),
+    "return": verb(2)
+  }, typeof Symbol === "function" && (g[Symbol.iterator] = function () {
+    return this;
+  }), g;
+
+  function verb(n) {
+    return function (v) {
+      return step([n, v]);
+    };
+  }
+
+  function step(op) {
+    if (f) throw new TypeError("Generator is already executing.");
+
+    while (_) {
+      try {
+        if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+        if (y = 0, t) op = [op[0] & 2, t.value];
+
+        switch (op[0]) {
+          case 0:
+          case 1:
+            t = op;
+            break;
+
+          case 4:
+            _.label++;
+            return {
+              value: op[1],
+              done: false
+            };
+
+          case 5:
+            _.label++;
+            y = op[1];
+            op = [0];
+            continue;
+
+          case 7:
+            op = _.ops.pop();
+
+            _.trys.pop();
+
+            continue;
+
+          default:
+            if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
+              _ = 0;
+              continue;
+            }
+
+            if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
+              _.label = op[1];
+              break;
+            }
+
+            if (op[0] === 6 && _.label < t[1]) {
+              _.label = t[1];
+              t = op;
+              break;
+            }
+
+            if (t && _.label < t[2]) {
+              _.label = t[2];
+
+              _.ops.push(op);
+
+              break;
+            }
+
+            if (t[2]) _.ops.pop();
+
+            _.trys.pop();
+
+            continue;
+        }
+
+        op = body.call(thisArg, _);
+      } catch (e) {
+        op = [6, e];
+        y = 0;
+      } finally {
+        f = t = 0;
+      }
+    }
+
+    if (op[0] & 5) throw op[1];
+    return {
+      value: op[0] ? op[1] : void 0,
+      done: true
+    };
+  }
+};
+
 var __importDefault = this && this.__importDefault || function (mod) {
   return mod && mod.__esModule ? mod : {
     "default": mod
@@ -6823,11 +6966,52 @@ var AuthProvider_1 = __webpack_require__(/*! ./providers/AuthProvider */ "./reso
 
 var Login_1 = __importDefault(__webpack_require__(/*! ./pages/guestPages/Login */ "./resources/js/RoyalSPBU/pages/guestPages/Login.tsx"));
 
+var Splash_1 = __importDefault(__webpack_require__(/*! ./pages/guestPages/Splash */ "./resources/js/RoyalSPBU/pages/guestPages/Splash.tsx"));
+
+var DB_1 = __importDefault(__webpack_require__(/*! ./utils/DB */ "./resources/js/RoyalSPBU/utils/DB.ts"));
+
 function App() {
-  var auth = AuthProvider_1.useAuth().auth;
+  var _this = this;
+
+  var _a = AuthProvider_1.useAuth(),
+      auth = _a.auth,
+      setAuthState = _a.setAuthState;
+
+  var db = new DB_1["default"]();
+
+  var _b = react_1.useState(true),
+      isBooting = _b[0],
+      setBooting = _b[1];
+
+  react_1.useEffect(function () {
+    boot();
+  }, []);
+
+  var boot = function boot() {
+    return __awaiter(_this, void 0, void 0, function () {
+      return __generator(this, function (_a) {
+        db.auth.bulkGet(['auth_token', 'name', 'username', 'role']).then(function (_a) {
+          var token = _a[0],
+              name = _a[1],
+              username = _a[2],
+              role = _a[3];
+          setAuthState({
+            name: (name === null || name === void 0 ? void 0 : name.value) || '',
+            username: (username === null || username === void 0 ? void 0 : username.value) || '',
+            role: (role === null || role === void 0 ? void 0 : role.value) || undefined,
+            token: (token === null || token === void 0 ? void 0 : token.value) || ''
+          });
+          setBooting(false);
+        });
+        return [2
+        /*return*/
+        ];
+      });
+    });
+  };
 
   var renderGuestRoutes = function renderGuestRoutes() {
-    return react_1["default"].createElement(react_router_dom_1.Switch, null, react_1["default"].createElement(react_router_dom_1.Route, {
+    return isBooting ? react_1["default"].createElement(Splash_1["default"], null) : react_1["default"].createElement(react_router_dom_1.Switch, null, react_1["default"].createElement(react_router_dom_1.Route, {
       path: "/login",
       exact: true,
       component: Login_1["default"]
@@ -10383,6 +10567,35 @@ exports.default = Login;
 
 /***/ }),
 
+/***/ "./resources/js/RoyalSPBU/pages/guestPages/Splash.tsx":
+/*!************************************************************!*\
+  !*** ./resources/js/RoyalSPBU/pages/guestPages/Splash.tsx ***!
+  \************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+function Splash() {
+  return react_1["default"].createElement("div", null, "Ini splash");
+}
+
+exports.default = Splash;
+
+/***/ }),
+
 /***/ "./resources/js/RoyalSPBU/pages/operatorPages/Absen.tsx":
 /*!**************************************************************!*\
   !*** ./resources/js/RoyalSPBU/pages/operatorPages/Absen.tsx ***!
@@ -10873,21 +11086,6 @@ var AuthProvider = function AuthProvider(_a) {
       _setState = _b[1];
 
   var db = new DB_1["default"](); // console.log(db.auth.get({key: 'auth_token'}))
-
-  react_1.useEffect(function () {
-    db.auth.bulkGet(['auth_token', 'name', 'username', 'role']).then(function (_a) {
-      var token = _a[0],
-          name = _a[1],
-          username = _a[2],
-          role = _a[3];
-      setAuthState({
-        name: (name === null || name === void 0 ? void 0 : name.value) || '',
-        username: (username === null || username === void 0 ? void 0 : username.value) || '',
-        role: (role === null || role === void 0 ? void 0 : role.value) || undefined,
-        token: (token === null || token === void 0 ? void 0 : token.value) || ''
-      });
-    });
-  }, []);
 
   var setAuthState = function setAuthState(newState) {
     return _setState(function (state) {
