@@ -9,6 +9,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\TankController;
 use App\Http\Controllers\PumpController;
 use App\Http\Controllers\RolePermissionController;
+use App\Http\Controllers\PresenceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -74,5 +75,10 @@ Route::middleware('auth:api')->group(function(){
             Route::post('/edit',[PumpController::class,'edit']);
         });
         
+    });
+
+    //operator APIs
+    Route::group(['middleware' => 'role:operator'], function(){
+        Route::get('/getPresenceToken', [PresenceController::class, 'getPresenceToken']);
     });
 });

@@ -2,7 +2,7 @@ import Dexie from "dexie"
 
 export default class DB extends Dexie{
 
-    public auth: Dexie.Table<IAuthTable, string>
+    auth: Dexie.Table<IAuthTable, string>
 
     constructor(){
         super("AppDB")
@@ -12,6 +12,10 @@ export default class DB extends Dexie{
         })
 
         this.auth = this.table('auth')
+    }
+
+    getAuthToken = () => {
+        return this.auth.get('auth_token')
     }
 }
 

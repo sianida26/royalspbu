@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::view('/','royalSPBU.app');
+Route::view('/','royalSPBU.app')->name('login');
 
 Route::view('/{path}','royalSPBU.app')
     ->where('path','^(?!api).*$');

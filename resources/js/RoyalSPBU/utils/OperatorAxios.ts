@@ -2,7 +2,7 @@ import axios from 'axios'
 import DB from './DB'
 
 const instance = axios.create({
-    baseURL: '/api/admin/',
+    baseURL: '/api/',
     timeout: 20000,
 })
 

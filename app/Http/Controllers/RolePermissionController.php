@@ -89,7 +89,7 @@ class RolePermissionController extends Controller
 
         $request->validate($rules, $messages);
 
-        $role = Role::create(['name' => $request->name]);
+        $role = Role::create(['name' => $request->name, 'guard_name' => 'api']);
 
         $role->syncPermissions($request->permissions);
 

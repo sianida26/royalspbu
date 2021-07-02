@@ -7037,88 +7037,10 @@ function App() {
 
   return react_1["default"].createElement(react_router_dom_1.BrowserRouter, null, react_1["default"].createElement(react_1.Suspense, {
     fallback: react_1["default"].createElement("div", null, "Loading...")
-  }, auth.role === types_1.Roles.OPERATOR ? react_1["default"].createElement(OperatorRoutes, null) : auth.role === types_1.Roles.ADMIN ? react_1["default"].createElement(AdminRoutes, null) : renderGuestRoutes()));
+  }, auth.role === types_1.Roles.OPERATOR ? react_1["default"].createElement(OperatorRoutes, null) : auth.role === types_1.Roles.ADMIN || auth.role === types_1.Roles.DEVELOPER ? react_1["default"].createElement(AdminRoutes, null) : renderGuestRoutes()));
 }
 
 exports.default = App;
-
-/***/ }),
-
-/***/ "./resources/js/RoyalSPBU/components/PrivateRoute.tsx":
-/*!************************************************************!*\
-  !*** ./resources/js/RoyalSPBU/components/PrivateRoute.tsx ***!
-  \************************************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var __assign = this && this.__assign || function () {
-  __assign = Object.assign || function (t) {
-    for (var s, i = 1, n = arguments.length; i < n; i++) {
-      s = arguments[i];
-
-      for (var p in s) {
-        if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
-      }
-    }
-
-    return t;
-  };
-
-  return __assign.apply(this, arguments);
-};
-
-var __rest = this && this.__rest || function (s, e) {
-  var t = {};
-
-  for (var p in s) {
-    if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
-  }
-
-  if (s != null && typeof Object.getOwnPropertySymbols === "function") for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-    if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i])) t[p[i]] = s[p[i]];
-  }
-  return t;
-};
-
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
-};
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-
-var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-
-var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
-
-var AuthProvider_1 = __webpack_require__(/*! ../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx");
-
-function PrivateRoute(_a) {
-  var children = _a.children,
-      rest = __rest(_a, ["children"]);
-
-  var auth = AuthProvider_1.useAuth().auth;
-  return react_1["default"].createElement(react_router_dom_1.Route, __assign({}, rest, {
-    render: function render(_a) {
-      var location = _a.location;
-      return auth.role ? children : react_1["default"].createElement(react_router_dom_1.Redirect, {
-        to: {
-          pathname: "/login",
-          state: {
-            from: location
-          }
-        }
-      });
-    }
-  }));
-}
-
-exports.default = PrivateRoute;
 
 /***/ }),
 
@@ -10619,8 +10541,36 @@ var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/r
 
 var react_qr_code_1 = __importDefault(__webpack_require__(/*! react-qr-code */ "./node_modules/react-qr-code/lib/index.js"));
 
+var notistack_1 = __webpack_require__(/*! notistack */ "./node_modules/notistack/dist/notistack.esm.js");
+
+var OperatorAxios_1 = __importDefault(__webpack_require__(/*! ../../utils/OperatorAxios */ "./resources/js/RoyalSPBU/utils/OperatorAxios.ts"));
+
 function Absen() {
-  // todo: add request qr code session
+  var enqueueSnackbar = notistack_1.useSnackbar().enqueueSnackbar;
+
+  var _a = react_1["default"].useState(true),
+      loading = _a[0],
+      setLoading = _a[1];
+
+  react_1["default"].useEffect(function () {
+    requestPresenceToken();
+  }, []);
+
+  var requestPresenceToken = function requestPresenceToken() {
+    OperatorAxios_1["default"]({
+      method: 'get',
+      url: '/getPresenceToken'
+    }).then(function (result) {
+      var data = result.data;
+      console.log(data); //todo: clear console
+    })["catch"](function (error) {
+      var errorMessage = error.pesan ? error.pesan : "Terjadi kesalahan pada pengaturan request ini. Silakan hubungi Admin.";
+      enqueueSnackbar(errorMessage, {
+        variant: "error"
+      });
+    });
+  };
+
   return react_1["default"].createElement("div", null, react_1["default"].createElement(react_qr_code_1["default"], {
     value: "hei"
   }), react_1["default"].createElement("span", null, "Ini nanti text qr code nya"));
@@ -10676,172 +10626,6 @@ function Home() {
 }
 
 exports.default = Home;
-
-/***/ }),
-
-/***/ "./resources/js/RoyalSPBU/pages/operatorPages/Laporan.tsx":
-/*!****************************************************************!*\
-  !*** ./resources/js/RoyalSPBU/pages/operatorPages/Laporan.tsx ***!
-  \****************************************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var __assign = this && this.__assign || function () {
-  __assign = Object.assign || function (t) {
-    for (var s, i = 1, n = arguments.length; i < n; i++) {
-      s = arguments[i];
-
-      for (var p in s) {
-        if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
-      }
-    }
-
-    return t;
-  };
-
-  return __assign.apply(this, arguments);
-};
-
-var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
-  if (k2 === undefined) k2 = k;
-  Object.defineProperty(o, k2, {
-    enumerable: true,
-    get: function get() {
-      return m[k];
-    }
-  });
-} : function (o, m, k, k2) {
-  if (k2 === undefined) k2 = k;
-  o[k2] = m[k];
-});
-
-var __setModuleDefault = this && this.__setModuleDefault || (Object.create ? function (o, v) {
-  Object.defineProperty(o, "default", {
-    enumerable: true,
-    value: v
-  });
-} : function (o, v) {
-  o["default"] = v;
-});
-
-var __importStar = this && this.__importStar || function (mod) {
-  if (mod && mod.__esModule) return mod;
-  var result = {};
-  if (mod != null) for (var k in mod) {
-    if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-  }
-
-  __setModuleDefault(result, mod);
-
-  return result;
-};
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-
-var react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
-
-var StepLaporan;
-
-(function (StepLaporan) {
-  StepLaporan[StepLaporan["PilihPompa"] = 0] = "PilihPompa";
-  StepLaporan[StepLaporan["IsiLaporan"] = 1] = "IsiLaporan";
-  StepLaporan[StepLaporan["PeriksaLaporan"] = 2] = "PeriksaLaporan";
-})(StepLaporan || (StepLaporan = {}));
-
-function Laporan() {
-  var _a = react_1.useState(StepLaporan.PilihPompa),
-      step = _a[0],
-      setStep = _a[1];
-
-  var _b = react_1.useState({
-    pompa: -1,
-    nozzles: {}
-  }),
-      report = _b[0],
-      setReport = _b[1];
-
-  var handlePilihPompa = function handlePilihPompa(pilihanPompa) {
-    setReport({
-      pompa: pilihanPompa,
-      nozzles: {}
-    });
-    setStep(StepLaporan.IsiLaporan);
-  };
-
-  var handleSubmitIsi = function handleSubmitIsi() {
-    setStep(StepLaporan.PeriksaLaporan);
-  };
-
-  var handleInputTotalisator = function handleInputTotalisator(input, nozzle) {
-    setReport(function (prev) {
-      var _a;
-
-      return __assign(__assign({}, prev), {
-        nozzles: __assign(__assign({}, prev.nozzles), (_a = {}, _a[nozzle] = +input, _a))
-      });
-    });
-  };
-
-  var renderPilihPompa = function renderPilihPompa() {
-    return react_1["default"].createElement("div", {
-      className: "tw-grid tw-grid-cols-2 tw-w-full tw-gap-8"
-    }, [1, 2, 3, 4].map(function (x) {
-      return react_1["default"].createElement("div", {
-        key: x,
-        onClick: function onClick() {
-          return handlePilihPompa(x);
-        },
-        className: "tw-w-24 tw-h-24 tw-border tw-border-black"
-      }, "pulau pompa " + x);
-    }));
-  };
-
-  var renderIsiLaporan = function renderIsiLaporan() {
-    return react_1["default"].createElement("div", {
-      className: "tw-flex tw-flex-col tw-gap-2"
-    }, [1, 2, 3, 4].map(function (x) {
-      return react_1["default"].createElement("div", {
-        key: x
-      }, react_1["default"].createElement("p", null, "Totalisator Nozzle ", x), react_1["default"].createElement("input", {
-        type: "number",
-        onChange: function onChange(e) {
-          return handleInputTotalisator(e.target.value, x);
-        },
-        className: "tw-border tw-border-black tw-p-2"
-      }));
-    }), react_1["default"].createElement("button", {
-      className: "tw-border tw-bg-gray-400",
-      onClick: handleSubmitIsi
-    }, "Selanjutnya"));
-  };
-
-  var renderPeriksaLaporan = function renderPeriksaLaporan() {
-    return react_1["default"].createElement("div", {
-      className: "tw-flex tw-flex-col tw-gap-2"
-    }, react_1["default"].createElement("p", {
-      className: "tw-text-center"
-    }, "Laporan pulau pompa ", report.pompa), Object.entries(report.nozzles).map(function (_a) {
-      var nozzle = _a[0],
-          totalisator = _a[1];
-      return react_1["default"].createElement("p", null, "nozzle ", nozzle, " : ", totalisator);
-    }), react_1["default"].createElement("button", {
-      className: "tw-border tw-bg-gray-400",
-      onClick: handleSubmitIsi
-    }, "Kirim"));
-  };
-
-  return react_1["default"].createElement("div", {
-    className: "tw-max-w-screen tw-w-full"
-  }, react_1["default"].createElement("p", {
-    className: "tw-text-center"
-  }, step === StepLaporan.PilihPompa ? 'Pilih Pompa' : step === StepLaporan.IsiLaporan ? 'Isi Laporan' : 'Periksa Laporan'), step === StepLaporan.PilihPompa ? renderPilihPompa() : step === StepLaporan.IsiLaporan ? renderIsiLaporan() : renderPeriksaLaporan());
-}
-
-exports.default = Laporan;
 
 /***/ }),
 
@@ -11357,7 +11141,7 @@ var AdminRoutes = function AdminRoutes() {
     return react_1["default"].createElement("div", null, "Page Not Found");
   };
 
-  return auth.role !== types_1.Roles.ADMIN ? react_1["default"].createElement(react_router_dom_1.Redirect, {
+  return auth.role !== types_1.Roles.ADMIN && auth.role !== types_1.Roles.DEVELOPER ? react_1["default"].createElement(react_router_dom_1.Redirect, {
     to: {
       pathname: "/login",
       state: {
@@ -11403,26 +11187,56 @@ Object.defineProperty(exports, "__esModule", ({
 
 var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 
-var PrivateRoute_1 = __importDefault(__webpack_require__(/*! ../components/PrivateRoute */ "./resources/js/RoyalSPBU/components/PrivateRoute.tsx"));
+var AdminConfigProvider_1 = __importDefault(__webpack_require__(/*! ../providers/AdminConfigProvider */ "./resources/js/RoyalSPBU/providers/AdminConfigProvider.tsx"));
+
+var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+
+var AuthProvider_1 = __webpack_require__(/*! ../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx");
+
+var types_1 = __webpack_require__(/*! ../types */ "./resources/js/RoyalSPBU/types.ts");
 
 var Home_1 = __importDefault(__webpack_require__(/*! ../pages/operatorPages/Home */ "./resources/js/RoyalSPBU/pages/operatorPages/Home.tsx"));
 
 var Absen_1 = __importDefault(__webpack_require__(/*! ../pages/operatorPages/Absen */ "./resources/js/RoyalSPBU/pages/operatorPages/Absen.tsx"));
 
-var Laporan_1 = __importDefault(__webpack_require__(/*! ../pages/operatorPages/Laporan */ "./resources/js/RoyalSPBU/pages/operatorPages/Laporan.tsx"));
+var AdminRoutes = function AdminRoutes() {
+  var auth = AuthProvider_1.useAuth().auth;
+  var routes = [{
+    path: '/',
+    exact: true,
+    component: Home_1["default"]
+  }, {
+    path: '/absen',
+    exact: true,
+    component: Absen_1["default"]
+  }]; // todo: desain page not found
 
-function Operator() {
-  return react_1["default"].createElement(react_1["default"].Fragment, null, react_1["default"].createElement(PrivateRoute_1["default"], {
-    path: "/",
-    exact: true
-  }, react_1["default"].createElement(Home_1["default"], null)), react_1["default"].createElement(PrivateRoute_1["default"], {
-    path: "/absen"
-  }, react_1["default"].createElement(Absen_1["default"], null)), react_1["default"].createElement(PrivateRoute_1["default"], {
-    path: "/laporan"
-  }, react_1["default"].createElement(Laporan_1["default"], null)));
-}
+  var NotFoundRoute = function NotFoundRoute() {
+    return react_1["default"].createElement("div", null, "Page Not Found");
+  };
 
-exports.default = Operator;
+  return auth.role !== types_1.Roles.OPERATOR ? react_1["default"].createElement(react_router_dom_1.Redirect, {
+    to: {
+      pathname: "/login",
+      state: {
+        from: location
+      }
+    }
+  }) : react_1["default"].createElement(AdminConfigProvider_1["default"], null, react_1["default"].createElement(react_router_dom_1.Switch, null, routes.map(function (route) {
+    return react_1["default"].createElement(react_router_dom_1.Route, {
+      path: route.path,
+      exact: route.exact,
+      component: route.component
+    });
+  }), react_1["default"].createElement(react_router_dom_1.Redirect, {
+    path: "/login",
+    to: "/"
+  }), react_1["default"].createElement(react_router_dom_1.Route, {
+    component: NotFoundRoute
+  })));
+};
+
+exports.default = react_router_dom_1.withRouter(AdminRoutes);
 
 /***/ }),
 
@@ -11471,15 +11285,23 @@ Object.defineProperty(exports, "__esModule", ({
 
 var axios_1 = __importDefault(__webpack_require__(/*! axios */ "./node_modules/axios/index.js"));
 
+var DB_1 = __importDefault(__webpack_require__(/*! ./DB */ "./resources/js/RoyalSPBU/utils/DB.ts"));
+
 var instance = axios_1["default"].create({
   baseURL: '/api/admin/',
   timeout: 20000
 });
 var TIMEOUT_MESSAGE = "Ups. Permintaan ke server terputus. Coba lagi";
+var db = new DB_1["default"]();
+var token = '';
+db.getAuthToken().then(function (result) {
+  return token = result === null || result === void 0 ? void 0 : result.value;
+});
 instance.interceptors.request.use(function (config) {
   //Do something before request is sent
   config.headers = {
-    Authorization: 'Bearer ' + localStorage.getItem('token')
+    accept: 'application/json',
+    Authorization: 'Bearer ' + token
   };
   return config;
 }, function (error) {
@@ -11660,6 +11482,10 @@ function (_super) {
   function DB() {
     var _this = _super.call(this, "AppDB") || this;
 
+    _this.getAuthToken = function () {
+      return _this.auth.get('auth_token');
+    };
+
     _this.version(1).stores({
       auth: 'key, value'
     });
@@ -11672,6 +11498,167 @@ function (_super) {
 }(dexie_1["default"]);
 
 exports.default = DB;
+
+/***/ }),
+
+/***/ "./resources/js/RoyalSPBU/utils/OperatorAxios.ts":
+/*!*******************************************************!*\
+  !*** ./resources/js/RoyalSPBU/utils/OperatorAxios.ts ***!
+  \*******************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var axios_1 = __importDefault(__webpack_require__(/*! axios */ "./node_modules/axios/index.js"));
+
+var DB_1 = __importDefault(__webpack_require__(/*! ./DB */ "./resources/js/RoyalSPBU/utils/DB.ts"));
+
+var instance = axios_1["default"].create({
+  baseURL: '/api/',
+  timeout: 20000
+});
+var TIMEOUT_MESSAGE = "Ups. Permintaan ke server terputus. Coba lagi";
+var db = new DB_1["default"]();
+var token = '';
+db.getAuthToken().then(function (result) {
+  return token = result === null || result === void 0 ? void 0 : result.value;
+});
+instance.interceptors.request.use(function (config) {
+  //Do something before request is sent
+  config.headers = {
+    accept: 'application/json',
+    Authorization: 'Bearer ' + token
+  };
+  return config;
+}, function (error) {
+  //Do something with request error
+  if (error.code === "ECONNABORTED") {
+    error.pesan = TIMEOUT_MESSAGE;
+  } else {
+    error.pesan = "Ups. Terjadi error. code: " + error.code;
+  }
+
+  return Promise.reject(error);
+});
+instance.interceptors.response.use(function (response) {
+  //Any status code that lie within the range of 2xx cause this function to trigger
+  //Do something with response data
+  return response;
+}, function (error) {
+  //Any status codes that falls outside the range of 2xx cause this function to trigger
+  //Do something with response error
+  var pesan = "error";
+
+  if (error.code === "ECONNABORTED") {
+    //Handle timeout error
+    pesan = TIMEOUT_MESSAGE;
+  } else if (error.code) {
+    //Handle other request error
+    pesan = "Ups. Terjadi error. code: " + error.code;
+  } else {
+    //handle response error
+    var errorCode = error.response.status;
+
+    switch (errorCode) {
+      case 400:
+        pesan = "Terjadi error saat mengirim (400)";
+        break;
+
+      case 401:
+        pesan = "Sesi login anda habis.";
+        break;
+
+      case 403:
+        pesan = "Anda tidak memiliki akses untuk ini";
+        break;
+
+      case 404:
+        pesan = "URL / sesuatu yang dicari tidak ada";
+        break;
+
+      case 405:
+        pesan = "Metode request ini tidak diizinkan";
+        break;
+
+      case 408:
+        pesan = TIMEOUT_MESSAGE;
+        break;
+
+      case 409:
+        pesan = "Terjadi konflik. Mungkin data yang anda kirim sudah ada.";
+        break;
+
+      case 419:
+        pesan = "Token CSRF Anda hilang. silakan logout kemudian login kembali";
+        break;
+
+      case 422:
+        pesan = "Ada data yang tidak sesuai. Silakan periksa kembali";
+        break;
+
+      case 429:
+        pesan = "Anda terlalu banyak melakukan request ini";
+        break;
+
+      case Math.floor(errorCode / 100) === 5:
+        //server error
+        pesan = "Ups. Terjadi error di dalam server. silakan coba lagi nanti (" + errorCode + ")";
+        break;
+
+      default:
+        pesan = "Ups. terjadi error (" + errorCode + ")";
+    }
+  }
+
+  error.pesan = pesan;
+  return Promise.reject(error);
+});
+exports.default = instance; //default template
+// axios({method:'get', url: '/getUserDetail'})
+// .then(result => { //handle success response
+//     let data = result.data;
+// })
+// .catch(error =>{ //handle error response
+//     let errorMessage = error.pesan ? error.pesan : "Terjadi kesalahan pada pengaturan request ini. Silakan hubungi Admin.";
+//     if (error.request){
+//         //Request was made but no response was received
+//     } else if (error.response){
+//         //Error caused from the server
+//         let errorCode = error.response.status
+//         switch(errorCode){
+//             case 400: /*bad request*/ break; 
+//             case 401: /*Unauthorized*/ break;
+//             case 403: /*Forbidden*/ break;
+//             case 404: /*not found*/ break; 
+//             case 405: /*method not allowed*/ break; 
+//             case 408: /*Request timed out*/ break;
+//             case 409: /*Conflict*/ break;
+//             case 419: /*Page expired, CSRF token missing*/ break;
+//             case 422: /*Validation failed*/ break;
+//             case 429: /*Too Many Request */ break;
+//             case (Math.floor(errorCode/100) === 5): //server error
+//                 errorMessage=`Ups. Terjadi error di dalam server. silakan coba lagi nanti (${errorCode})`;
+//                 break; 
+//             default: /* Other errors */
+//                 errorMessage=`Ups. terjadi error (${errorCode})`;
+//         }
+//     } else {
+//         //Something happened in setting up the request that triggered an Error
+//     }
+//     //you can show error notification here
+//     enqueueSnackbar(errorMessage,{variant:"error"});
+// });
 
 /***/ }),
 

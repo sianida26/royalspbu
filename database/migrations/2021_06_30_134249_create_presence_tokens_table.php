@@ -17,7 +17,6 @@ class CreatePresenceTokensTable extends Migration
             $table->id();
             $table->string('token');
             $table->foreignId('user_id')->constrained();
-            $table->timestamp('expiry');
         });
     }
 

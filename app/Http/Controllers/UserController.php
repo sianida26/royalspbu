@@ -34,6 +34,9 @@ class UserController extends Controller
      * @bodyParam [].is_active boolean status aktif user
      */
     function getAllUser(Request $request){
+
+        Debugbar::info($request->user()->token());
+
         return User::all()->map(function($user){
             $roleId = -1;
             if ($user->roles->isNotEmpty()){

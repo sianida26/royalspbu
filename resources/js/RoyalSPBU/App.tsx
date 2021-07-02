@@ -70,7 +70,7 @@ export default function App() {
                 <Suspense fallback={<div>Loading...</div>}>
                     {
                         auth.role === Roles.OPERATOR ? <OperatorRoutes />
-                        : auth.role === Roles.ADMIN ? <AdminRoutes />
+                        : auth.role === Roles.ADMIN || auth.role === Roles.DEVELOPER ? <AdminRoutes />
                         : renderGuestRoutes()
                     }
                 </Suspense>

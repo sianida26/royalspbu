@@ -144,7 +144,7 @@ const AdminRoutes = () => {
         )
     }
 
-    return auth.role !== Roles.ADMIN ? <Redirect to={{pathname: "/login", state: {from: location}}} /> : (
+    return (auth.role !== Roles.ADMIN && auth.role !== Roles.DEVELOPER) ? <Redirect to={{pathname: "/login", state: {from: location}}} /> : (
         <AdminConfigProvider>
             <Switch>
                 {
