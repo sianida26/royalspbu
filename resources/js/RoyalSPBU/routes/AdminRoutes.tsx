@@ -150,6 +150,7 @@ const AdminRoutes = () => {
                 {
                     routes.map(route => <Route path={route.path} exact={route.exact} component={route.component} />)
                 }
+                <Redirect path="/login" to="/" />
                 <Route component={NotFoundRoute} />
             </Switch>
         </AdminConfigProvider>

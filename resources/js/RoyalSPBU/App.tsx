@@ -24,8 +24,8 @@ export default function App() {
         return (
             <Switch>
                 <Route path="/login" exact component={Login} />
-                <Redirect from="/" to="/login" exact />
-                <Route component={NotFoundRoute} />
+                <Redirect to="/login" />
+                {/* <Route component={NotFoundRoute} /> */}
             </Switch>
         )
     }

@@ -65,6 +65,7 @@ export interface IAuth {
     name?       : string
     username?   : string
     role?       : Roles | undefined
+    token?      : string
 }
 
 export type ConfigContextState = {
