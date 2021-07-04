@@ -3,15 +3,29 @@
 import React from 'react'
 import { render } from 'react-dom'
 import {scanImageData, Symbol} from 'zbar.wasm'
+import { useUserMedia } from '../../../hooks/useUserMedia'
 
+
+const CAPTURE_OPTIONS = {
+    audio: false,
+    video: {
+        facingMode: 'environment',
+        width: { max: 640 },
+        height: { min: 640 },
+    }
+}
 
 export default function Scan() {
-
-    const [isScanning, setScanning] = React.useState(true)
     const [qrValue, setQrValue] = React.useState('')
     const videoElement = React.useRef<HTMLVideoElement>(null)
     const canvasElement = React.useRef<HTMLCanvasElement>(null)
     const scannerContainer = React.useRef<HTMLDivElement>(null)
+
+    const mediaStream = useUserMedia(CAPTURE_OPTIONS)
+
+    if (mediaStream && videoElement.current && videoElement.current.srcObject === null) {
+        videoElement.current.srcObject = mediaStream
+    }
 
     React.useEffect(() => {
         main()
@@ -45,9 +59,10 @@ export default function Scan() {
         const sleep = (ms: number) => new Promise(r => setTimeout(r,ms))
 
         try{
-            await init()
-            while (isScanning){
-                await scan()
+            while (true){
+                if (videoElement.current){
+                    await scan()
+                }
                 await sleep(100)
             }
         } catch (e){
@@ -56,21 +71,8 @@ export default function Scan() {
         }
     }
 
-    const init = async () => {
-        const mediaStream = await navigator.mediaDevices.getUserMedia({
-            audio: false,
-            video: {
-                facingMode: 'environment',
-                width: { max: 640 },
-                height: { min: 640 },
-            }
-        })
-
-        videoElement.current!.srcObject = mediaStream
-        videoElement.current!.setAttribute('playsinline', '')
+    const handleCanPlay = () => {
         videoElement.current!.play()
-        await new Promise(r => videoElement.current!.onloadedmetadata = r)
-        handleResize()
     }
 
     const scan = async () => {
@@ -79,43 +81,15 @@ export default function Scan() {
         canvasElement.current!.width = width
         canvasElement.current!.height = height
 
-        const context: CanvasRenderingContext2D | null = canvasElement.current!.getContext('2d')
-        context?.drawImage(videoElement.current!, 0, 0, width, height)
-        const imgData = context?.getImageData(0, 0, width, height)
-        const res = await scanImageData(imgData!)
-        render(res)
-    }
-
-    const render = (symbols: Symbol[]) => {
-        const context = canvasElement.current?.getContext('2d')
-        if (context == null || context == undefined){
-            console.log('context in render is null!')
-            return
-        }
-        const width = canvasElement.current!.width
-        const height = canvasElement.current!.height
-        context.clearRect(0,0,width,height)
-        context.strokeStyle = '#FF0000'
-        context.fillStyle = '#00FF00'
-        context.lineWidth = 6
-        for (let i = 0; i < symbols.length; ++i){
-            const sym = symbols[i]
-            const points = sym.points
-            context.beginPath()
-            for (let j = 0; j < points.length; ++j){
-                const {x, y} = points[j]
-                if (j == 0) context.moveTo(x, y)
-                else context.lineTo(x,y)
-            }
-            context.closePath()
-            context.stroke()
-            context.fillText('#' + i,points[0].x, points[0].y - 10)
-            // setQrValue(sym.decode())
-            console.log('horee'+sym.decode())
-        }
-        if (symbols.length > 0){
-            const sym = symbols[0]
-            setQrValue(sym.decode())
+        if (canvasElement.current && canvasElement.current.width > 0){
+            const context: CanvasRenderingContext2D | null = canvasElement.current!.getContext('2d')
+            context?.drawImage(videoElement.current!, 0, 0, width, height)
+            const imgData = context?.getImageData(0, 0, width, height)
+            const symbols = await scanImageData(imgData!)
+            if (symbols.length > 0){
+                const sym = symbols[0]
+                setQrValue(sym.decode())
+            }   
         }
     }
 
@@ -123,7 +97,7 @@ export default function Scan() {
         <div className="tw-flex tw-flex-col tw-w-full tw-px-4">
             <p className="tw-text-right">Tanggal sekarang</p>
             <div className="tw-w-full relative" ref={scannerContainer}>
-                <video className="tw-block tw-transform" style={{transform: 'rotateY(180deg)', WebkitTransform: 'rotateY(180deg)'}} ref={videoElement}></video>
+                <video className="tw-block tw-transform" onCanPlay={handleCanPlay} style={{transform: 'rotateY(180deg)', WebkitTransform: 'rotateY(180deg)'}} ref={videoElement} muted autoPlay playsInline></video>
                 <canvas ref={canvasElement} className="tw-hidden tw-absolute tw-top-0 tw-left-0 tw-right-0 tw-bottom-0 tw-m-auto"></canvas>
             </div>
             <div className="">
