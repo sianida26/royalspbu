@@ -27,11 +27,11 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout']);
 // Route::get('/admin/user/getAll', [UserController::class, 'getAllUser'] );
 
 Route::middleware('auth:api')->group(function(){
     
+    Route::get('/logout', [AuthController::class, 'logout']);
     Route::prefix('admin')->group(function(){
         Route::prefix('user')->group(function(){
             Route::get('/getAll', [UserController::class, 'getAllUser'] );
@@ -77,6 +77,9 @@ Route::middleware('auth:api')->group(function(){
             Route::post('/edit',[PumpController::class,'edit']);
         });
         
+        Route::prefix('presence')->group(function(){
+            Route::post('scan', [PresenceController::class, 'scan']);
+        });
     });
 
     //operator APIs

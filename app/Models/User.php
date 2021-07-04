@@ -39,4 +39,13 @@ class User extends Authenticatable
      * @var array
      */
     protected $casts = [];
+
+
+    public function presenceToken(){
+        return $this->hasOne(PresenceToken::class);
+    }
+
+    public function presence(){
+        return $this->hasOne(Presence::class);
+    }
 }

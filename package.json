@@ -10,6 +10,7 @@
         "production": "mix --production"
     },
     "devDependencies": {
+        "@types/react-measure": "^2.0.6",
         "axios": "^0.21.1",
         "file-loader": "^6.2.0",
         "laravel-mix": "^6.0.6",
@@ -27,6 +28,7 @@
         "notistack": "^1.0.9",
         "react": "^17.0.2",
         "react-dom": "^17.0.2",
+        "react-measure": "^2.5.2",
         "react-qr-code": "^1.1.1",
         "react-router-dom": "^5.2.0",
         "react-webcam": "^5.2.4",

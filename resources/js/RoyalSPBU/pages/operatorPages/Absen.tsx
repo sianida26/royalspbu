@@ -10,27 +10,36 @@ export default function Absen() {
     const {axios} = useAuth()
 
     const [loading, setLoading] = React.useState(true)
+    const [token, setToken] = React.useState('')
 
     React.useEffect(() => {
         requestPresenceToken()
     },[])
 
     const requestPresenceToken = () => {
+        setLoading(true)
         axios({method:'get', url: '/getPresenceToken'})
         .then(result => { //handle success response
             let data = result.data;
+            setToken(data.token)
             console.log(data) //todo: clear console
         })
         .catch(error =>{ //handle error response
             let errorMessage = error.pesan ? error.pesan : "Terjadi kesalahan pada pengaturan request ini. Silakan hubungi Admin.";
             enqueueSnackbar(errorMessage,{variant:"error"});
-        });
+        })
+        .finally(() => setLoading(false))
     }
 
     return (
-        <div>
-            <QRCode value={"hei"}></QRCode>
-            <span>Ini nanti text qr code nya</span>
+        <div className="tw-flex tw-flex-col tw-p-5">
+            {
+                loading? <div>Loading QR code</div> : 
+                <div>
+                    <QRCode value={token} level="H"></QRCode>
+                    <span>{token}</span>
+                </div>
+            }
         </div>
     )
 }

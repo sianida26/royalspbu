@@ -7355,6 +7355,227 @@ exports.default = RouteSwitch;
 
 /***/ }),
 
+/***/ "./resources/js/RoyalSPBU/hooks/useUserMedia.ts":
+/*!******************************************************!*\
+  !*** ./resources/js/RoyalSPBU/hooks/useUserMedia.ts ***!
+  \******************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+/*
+source: https://blog.logrocket.com/responsive-camera-component-react-hooks/
+*/
+
+var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, generator) {
+  function adopt(value) {
+    return value instanceof P ? value : new P(function (resolve) {
+      resolve(value);
+    });
+  }
+
+  return new (P || (P = Promise))(function (resolve, reject) {
+    function fulfilled(value) {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function rejected(value) {
+      try {
+        step(generator["throw"](value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function step(result) {
+      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+    }
+
+    step((generator = generator.apply(thisArg, _arguments || [])).next());
+  });
+};
+
+var __generator = this && this.__generator || function (thisArg, body) {
+  var _ = {
+    label: 0,
+    sent: function sent() {
+      if (t[0] & 1) throw t[1];
+      return t[1];
+    },
+    trys: [],
+    ops: []
+  },
+      f,
+      y,
+      t,
+      g;
+  return g = {
+    next: verb(0),
+    "throw": verb(1),
+    "return": verb(2)
+  }, typeof Symbol === "function" && (g[Symbol.iterator] = function () {
+    return this;
+  }), g;
+
+  function verb(n) {
+    return function (v) {
+      return step([n, v]);
+    };
+  }
+
+  function step(op) {
+    if (f) throw new TypeError("Generator is already executing.");
+
+    while (_) {
+      try {
+        if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+        if (y = 0, t) op = [op[0] & 2, t.value];
+
+        switch (op[0]) {
+          case 0:
+          case 1:
+            t = op;
+            break;
+
+          case 4:
+            _.label++;
+            return {
+              value: op[1],
+              done: false
+            };
+
+          case 5:
+            _.label++;
+            y = op[1];
+            op = [0];
+            continue;
+
+          case 7:
+            op = _.ops.pop();
+
+            _.trys.pop();
+
+            continue;
+
+          default:
+            if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
+              _ = 0;
+              continue;
+            }
+
+            if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
+              _.label = op[1];
+              break;
+            }
+
+            if (op[0] === 6 && _.label < t[1]) {
+              _.label = t[1];
+              t = op;
+              break;
+            }
+
+            if (t && _.label < t[2]) {
+              _.label = t[2];
+
+              _.ops.push(op);
+
+              break;
+            }
+
+            if (t[2]) _.ops.pop();
+
+            _.trys.pop();
+
+            continue;
+        }
+
+        op = body.call(thisArg, _);
+      } catch (e) {
+        op = [6, e];
+        y = 0;
+      } finally {
+        f = t = 0;
+      }
+    }
+
+    if (op[0] & 5) throw op[1];
+    return {
+      value: op[0] ? op[1] : void 0,
+      done: true
+    };
+  }
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.useUserMedia = void 0;
+
+var react_1 = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+function useUserMedia(requestedMedia) {
+  var _a = react_1.useState(null),
+      mediaStream = _a[0],
+      setMediaStream = _a[1];
+
+  react_1.useEffect(function () {
+    function enableStream() {
+      return __awaiter(this, void 0, void 0, function () {
+        var stream, err_1;
+        return __generator(this, function (_a) {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2,, 3]);
+
+              return [4
+              /*yield*/
+              , navigator.mediaDevices.getUserMedia(requestedMedia)];
+
+            case 1:
+              stream = _a.sent();
+              setMediaStream(stream);
+              return [3
+              /*break*/
+              , 3];
+
+            case 2:
+              err_1 = _a.sent(); //todo: add action error
+
+              console.log("error in useUserMedia: " + err_1);
+              return [3
+              /*break*/
+              , 3];
+
+            case 3:
+              return [2
+              /*return*/
+              ];
+          }
+        });
+      });
+    }
+
+    if (!mediaStream) {
+      enableStream();
+    } else {
+      return function cleanup() {
+        mediaStream.getTracks().forEach(function (track) {
+          track.stop();
+        });
+      };
+    }
+  }, [mediaStream, requestedMedia]);
+  return mediaStream;
+}
+
+exports.useUserMedia = useUserMedia;
+
+/***/ }),
+
 /***/ "./resources/js/RoyalSPBU/index.tsx":
 /*!******************************************!*\
   !*** ./resources/js/RoyalSPBU/index.tsx ***!
@@ -7557,6 +7778,11 @@ function Home() {
       return history.push('/user');
     }
   }, "List User"), react_1["default"].createElement("div", {
+    className: "tw-py-8 tw-border tw-border-black",
+    onClick: function onClick() {
+      return history.push('/presensi');
+    }
+  }, "Presensi"), react_1["default"].createElement("div", {
     className: "tw-py-8 tw-border tw-border-black",
     onClick: function onClick() {
       return history.push('/products');
@@ -8157,20 +8383,61 @@ var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/r
 
 var zbar_wasm_1 = __webpack_require__(/*! zbar.wasm */ "./node_modules/zbar.wasm/dist/index.js");
 
+var AuthProvider_1 = __webpack_require__(/*! ../../../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx");
+
+var notistack_1 = __webpack_require__(/*! notistack */ "./node_modules/notistack/dist/notistack.esm.js");
+
+var useUserMedia_1 = __webpack_require__(/*! ../../../hooks/useUserMedia */ "./resources/js/RoyalSPBU/hooks/useUserMedia.ts");
+
+var ScanStatus;
+
+(function (ScanStatus) {
+  ScanStatus[ScanStatus["INIT"] = 0] = "INIT";
+  ScanStatus[ScanStatus["SUCCESS"] = 1] = "SUCCESS";
+  ScanStatus[ScanStatus["ERROR"] = 2] = "ERROR";
+})(ScanStatus || (ScanStatus = {}));
+
+var CAPTURE_OPTIONS = {
+  audio: false,
+  video: {
+    facingMode: 'environment',
+    width: {
+      max: 640
+    },
+    height: {
+      min: 640
+    }
+  }
+};
+
 function Scan() {
   var _this = this;
 
-  var _a = react_1["default"].useState(true),
-      isScanning = _a[0],
-      setScanning = _a[1];
+  var enqueueSnackbar = notistack_1.useSnackbar().enqueueSnackbar;
+  var mediaStream = useUserMedia_1.useUserMedia(CAPTURE_OPTIONS);
+  var axios = AuthProvider_1.useAuth().axios; // const beep = require('../../../assets/store-scanner-beep.mp3')
 
-  var _b = react_1["default"].useState(''),
-      qrValue = _b[0],
-      setQrValue = _b[1];
+  var _a = react_1["default"].useState(''),
+      qrValue = _a[0],
+      setQrValue = _a[1];
 
   var videoElement = react_1["default"].useRef(null);
   var canvasElement = react_1["default"].useRef(null);
   var scannerContainer = react_1["default"].useRef(null);
+  var audio = new Audio('/storage/store-scanner-beep.mp3');
+
+  var _b = react_1["default"].useState({
+    status: ScanStatus.INIT,
+    name: '-',
+    timestamp: '-'
+  }),
+      scanResult = _b[0],
+      setScanResult = _b[1];
+
+  if (mediaStream && videoElement.current && videoElement.current.srcObject === null) {
+    videoElement.current.srcObject = mediaStream;
+  }
+
   react_1["default"].useEffect(function () {
     main();
   }, []);
@@ -8216,26 +8483,23 @@ function Scan() {
           case 1:
             _a.trys.push([1, 7,, 8]);
 
-            return [4
-            /*yield*/
-            , init()];
+            _a.label = 2;
 
           case 2:
-            _a.sent();
-
-            _a.label = 3;
-
-          case 3:
-            if (!isScanning) return [3
+            if (false) {}
+            if (!videoElement.current) return [3
             /*break*/
-            , 6];
+            , 4];
             return [4
             /*yield*/
             , scan()];
 
-          case 4:
+          case 3:
             _a.sent();
 
+            _a.label = 4;
+
+          case 4:
             return [4
             /*yield*/
             , sleep(100)];
@@ -8245,7 +8509,7 @@ function Scan() {
 
             return [3
             /*break*/
-            , 3];
+            , 2];
 
           case 6:
             return [3
@@ -8269,60 +8533,29 @@ function Scan() {
     });
   };
 
-  var init = function init() {
-    return __awaiter(_this, void 0, void 0, function () {
-      var mediaStream;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            return [4
-            /*yield*/
-            , navigator.mediaDevices.getUserMedia({
-              audio: false,
-              video: {
-                facingMode: 'environment',
-                width: {
-                  max: 640
-                },
-                height: {
-                  min: 640
-                }
-              }
-            })];
-
-          case 1:
-            mediaStream = _a.sent();
-            videoElement.current.srcObject = mediaStream;
-            videoElement.current.setAttribute('playsinline', '');
-            videoElement.current.play();
-            return [4
-            /*yield*/
-            , new Promise(function (r) {
-              return videoElement.current.onloadedmetadata = r;
-            })];
-
-          case 2:
-            _a.sent();
-
-            handleResize();
-            return [2
-            /*return*/
-            ];
-        }
-      });
-    });
+  var handleCanPlay = function handleCanPlay() {
+    videoElement.current.play();
   };
 
   var scan = function scan() {
     return __awaiter(_this, void 0, void 0, function () {
-      var width, height, context, imgData, res;
+      var sleep, width, height, context, imgData, symbols, sym, token;
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
+            sleep = function sleep(ms) {
+              return new Promise(function (r) {
+                return setTimeout(r, ms);
+              });
+            };
+
             width = videoElement.current.videoWidth;
             height = videoElement.current.videoHeight;
             canvasElement.current.width = width;
             canvasElement.current.height = height;
+            if (!(canvasElement.current && canvasElement.current.width > 0)) return [3
+            /*break*/
+            , 3];
             context = canvasElement.current.getContext('2d');
             context === null || context === void 0 ? void 0 : context.drawImage(videoElement.current, 0, 0, width, height);
             imgData = context === null || context === void 0 ? void 0 : context.getImageData(0, 0, width, height);
@@ -8331,8 +8564,27 @@ function Scan() {
             , zbar_wasm_1.scanImageData(imgData)];
 
           case 1:
-            res = _a.sent();
-            render(res);
+            symbols = _a.sent();
+            if (!(symbols.length > 0)) return [3
+            /*break*/
+            , 3];
+            audio.play();
+            sym = symbols[0];
+            token = sym.decode();
+            setQrValue(token);
+            sendToken(token);
+            return [4
+            /*yield*/
+            , sleep(1000)];
+          //add delay after scanning
+
+          case 2:
+            _a.sent(); //add delay after scanning
+
+
+            _a.label = 3;
+
+          case 3:
             return [2
             /*return*/
             ];
@@ -8341,46 +8593,46 @@ function Scan() {
     });
   };
 
-  var render = function render(symbols) {
-    var _a;
+  var handleCheck = function handleCheck() {
+    sendToken(qrValue);
+  };
 
-    var context = (_a = canvasElement.current) === null || _a === void 0 ? void 0 : _a.getContext('2d');
-
-    if (context == null || context == undefined) {
-      console.log('context in render is null!');
-      return;
-    }
-
-    var width = canvasElement.current.width;
-    var height = canvasElement.current.height;
-    context.clearRect(0, 0, width, height);
-    context.strokeStyle = '#FF0000';
-    context.fillStyle = '#00FF00';
-    context.lineWidth = 6;
-
-    for (var i = 0; i < symbols.length; ++i) {
-      var sym = symbols[i];
-      var points = sym.points;
-      context.beginPath();
-
-      for (var j = 0; j < points.length; ++j) {
-        var _b = points[j],
-            x = _b.x,
-            y = _b.y;
-        if (j == 0) context.moveTo(x, y);else context.lineTo(x, y);
+  var sendToken = function sendToken(token) {
+    axios({
+      url: '/admin/presence/scan',
+      method: 'post',
+      data: {
+        token: token
       }
+    }).then(function (result) {
+      console.log(result); // let data: ScanResult = result.data
 
-      context.closePath();
-      context.stroke();
-      context.fillText('#' + i, points[0].x, points[0].y - 10); // setQrValue(sym.decode())
+      setScanResult({
+        status: ScanStatus.SUCCESS,
+        name: result.data.name,
+        timestamp: result.data.timestamp
+      });
+    })["catch"](function (error) {
+      setScanResult({
+        status: ScanStatus.ERROR
+      });
+      var errorMessage = error.pesan ? error.pesan : "Terjadi kesalahan pada pengaturan request ini. Silakan hubungi Admin.";
 
-      console.log('horee' + sym.decode());
-    }
+      if (error.request) {//Request was made but no response was received
+      } else if (error.response) {
+        //Error caused from the server
+        var errorCode = error.response.status;
 
-    if (symbols.length > 0) {
-      var sym = symbols[0];
-      setQrValue(sym.decode());
-    }
+        switch (errorCode) {
+          case 404:
+            errorMessage = "Kode tidak valid";
+            break;
+        }
+      } else {//Something happened in setting up the request that triggered an Error
+      } //you can show error notification here
+      // enqueueSnackbar(errorMessage,{variant:"error"});
+
+    });
   };
 
   return react_1["default"].createElement("div", {
@@ -8392,11 +8644,15 @@ function Scan() {
     ref: scannerContainer
   }, react_1["default"].createElement("video", {
     className: "tw-block tw-transform",
+    onCanPlay: handleCanPlay,
     style: {
       transform: 'rotateY(180deg)',
       WebkitTransform: 'rotateY(180deg)'
     },
-    ref: videoElement
+    ref: videoElement,
+    muted: true,
+    autoPlay: true,
+    playsInline: true
   }), react_1["default"].createElement("canvas", {
     ref: canvasElement,
     className: "tw-hidden tw-absolute tw-top-0 tw-left-0 tw-right-0 tw-bottom-0 tw-m-auto"
@@ -8408,9 +8664,15 @@ function Scan() {
     onChange: function onChange(e) {
       return setQrValue(e.target.value);
     }
-  }), react_1["default"].createElement("button", null, "Cek")), react_1["default"].createElement("hr", {
+  }), react_1["default"].createElement("button", {
+    onClick: handleCheck
+  }, "Cek")), react_1["default"].createElement("hr", {
     className: "tw-border-b tw-border-black mt-2"
-  }), react_1["default"].createElement("span", null, "Presensi berhasil"), react_1["default"].createElement("span", null, "Nama: Belum"), react_1["default"].createElement("span", null, "Waktu presensi: belum diprogram"));
+  }), scanResult.status === ScanStatus.SUCCESS ? react_1["default"].createElement("div", {
+    className: "tw-flex tw-flex-col"
+  }, react_1["default"].createElement("span", null, "Presensi berhasil"), react_1["default"].createElement("span", null, "Nama: ", scanResult.name), react_1["default"].createElement("span", null, "Waktu presensi: ", scanResult.timestamp)) : scanResult.status === ScanStatus.ERROR && react_1["default"].createElement("p", {
+    className: "tw-text-red"
+  }, "Kode tidak valid"));
 }
 
 exports.default = Scan;
@@ -10847,6 +11109,7 @@ function Login() {
         key: 'role',
         value: data.role
       });
+      history.push('/');
     })["catch"](function (error) {
       console.error('error!');
       console.log(error.response);
@@ -10915,28 +11178,39 @@ function Absen() {
       loading = _a[0],
       setLoading = _a[1];
 
+  var _b = react_1["default"].useState(''),
+      token = _b[0],
+      setToken = _b[1];
+
   react_1["default"].useEffect(function () {
     requestPresenceToken();
   }, []);
 
   var requestPresenceToken = function requestPresenceToken() {
+    setLoading(true);
     axios({
       method: 'get',
       url: '/getPresenceToken'
     }).then(function (result) {
       var data = result.data;
+      setToken(data.token);
       console.log(data); //todo: clear console
     })["catch"](function (error) {
       var errorMessage = error.pesan ? error.pesan : "Terjadi kesalahan pada pengaturan request ini. Silakan hubungi Admin.";
       enqueueSnackbar(errorMessage, {
         variant: "error"
       });
+    })["finally"](function () {
+      return setLoading(false);
     });
   };
 
-  return react_1["default"].createElement("div", null, react_1["default"].createElement(react_qr_code_1["default"], {
-    value: "hei"
-  }), react_1["default"].createElement("span", null, "Ini nanti text qr code nya"));
+  return react_1["default"].createElement("div", {
+    className: "tw-flex tw-flex-col tw-p-5"
+  }, loading ? react_1["default"].createElement("div", null, "Loading QR code") : react_1["default"].createElement("div", null, react_1["default"].createElement(react_qr_code_1["default"], {
+    value: token,
+    level: "H"
+  }), react_1["default"].createElement("span", null, token)));
 }
 
 exports.default = Absen;

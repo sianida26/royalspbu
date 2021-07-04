@@ -17,7 +17,7 @@ class CreateTanksTable extends Migration
             $table->id();
             $table->foreignId('product_id')->constrained();
             $table->string('name');
-            $table->integer('stock')->default(0);
+            $table->unsignedInteger('stock')->default(0);
             $table->text('history');
             $table->timestamps();
             $table->softDeletes();

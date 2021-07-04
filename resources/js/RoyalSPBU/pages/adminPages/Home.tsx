@@ -11,6 +11,9 @@ export default function Home() {
             <div className="tw-py-8 tw-border tw-border-black" onClick={() => history.push('/user') }>
                 List User
             </div>
+            <div className="tw-py-8 tw-border tw-border-black" onClick={() => history.push('/presensi') }>
+                Presensi
+            </div>
             <div className="tw-py-8 tw-border tw-border-black" onClick={() => history.push('/products')}>
                 Produk
             </div>
