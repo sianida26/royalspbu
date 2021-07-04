@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\PresenceToken;
 use App\Models\Presence;
+use App\Models\User;
 use Illuminate\Support\Arr;
 use Carbon\Carbon;
 use Debugbar;
@@ -54,5 +55,17 @@ class PresenceController extends Controller
             'name' => $user->name,
             'timestamp' => $presence->timestamp->format('d M Y; H:i:s'),
         ];
+    }
+
+    public function list(Request $request){
+
+        $operators = User::role('operator')->get();
+        return $operators->map(function($user){
+            return [
+                'name' => $user->name,
+                'id' => $user->id,
+                'status' => $user->isTodayPresence(),
+            ];
+        });
     }
 }

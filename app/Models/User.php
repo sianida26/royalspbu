@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Permission\Traits\HasRoles;
 use Laravel\Passport\HasApiTokens;
+use Carbon\Carbon;
 
 class User extends Authenticatable
 {
@@ -40,12 +41,17 @@ class User extends Authenticatable
      */
     protected $casts = [];
 
-
     public function presenceToken(){
         return $this->hasOne(PresenceToken::class);
     }
 
     public function presence(){
-        return $this->hasOne(Presence::class);
+        return $this->hasMany(Presence::class);
+    }
+
+
+    // helper functions
+    public function isTodayPresence(){
+        return $this->presence()->whereDate('timestamp', Carbon::today())->exists();
     }
 }

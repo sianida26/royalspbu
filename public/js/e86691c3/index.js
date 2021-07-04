@@ -7636,9 +7636,8 @@ var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/r
 
 var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
 
-var AuthProvider_1 = __webpack_require__(/*! ../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx");
+var AuthProvider_1 = __webpack_require__(/*! ../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx"); // import axios from '../utils/oooperator'
 
-var oooperator_1 = __importDefault(__webpack_require__(Object(function webpackMissingModule() { var e = new Error("Cannot find module '../utils/oooperator'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())));
 
 var DB_1 = __importDefault(__webpack_require__(/*! ../utils/DB */ "./resources/js/RoyalSPBU/utils/DB.ts"));
 
@@ -7648,10 +7647,11 @@ function Logout() {
 
   var _a = AuthProvider_1.useAuth(),
       auth = _a.auth,
-      setAuthState = _a.setAuthState;
+      setAuthState = _a.setAuthState,
+      axios = _a.axios;
 
   react_1["default"].useEffect(function () {
-    oooperator_1["default"]({
+    axios({
       method: 'get',
       url: '/logout'
     });
@@ -8184,6 +8184,8 @@ var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/r
 
 var Scan_1 = __importDefault(__webpack_require__(/*! ./Scan */ "./resources/js/RoyalSPBU/pages/adminPages/presence/Scan.tsx"));
 
+var PresenceListTab_1 = __importDefault(__webpack_require__(/*! ./PresenceListTab */ "./resources/js/RoyalSPBU/pages/adminPages/presence/PresenceListTab.tsx"));
+
 var Tab;
 
 (function (Tab) {
@@ -8210,10 +8212,96 @@ function Presence() {
     onClick: function onClick() {
       return setTab(Tab.LIST);
     }
-  }, "List Presensi")), tab === Tab.SCAN ? react_1["default"].createElement(Scan_1["default"], null) : react_1["default"].createElement("div", null, "Belum diprogram"));
+  }, "List Presensi")), tab === Tab.SCAN ? react_1["default"].createElement(Scan_1["default"], null) : react_1["default"].createElement(PresenceListTab_1["default"], null));
 }
 
 exports.default = Presence;
+
+/***/ }),
+
+/***/ "./resources/js/RoyalSPBU/pages/adminPages/presence/PresenceListTab.tsx":
+/*!******************************************************************************!*\
+  !*** ./resources/js/RoyalSPBU/pages/adminPages/presence/PresenceListTab.tsx ***!
+  \******************************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var AuthProvider_1 = __webpack_require__(/*! ../../../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx");
+
+var notistack_1 = __webpack_require__(/*! notistack */ "./node_modules/notistack/dist/notistack.esm.js");
+
+function PresenceListTab() {
+  var axios = AuthProvider_1.useAuth().axios;
+  var enqueueSnackbar = notistack_1.useSnackbar().enqueueSnackbar;
+
+  var _a = react_1["default"].useState(false),
+      isShowingDetail = _a[0],
+      setShowingDetail = _a[1];
+
+  var _b = react_1["default"].useState([]),
+      presences = _b[0],
+      setPresences = _b[1];
+
+  var _c = react_1["default"].useState(true),
+      isLoading = _c[0],
+      setLoading = _c[1];
+
+  react_1["default"].useEffect(function () {
+    requestPresenceList();
+  }, []);
+
+  var requestPresenceList = function requestPresenceList() {
+    setLoading(true);
+    axios({
+      method: 'get',
+      url: '/admin/presence/list'
+    }).then(function (result) {
+      var data = result.data;
+      setPresences(data);
+    })["catch"](function (error) {
+      var errorMessage = error.pesan ? error.pesan : "Terjadi kesalahan pada pengaturan request ini. Silakan hubungi Admin.";
+      enqueueSnackbar(errorMessage, {
+        variant: "error"
+      });
+    })["finally"](function () {
+      setLoading(false);
+    });
+  };
+
+  return react_1["default"].createElement("div", {
+    className: "tw-w-full"
+  }, react_1["default"].createElement("table", {
+    className: "tw-w-full"
+  }, react_1["default"].createElement("thead", {
+    className: "tw-text-left"
+  }, react_1["default"].createElement("tr", null, react_1["default"].createElement("th", null, "#"), react_1["default"].createElement("th", null, "Nama"), react_1["default"].createElement("th", null, "Kehadiran"))), react_1["default"].createElement("tbody", null, isLoading ? react_1["default"].createElement("tr", null, react_1["default"].createElement("td", {
+    colSpan: 3,
+    className: "tw-text-center"
+  }, "Loading...")) : presences.length <= 0 ? react_1["default"].createElement("tr", null, react_1["default"].createElement("td", {
+    colSpan: 3,
+    className: "tw-text-center"
+  }, "Tidak ada data")) : presences.map(function (user, i) {
+    return react_1["default"].createElement("tr", {
+      key: user.id
+    }, react_1["default"].createElement("td", null, i + 1), react_1["default"].createElement("td", null, user.name), react_1["default"].createElement("td", null, user.status ? 'Hadir' : 'Tidak hadir'));
+  }))));
+}
+
+exports.default = PresenceListTab;
 
 /***/ }),
 

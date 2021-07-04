@@ -1,6 +1,7 @@
 import React from 'react'
 
 import Scan from './Scan'
+import PresenceList from './PresenceListTab'
 
 enum Tab{
     SCAN,
@@ -18,7 +19,7 @@ export default function Presence() {
                 <span className={`${tab !== Tab.SCAN && 'tw-border tw-border-black'}`} onClick={() => setTab(Tab.LIST)}>List Presensi</span>
             </div>
             {
-                tab === Tab.SCAN ? <Scan /> : <div>Belum diprogram</div>
+                tab === Tab.SCAN ? <Scan /> : <PresenceList />
             }
         </div>
     )

@@ -2,14 +2,14 @@ import React from 'react'
 import { useHistory } from 'react-router-dom'
 
 import {useAuth} from '../providers/AuthProvider'
-import axios from '../utils/oooperator'
+// import axios from '../utils/oooperator'
 import DB from '../utils/DB'
 
 export default function Logout() {
 
     const history = useHistory()
     const db = new DB()
-    const {auth, setAuthState} = useAuth()
+    const {auth, setAuthState, axios} = useAuth()
 
     React.useEffect(() => {
         axios({method: 'get', url: '/logout'})

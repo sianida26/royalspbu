@@ -78,6 +78,7 @@ Route::middleware('auth:api')->group(function(){
         });
         
         Route::prefix('presence')->group(function(){
+            Route::get('list', [PresenceController::class, 'list']);
             Route::post('scan', [PresenceController::class, 'scan']);
         });
     });
