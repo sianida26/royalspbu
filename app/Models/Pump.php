@@ -8,6 +8,18 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 use Debugbar;
 
+
+/**
+ * 
+ * Table name : pumps
+ * Columns :
+ * - id
+ * - created_at : timestamp
+ * - updated_at : timestamp
+ * - deleted_at : timestamp
+ * 
+ */
+
 class Pump extends Model
 {
     use HasFactory, SoftDeletes;

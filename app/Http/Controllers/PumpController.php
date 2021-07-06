@@ -131,4 +131,22 @@ class PumpController extends Controller
         $pump->hapus();
         return 'ok';
     }
+
+    public function getAvailablePumps(Request $request){
+
+        return Pump::all()->map(function($pump){
+            return [
+                'id' => $pump->id,
+                'available' => true,
+                'nozzles' => $pump->nozzles->map(function($nozzle){
+                    return [
+                        'id' => $nozzle->id,
+                        'initialTotalizator' => $nozzle->totalizator,
+                        'price' => $nozzle->tank->product->price,
+                        'productName' => $nozzle->tank->product->name,
+                    ];
+                }),
+            ];
+        });
+    }
 }

@@ -7252,6 +7252,9 @@ function OperatorRoutes() {
       exact: !route.isNotExact,
       component: route.component
     });
+  }), react_1["default"].createElement(react_router_dom_1.Redirect, {
+    path: "/login",
+    to: "/"
   }), react_1["default"].createElement(react_router_dom_1.Route, null, react_1["default"].createElement(NotFound_1["default"], null)));
 }
 
@@ -11354,6 +11357,459 @@ exports.default = Home;
 
 /***/ }),
 
+/***/ "./resources/js/RoyalSPBU/pages/operatorPages/Laporan/IsiLaporan.tsx":
+/*!***************************************************************************!*\
+  !*** ./resources/js/RoyalSPBU/pages/operatorPages/Laporan/IsiLaporan.tsx ***!
+  \***************************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __assign = this && this.__assign || function () {
+  __assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+
+      for (var p in s) {
+        if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+      }
+    }
+
+    return t;
+  };
+
+  return __assign.apply(this, arguments);
+};
+
+var __spreadArray = this && this.__spreadArray || function (to, from) {
+  for (var i = 0, il = from.length, j = to.length; i < il; i++, j++) {
+    to[j] = from[i];
+  }
+
+  return to;
+};
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var compressorjs_1 = __importDefault(__webpack_require__(/*! compressorjs */ "./node_modules/compressorjs/dist/compressor.js"));
+
+var _1 = __webpack_require__(/*! . */ "./resources/js/RoyalSPBU/pages/operatorPages/Laporan/index.tsx");
+
+var AuthProvider_1 = __webpack_require__(/*! ../../../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx");
+
+function IsiLaporan(_a) {
+  var report = _a.report,
+      handleSubmitIsi = _a.handleSubmitIsi;
+  var axios = AuthProvider_1.useAuth().axios;
+
+  var _b = react_1["default"].useState(report),
+      pump = _b[0],
+      setPump = _b[1];
+
+  react_1["default"].useEffect(function () {
+    setPump(report);
+  }, []);
+
+  var setNozzleData = function setNozzleData(id, data) {
+    var nozzle = pump.nozzles.find(function (nozzle) {
+      return nozzle.id === id;
+    });
+
+    if (nozzle) {
+      var newData_1 = __assign(__assign({}, nozzle), data);
+
+      setPump(function (prev) {
+        return __assign(__assign({}, prev), {
+          nozzles: __spreadArray(__spreadArray([], prev.nozzles.filter(function (nozzle) {
+            return nozzle.id !== id;
+          })), [newData_1])
+        });
+      });
+    }
+
+    console.log("Failed to updating nozzle data with id " + id);
+  };
+
+  var handleInputTotalizator = function handleInputTotalizator(value, id) {
+    // setPump(prev => prev.setNozzleData(id, {finalTotalizator: +value}))
+    setNozzleData(id, {
+      finalTotalizator: +value
+    });
+  };
+
+  var handleChooseImage = function handleChooseImage(event, id) {
+    if (event.target.files && event.target.files[0]) {
+      // setPump(prev => prev.setNozzleData(id, {
+      //     uploadErrorMsg: '',
+      //     imageUrl: URL.createObjectURL(event.target.files![0]),
+      //     uploadStatus: UploadStatus.COMPRESSING,
+      //     uploadProgress: 0,
+      // }))
+      setNozzleData(id, {
+        uploadErrorMsg: '',
+        imageUrl: URL.createObjectURL(event.target.files[0]),
+        uploadStatus: _1.UploadStatus.COMPRESSING,
+        uploadProgress: 0
+      });
+      new compressorjs_1["default"](event.target.files[0], {
+        quality: 0.6,
+        success: function success(result) {
+          var formData = new FormData();
+          formData.append('image', result, 'image.jpeg');
+          axios({
+            method: 'post',
+            url: '/uploadBuktiTotalizer',
+            data: formData,
+            onUploadProgress: function onUploadProgress(progressEvent) {
+              // setPump(prev => prev.setNozzleData(id,{
+              //     uploadStatus: UploadStatus.UPLOADING,
+              //     uploadProgress: (progressEvent.loaded/progressEvent.total)*100,
+              // }))
+              setNozzleData(id, {
+                uploadStatus: _1.UploadStatus.UPLOADING,
+                uploadProgress: progressEvent.loaded / progressEvent.total * 100
+              });
+            }
+          }).then(function (response) {
+            console.log(response); // setPump(prev => prev.setNozzleData(id,{
+            //     uploadStatus: UploadStatus.UPLOADED,
+            //     uploadProgress: -1,
+            //     reportFilename: response.data
+            // }))
+
+            setNozzleData(id, {
+              uploadStatus: _1.UploadStatus.UPLOADED,
+              uploadProgress: -1,
+              reportFilename: response.data
+            });
+          })["catch"](function (err) {
+            var _a, _b, _c; // setPump(prev => prev.setNozzleData(id, {
+            //     uploadStatus: UploadStatus.ERROR,
+            //     uploadProgress: -1,
+            //     uploadErrorMsg: err.response?.data?.errors?.image[0] || 'Terjadi kesalahan ketika mengirim'
+            // }))
+
+
+            setNozzleData(id, {
+              uploadStatus: _1.UploadStatus.ERROR,
+              uploadProgress: -1,
+              uploadErrorMsg: ((_c = (_b = (_a = err.response) === null || _a === void 0 ? void 0 : _a.data) === null || _b === void 0 ? void 0 : _b.errors) === null || _c === void 0 ? void 0 : _c.image[0]) || 'Terjadi kesalahan ketika mengirim'
+            });
+            console.log(err.response);
+          });
+        },
+        error: function error(_error) {
+          console.log(_error.message); //add error message for this file
+          // setPump(prev => prev.setNozzleData(id, {
+          //     uploadStatus: UploadStatus.ERROR,
+          //     uploadProgress: -1,
+          //     uploadErrorMsg: 'File tidak bisa diproses',
+          // }))
+
+          setNozzleData(id, {
+            uploadStatus: _1.UploadStatus.ERROR,
+            uploadProgress: -1,
+            uploadErrorMsg: 'File tidak bisa diproses'
+          });
+        }
+      });
+    }
+  };
+
+  return react_1["default"].createElement("div", {
+    className: "tw-flex tw-flex-col tw-gap-2"
+  }, pump.nozzles.map(function (nozzle, i) {
+    return react_1["default"].createElement("div", {
+      key: nozzle.id
+    }, react_1["default"].createElement("p", {
+      className: "tw-font-bold"
+    }, "Nozzle ", i + 1), react_1["default"].createElement("p", null, "Nama Produk: ", nozzle.productName), react_1["default"].createElement("p", null, "Totalisator Akhir"), react_1["default"].createElement("input", {
+      type: "number",
+      value: nozzle.finalTotalizator,
+      onChange: function onChange(e) {
+        return handleInputTotalizator(e.target.value, nozzle.id);
+      },
+      className: "tw-border tw-border-black tw-p-2"
+    }), react_1["default"].createElement("img", {
+      src: nozzle.imageUrl
+    }), react_1["default"].createElement("input", {
+      type: "file",
+      accept: "images/*",
+      onChange: function onChange(event) {
+        return handleChooseImage(event, nozzle.id);
+      }
+    }), nozzle.uploadProgress >= 0 && react_1["default"].createElement("div", {
+      className: "tw-flex tw-flex-col tw-w-full"
+    }, react_1["default"].createElement("progress", {
+      value: nozzle.uploadProgress,
+      max: 100
+    }, nozzle.uploadProgress, "%"), react_1["default"].createElement("p", {
+      className: ""
+    }, nozzle.uploadStatus === _1.UploadStatus.COMPRESSING ? 'Mengompres...' : 'Mengupload...')), react_1["default"].createElement("p", {
+      className: "tw-text-red-500"
+    }, nozzle.uploadErrorMsg));
+  }), react_1["default"].createElement("button", {
+    className: "tw-border tw-bg-gray-400",
+    onClick: function onClick() {
+      return handleSubmitIsi(pump);
+    }
+  }, "Selanjutnya"));
+}
+
+exports.default = IsiLaporan;
+
+/***/ }),
+
+/***/ "./resources/js/RoyalSPBU/pages/operatorPages/Laporan/PilihPompa.tsx":
+/*!***************************************************************************!*\
+  !*** ./resources/js/RoyalSPBU/pages/operatorPages/Laporan/PilihPompa.tsx ***!
+  \***************************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+function PilihPompa(_a) {
+  var pumps = _a.pumps,
+      handlePilihPompa = _a.handlePilihPompa;
+  return pumps.length > 0 ? react_1["default"].createElement("div", {
+    className: "tw-grid tw-grid-cols-2 tw-w-full tw-gap-8"
+  }, pumps.map(function (pump, i) {
+    return react_1["default"].createElement("div", {
+      key: pump.id,
+      onClick: function onClick() {
+        return handlePilihPompa(pump);
+      },
+      className: "tw-w-24 tw-h-24 tw-border tw-border-black " + (!pump.available && 'tw-bg-gray-400')
+    }, "pulau pompa " + (i + 1));
+  })) : react_1["default"].createElement("div", null, "Tidak ada pompa");
+}
+
+exports.default = PilihPompa;
+
+/***/ }),
+
+/***/ "./resources/js/RoyalSPBU/pages/operatorPages/Laporan/index.tsx":
+/*!**********************************************************************!*\
+  !*** ./resources/js/RoyalSPBU/pages/operatorPages/Laporan/index.tsx ***!
+  \**********************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __assign = this && this.__assign || function () {
+  __assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+
+      for (var p in s) {
+        if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+      }
+    }
+
+    return t;
+  };
+
+  return __assign.apply(this, arguments);
+};
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.UploadStatus = void 0;
+
+var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var notistack_1 = __webpack_require__(/*! notistack */ "./node_modules/notistack/dist/notistack.esm.js"); // import Pump from '../../../models/Pump'
+// import Nozzle from '../../../models/Nozzle'
+
+
+var AuthProvider_1 = __webpack_require__(/*! ../../../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx");
+
+var PilihPompa_1 = __importDefault(__webpack_require__(/*! ./PilihPompa */ "./resources/js/RoyalSPBU/pages/operatorPages/Laporan/PilihPompa.tsx"));
+
+var IsiLaporan_1 = __importDefault(__webpack_require__(/*! ./IsiLaporan */ "./resources/js/RoyalSPBU/pages/operatorPages/Laporan/IsiLaporan.tsx")); //TODO REFACTOR. This page needs so much refactoring
+//TODO buat alert kalau file tidak bisa diupload karena offline
+
+
+var StepLaporan;
+
+(function (StepLaporan) {
+  StepLaporan[StepLaporan["PilihPompa"] = 0] = "PilihPompa";
+  StepLaporan[StepLaporan["IsiLaporan"] = 1] = "IsiLaporan";
+  StepLaporan[StepLaporan["PeriksaLaporan"] = 2] = "PeriksaLaporan";
+})(StepLaporan || (StepLaporan = {}));
+
+var UploadStatus;
+
+(function (UploadStatus) {
+  UploadStatus[UploadStatus["NONE"] = 0] = "NONE";
+  UploadStatus[UploadStatus["COMPRESSING"] = 1] = "COMPRESSING";
+  UploadStatus[UploadStatus["UPLOADING"] = 2] = "UPLOADING";
+  UploadStatus[UploadStatus["ERROR"] = 3] = "ERROR";
+  UploadStatus[UploadStatus["UPLOADED"] = 4] = "UPLOADED";
+})(UploadStatus = exports.UploadStatus || (exports.UploadStatus = {}));
+
+var defaultPumpObj = {
+  id: -1,
+  available: false,
+  nozzles: []
+};
+
+function Laporan() {
+  var axios = AuthProvider_1.useAuth().axios;
+  var enqueueSnackbar = notistack_1.useSnackbar().enqueueSnackbar;
+
+  var _a = react_1["default"].useState(StepLaporan.PilihPompa),
+      step = _a[0],
+      setStep = _a[1];
+
+  var _b = react_1["default"].useState(defaultPumpObj),
+      report = _b[0],
+      setReport = _b[1];
+
+  var _c = react_1["default"].useState(true),
+      isLoading = _c[0],
+      setLoading = _c[1];
+
+  var _d = react_1["default"].useState([]),
+      pumps = _d[0],
+      setPumps = _d[1]; // const selectedPump = React.useRef<Pump>(defaultPumpObj)
+
+
+  react_1["default"].useEffect(function () {
+    requestAvailablePumps();
+  }, []);
+
+  var requestAvailablePumps = function requestAvailablePumps() {
+    setLoading(true);
+    axios({
+      method: 'get',
+      url: '/getAvailablePumps'
+    }).then(function (response) {
+      var data = response.data;
+      setPumps(data);
+    })["catch"](function (error) {
+      var errorMessage = error.pesan ? error.pesan : "Terjadi kesalahan pada pengaturan request ini. Silakan hubungi Admin.";
+      enqueueSnackbar(errorMessage, {
+        variant: "error"
+      });
+    })["finally"](function () {
+      return setLoading(false);
+    });
+  };
+
+  var _handlePilihPompa = function handlePilihPompa(pump) {
+    setReport(__assign(__assign({}, pump), {
+      nozzles: pump.nozzles.map(function (nozzle) {
+        return __assign(__assign({}, nozzle), {
+          finalTotalizator: 0,
+          imageUrl: '',
+          reportFilename: '',
+          uploadErrorMsg: '',
+          uploadProgress: -1,
+          uploadStatus: UploadStatus.NONE
+        });
+      })
+    }));
+    setStep(StepLaporan.IsiLaporan);
+  };
+
+  var _handleSubmitIsi = function handleSubmitIsi(pump) {
+    //cek apakah sudah terisi semua
+    // selectedPump.current = pump
+    // let anyEmpty = pump.nozzles.some(nozzle => (nozzle.data.finalTotalizator == undefined || nozzle.data.reportFilename == ""))
+    // if (anyEmpty) enqueueSnackbar('Anda harus mengisi semua masukan untuk melanjutkan',{variant: 'error'})
+    // else setStep(StepLaporan.PeriksaLaporan)
+    alert('belum diprogram');
+  };
+
+  var renderPilihPompa = function renderPilihPompa() {
+    return isLoading ? react_1["default"].createElement("div", null, "Loading...") : react_1["default"].createElement(PilihPompa_1["default"], {
+      pumps: pumps,
+      handlePilihPompa: function handlePilihPompa(pump) {
+        return _handlePilihPompa(pump);
+      }
+    });
+  };
+
+  var renderIsiLaporan = function renderIsiLaporan() {
+    return react_1["default"].createElement(IsiLaporan_1["default"], {
+      report: report,
+      handleSubmitIsi: function handleSubmitIsi(report) {
+        return _handleSubmitIsi(report);
+      }
+    });
+  };
+
+  var renderPeriksaLaporan = function renderPeriksaLaporan() {// return (
+    //     <div className="tw-flex tw-flex-col tw-gap-2">
+    //         <p className="tw-text-center">Laporan pulau pompa {report.pump}</p>
+    //         {/* {
+    //             Object.entries(report.nozzles).map(([nozzle, totalisator]) => (
+    //                 <p>nozzle {nozzle} : {totalisator}</p>
+    //             ))
+    //         } */}
+    //         {
+    //             selectedPump.current.nozzles.map((nozzle, i) => {
+    //                 return (<div className="tw-w-full tw-flex tw-flex-col tw-border tw-p-2 tw-border-black" key={nozzle.id}>
+    //                     <p className="tw-text-center tw-font-bold">Nozzle {i+1}</p>
+    //                     <p>Nama Produk: {nozzle.data.productName}</p>
+    //                     <p>Totalisator Awal: {nozzle.data.initialTotalizator} L</p>
+    //                     <p>Totalisator AKhir: {nozzle.data.finalTotalizator} L</p>
+    //                     <p>Volume penjualan: {nozzle.totalizatorDifference} L</p>
+    //                     <p>Harga per liter: Rp{nozzle.data.price}</p>
+    //                     <p>Total pendapatan: Rp{nozzle.data.price*nozzle.totalizatorDifference}</p>
+    //                     <p>Bukti foto</p>
+    //                 </div>
+    //             )})
+    //         }
+    //         {/* <button className="tw-border tw-bg-gray-400" onClick={handleSubmitIsi}>Kirim</button> */}
+    //     </div>
+    // )
+  };
+
+  return react_1["default"].createElement("div", {
+    className: "tw-max-w-screen tw-w-full"
+  }, react_1["default"].createElement("p", {
+    className: "tw-text-center"
+  }, step === StepLaporan.PilihPompa ? 'Pilih Pompa' : step === StepLaporan.IsiLaporan ? 'Isi Laporan' : 'Periksa Laporan'), step === StepLaporan.PilihPompa ? renderPilihPompa() : step === StepLaporan.IsiLaporan ? renderIsiLaporan() : renderPeriksaLaporan());
+}
+
+exports.default = Laporan;
+
+/***/ }),
+
 /***/ "./resources/js/RoyalSPBU/providers/AdminConfigProvider.tsx":
 /*!******************************************************************!*\
   !*** ./resources/js/RoyalSPBU/providers/AdminConfigProvider.tsx ***!
@@ -12056,6 +12512,8 @@ var Absen_1 = __importDefault(__webpack_require__(/*! ../pages/operatorPages/Abs
 
 var Logout_1 = __importDefault(__webpack_require__(/*! ../pages/Logout */ "./resources/js/RoyalSPBU/pages/Logout.tsx"));
 
+var Laporan_1 = __importDefault(__webpack_require__(/*! ../pages/operatorPages/Laporan */ "./resources/js/RoyalSPBU/pages/operatorPages/Laporan/index.tsx"));
+
 var routes = [{
   path: '/',
   component: Home_1["default"]
@@ -12065,6 +12523,9 @@ var routes = [{
 }, {
   path: '/logout',
   component: Logout_1["default"]
+}, {
+  path: '/laporan',
+  component: Laporan_1["default"]
 }];
 exports.default = routes;
 
@@ -12245,6 +12706,986 @@ function toVal(mix) {
 	}
 	return str;
 }
+
+
+/***/ }),
+
+/***/ "./node_modules/compressorjs/dist/compressor.js":
+/*!******************************************************!*\
+  !*** ./node_modules/compressorjs/dist/compressor.js ***!
+  \******************************************************/
+/***/ (function(module) {
+
+/*!
+ * Compressor.js v1.0.7
+ * https://fengyuanchen.github.io/compressorjs
+ *
+ * Copyright 2018-present Chen Fengyuan
+ * Released under the MIT license
+ *
+ * Date: 2020-11-28T07:13:17.754Z
+ */
+
+(function (global, factory) {
+   true ? module.exports = factory() :
+  0;
+}(this, (function () { 'use strict';
+
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
+
+  function _defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
+
+  function _createClass(Constructor, protoProps, staticProps) {
+    if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) _defineProperties(Constructor, staticProps);
+    return Constructor;
+  }
+
+  function _defineProperty(obj, key, value) {
+    if (key in obj) {
+      Object.defineProperty(obj, key, {
+        value: value,
+        enumerable: true,
+        configurable: true,
+        writable: true
+      });
+    } else {
+      obj[key] = value;
+    }
+
+    return obj;
+  }
+
+  function _extends() {
+    _extends = Object.assign || function (target) {
+      for (var i = 1; i < arguments.length; i++) {
+        var source = arguments[i];
+
+        for (var key in source) {
+          if (Object.prototype.hasOwnProperty.call(source, key)) {
+            target[key] = source[key];
+          }
+        }
+      }
+
+      return target;
+    };
+
+    return _extends.apply(this, arguments);
+  }
+
+  function ownKeys(object, enumerableOnly) {
+    var keys = Object.keys(object);
+
+    if (Object.getOwnPropertySymbols) {
+      var symbols = Object.getOwnPropertySymbols(object);
+      if (enumerableOnly) symbols = symbols.filter(function (sym) {
+        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+      });
+      keys.push.apply(keys, symbols);
+    }
+
+    return keys;
+  }
+
+  function _objectSpread2(target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i] != null ? arguments[i] : {};
+
+      if (i % 2) {
+        ownKeys(Object(source), true).forEach(function (key) {
+          _defineProperty(target, key, source[key]);
+        });
+      } else if (Object.getOwnPropertyDescriptors) {
+        Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+      } else {
+        ownKeys(Object(source)).forEach(function (key) {
+          Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+        });
+      }
+    }
+
+    return target;
+  }
+
+  function createCommonjsModule(fn, basedir, module) {
+  	return module = {
+  		path: basedir,
+  		exports: {},
+  		require: function (path, base) {
+  			return commonjsRequire(path, (base === undefined || base === null) ? module.path : base);
+  		}
+  	}, fn(module, module.exports), module.exports;
+  }
+
+  function commonjsRequire () {
+  	throw new Error('Dynamic requires are not currently supported by @rollup/plugin-commonjs');
+  }
+
+  var canvasToBlob = createCommonjsModule(function (module) {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    (function (window) {
+
+      var CanvasPrototype = window.HTMLCanvasElement && window.HTMLCanvasElement.prototype;
+
+      var hasBlobConstructor = window.Blob && function () {
+        try {
+          return Boolean(new Blob());
+        } catch (e) {
+          return false;
+        }
+      }();
+
+      var hasArrayBufferViewSupport = hasBlobConstructor && window.Uint8Array && function () {
+        try {
+          return new Blob([new Uint8Array(100)]).size === 100;
+        } catch (e) {
+          return false;
+        }
+      }();
+
+      var BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder || window.MSBlobBuilder;
+      var dataURIPattern = /^data:((.*?)(;charset=.*?)?)(;base64)?,/;
+
+      var dataURLtoBlob = (hasBlobConstructor || BlobBuilder) && window.atob && window.ArrayBuffer && window.Uint8Array && function (dataURI) {
+        var matches, mediaType, isBase64, dataString, byteString, arrayBuffer, intArray, i, bb; // Parse the dataURI components as per RFC 2397
+
+        matches = dataURI.match(dataURIPattern);
+
+        if (!matches) {
+          throw new Error('invalid data URI');
+        } // Default to text/plain;charset=US-ASCII
+
+
+        mediaType = matches[2] ? matches[1] : 'text/plain' + (matches[3] || ';charset=US-ASCII');
+        isBase64 = !!matches[4];
+        dataString = dataURI.slice(matches[0].length);
+
+        if (isBase64) {
+          // Convert base64 to raw binary data held in a string:
+          byteString = atob(dataString);
+        } else {
+          // Convert base64/URLEncoded data component to raw binary:
+          byteString = decodeURIComponent(dataString);
+        } // Write the bytes of the string to an ArrayBuffer:
+
+
+        arrayBuffer = new ArrayBuffer(byteString.length);
+        intArray = new Uint8Array(arrayBuffer);
+
+        for (i = 0; i < byteString.length; i += 1) {
+          intArray[i] = byteString.charCodeAt(i);
+        } // Write the ArrayBuffer (or ArrayBufferView) to a blob:
+
+
+        if (hasBlobConstructor) {
+          return new Blob([hasArrayBufferViewSupport ? intArray : arrayBuffer], {
+            type: mediaType
+          });
+        }
+
+        bb = new BlobBuilder();
+        bb.append(arrayBuffer);
+        return bb.getBlob(mediaType);
+      };
+
+      if (window.HTMLCanvasElement && !CanvasPrototype.toBlob) {
+        if (CanvasPrototype.mozGetAsFile) {
+          CanvasPrototype.toBlob = function (callback, type, quality) {
+            var self = this;
+            setTimeout(function () {
+              if (quality && CanvasPrototype.toDataURL && dataURLtoBlob) {
+                callback(dataURLtoBlob(self.toDataURL(type, quality)));
+              } else {
+                callback(self.mozGetAsFile('blob', type));
+              }
+            });
+          };
+        } else if (CanvasPrototype.toDataURL && dataURLtoBlob) {
+          if (CanvasPrototype.msToBlob) {
+            CanvasPrototype.toBlob = function (callback, type, quality) {
+              var self = this;
+              setTimeout(function () {
+                if ((type && type !== 'image/png' || quality) && CanvasPrototype.toDataURL && dataURLtoBlob) {
+                  callback(dataURLtoBlob(self.toDataURL(type, quality)));
+                } else {
+                  callback(self.msToBlob(type));
+                }
+              });
+            };
+          } else {
+            CanvasPrototype.toBlob = function (callback, type, quality) {
+              var self = this;
+              setTimeout(function () {
+                callback(dataURLtoBlob(self.toDataURL(type, quality)));
+              });
+            };
+          }
+        }
+      }
+
+      if ( module.exports) {
+        module.exports = dataURLtoBlob;
+      } else {
+        window.dataURLtoBlob = dataURLtoBlob;
+      }
+    })(window);
+  });
+
+  var isBlob = function isBlob(value) {
+    if (typeof Blob === 'undefined') {
+      return false;
+    }
+
+    return value instanceof Blob || Object.prototype.toString.call(value) === '[object Blob]';
+  };
+
+  var DEFAULTS = {
+    /**
+     * Indicates if output the original image instead of the compressed one
+     * when the size of the compressed image is greater than the original one's
+     * @type {boolean}
+     */
+    strict: true,
+
+    /**
+     * Indicates if read the image's Exif Orientation information,
+     * and then rotate or flip the image automatically.
+     * @type {boolean}
+     */
+    checkOrientation: true,
+
+    /**
+     * The max width of the output image.
+     * @type {number}
+     */
+    maxWidth: Infinity,
+
+    /**
+     * The max height of the output image.
+     * @type {number}
+     */
+    maxHeight: Infinity,
+
+    /**
+     * The min width of the output image.
+     * @type {number}
+     */
+    minWidth: 0,
+
+    /**
+     * The min height of the output image.
+     * @type {number}
+     */
+    minHeight: 0,
+
+    /**
+     * The width of the output image.
+     * If not specified, the natural width of the source image will be used.
+     * @type {number}
+     */
+    width: undefined,
+
+    /**
+     * The height of the output image.
+     * If not specified, the natural height of the source image will be used.
+     * @type {number}
+     */
+    height: undefined,
+
+    /**
+     * The quality of the output image.
+     * It must be a number between `0` and `1`,
+     * and only available for `image/jpeg` and `image/webp` images.
+     * Check out {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob canvas.toBlob}.
+     * @type {number}
+     */
+    quality: 0.8,
+
+    /**
+     * The mime type of the output image.
+     * By default, the original mime type of the source image file will be used.
+     * @type {string}
+     */
+    mimeType: 'auto',
+
+    /**
+     * PNG files over this value (5 MB by default) will be converted to JPEGs.
+     * To disable this, just set the value to `Infinity`.
+     * @type {number}
+     */
+    convertSize: 5000000,
+
+    /**
+     * The hook function to execute before draw the image into the canvas for compression.
+     * @type {Function}
+     * @param {CanvasRenderingContext2D} context - The 2d rendering context of the canvas.
+     * @param {HTMLCanvasElement} canvas - The canvas for compression.
+     * @example
+     * function (context, canvas) {
+     *   context.fillStyle = '#fff';
+     * }
+     */
+    beforeDraw: null,
+
+    /**
+     * The hook function to execute after drew the image into the canvas for compression.
+     * @type {Function}
+     * @param {CanvasRenderingContext2D} context - The 2d rendering context of the canvas.
+     * @param {HTMLCanvasElement} canvas - The canvas for compression.
+     * @example
+     * function (context, canvas) {
+     *   context.filter = 'grayscale(100%)';
+     * }
+     */
+    drew: null,
+
+    /**
+     * The hook function to execute when success to compress the image.
+     * @type {Function}
+     * @param {File} file - The compressed image File object.
+     * @example
+     * function (file) {
+     *   console.log(file);
+     * }
+     */
+    success: null,
+
+    /**
+     * The hook function to execute when fail to compress the image.
+     * @type {Function}
+     * @param {Error} err - An Error object.
+     * @example
+     * function (err) {
+     *   console.log(err.message);
+     * }
+     */
+    error: null
+  };
+
+  var IS_BROWSER = typeof window !== 'undefined' && typeof window.document !== 'undefined';
+  var WINDOW = IS_BROWSER ? window : {};
+
+  var slice = Array.prototype.slice;
+  /**
+   * Convert array-like or iterable object to an array.
+   * @param {*} value - The value to convert.
+   * @returns {Array} Returns a new array.
+   */
+
+  function toArray(value) {
+    return Array.from ? Array.from(value) : slice.call(value);
+  }
+  var REGEXP_IMAGE_TYPE = /^image\/.+$/;
+  /**
+   * Check if the given value is a mime type of image.
+   * @param {*} value - The value to check.
+   * @returns {boolean} Returns `true` if the given is a mime type of image, else `false`.
+   */
+
+  function isImageType(value) {
+    return REGEXP_IMAGE_TYPE.test(value);
+  }
+  /**
+   * Convert image type to extension.
+   * @param {string} value - The image type to convert.
+   * @returns {boolean} Returns the image extension.
+   */
+
+  function imageTypeToExtension(value) {
+    var extension = isImageType(value) ? value.substr(6) : '';
+
+    if (extension === 'jpeg') {
+      extension = 'jpg';
+    }
+
+    return ".".concat(extension);
+  }
+  var fromCharCode = String.fromCharCode;
+  /**
+   * Get string from char code in data view.
+   * @param {DataView} dataView - The data view for read.
+   * @param {number} start - The start index.
+   * @param {number} length - The read length.
+   * @returns {string} The read result.
+   */
+
+  function getStringFromCharCode(dataView, start, length) {
+    var str = '';
+    var i;
+    length += start;
+
+    for (i = start; i < length; i += 1) {
+      str += fromCharCode(dataView.getUint8(i));
+    }
+
+    return str;
+  }
+  var btoa = WINDOW.btoa;
+  /**
+   * Transform array buffer to Data URL.
+   * @param {ArrayBuffer} arrayBuffer - The array buffer to transform.
+   * @param {string} mimeType - The mime type of the Data URL.
+   * @returns {string} The result Data URL.
+   */
+
+  function arrayBufferToDataURL(arrayBuffer, mimeType) {
+    var chunks = [];
+    var chunkSize = 8192;
+    var uint8 = new Uint8Array(arrayBuffer);
+
+    while (uint8.length > 0) {
+      // XXX: Babel's `toConsumableArray` helper will throw error in IE or Safari 9
+      // eslint-disable-next-line prefer-spread
+      chunks.push(fromCharCode.apply(null, toArray(uint8.subarray(0, chunkSize))));
+      uint8 = uint8.subarray(chunkSize);
+    }
+
+    return "data:".concat(mimeType, ";base64,").concat(btoa(chunks.join('')));
+  }
+  /**
+   * Get orientation value from given array buffer.
+   * @param {ArrayBuffer} arrayBuffer - The array buffer to read.
+   * @returns {number} The read orientation value.
+   */
+
+  function resetAndGetOrientation(arrayBuffer) {
+    var dataView = new DataView(arrayBuffer);
+    var orientation; // Ignores range error when the image does not have correct Exif information
+
+    try {
+      var littleEndian;
+      var app1Start;
+      var ifdStart; // Only handle JPEG image (start by 0xFFD8)
+
+      if (dataView.getUint8(0) === 0xFF && dataView.getUint8(1) === 0xD8) {
+        var length = dataView.byteLength;
+        var offset = 2;
+
+        while (offset + 1 < length) {
+          if (dataView.getUint8(offset) === 0xFF && dataView.getUint8(offset + 1) === 0xE1) {
+            app1Start = offset;
+            break;
+          }
+
+          offset += 1;
+        }
+      }
+
+      if (app1Start) {
+        var exifIDCode = app1Start + 4;
+        var tiffOffset = app1Start + 10;
+
+        if (getStringFromCharCode(dataView, exifIDCode, 4) === 'Exif') {
+          var endianness = dataView.getUint16(tiffOffset);
+          littleEndian = endianness === 0x4949;
+
+          if (littleEndian || endianness === 0x4D4D
+          /* bigEndian */
+          ) {
+              if (dataView.getUint16(tiffOffset + 2, littleEndian) === 0x002A) {
+                var firstIFDOffset = dataView.getUint32(tiffOffset + 4, littleEndian);
+
+                if (firstIFDOffset >= 0x00000008) {
+                  ifdStart = tiffOffset + firstIFDOffset;
+                }
+              }
+            }
+        }
+      }
+
+      if (ifdStart) {
+        var _length = dataView.getUint16(ifdStart, littleEndian);
+
+        var _offset;
+
+        var i;
+
+        for (i = 0; i < _length; i += 1) {
+          _offset = ifdStart + i * 12 + 2;
+
+          if (dataView.getUint16(_offset, littleEndian) === 0x0112
+          /* Orientation */
+          ) {
+              // 8 is the offset of the current tag's value
+              _offset += 8; // Get the original orientation value
+
+              orientation = dataView.getUint16(_offset, littleEndian); // Override the orientation with its default value
+
+              dataView.setUint16(_offset, 1, littleEndian);
+              break;
+            }
+        }
+      }
+    } catch (e) {
+      orientation = 1;
+    }
+
+    return orientation;
+  }
+  /**
+   * Parse Exif Orientation value.
+   * @param {number} orientation - The orientation to parse.
+   * @returns {Object} The parsed result.
+   */
+
+  function parseOrientation(orientation) {
+    var rotate = 0;
+    var scaleX = 1;
+    var scaleY = 1;
+
+    switch (orientation) {
+      // Flip horizontal
+      case 2:
+        scaleX = -1;
+        break;
+      // Rotate left 180°
+
+      case 3:
+        rotate = -180;
+        break;
+      // Flip vertical
+
+      case 4:
+        scaleY = -1;
+        break;
+      // Flip vertical and rotate right 90°
+
+      case 5:
+        rotate = 90;
+        scaleY = -1;
+        break;
+      // Rotate right 90°
+
+      case 6:
+        rotate = 90;
+        break;
+      // Flip horizontal and rotate right 90°
+
+      case 7:
+        rotate = 90;
+        scaleX = -1;
+        break;
+      // Rotate left 90°
+
+      case 8:
+        rotate = -90;
+        break;
+    }
+
+    return {
+      rotate: rotate,
+      scaleX: scaleX,
+      scaleY: scaleY
+    };
+  }
+  var REGEXP_DECIMALS = /\.\d*(?:0|9){12}\d*$/;
+  /**
+   * Normalize decimal number.
+   * Check out {@link https://0.30000000000000004.com/}
+   * @param {number} value - The value to normalize.
+   * @param {number} [times=100000000000] - The times for normalizing.
+   * @returns {number} Returns the normalized number.
+   */
+
+  function normalizeDecimalNumber(value) {
+    var times = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 100000000000;
+    return REGEXP_DECIMALS.test(value) ? Math.round(value * times) / times : value;
+  }
+
+  var ArrayBuffer$1 = WINDOW.ArrayBuffer,
+      FileReader = WINDOW.FileReader;
+  var URL = WINDOW.URL || WINDOW.webkitURL;
+  var REGEXP_EXTENSION = /\.\w+$/;
+  var AnotherCompressor = WINDOW.Compressor;
+  /**
+   * Creates a new image compressor.
+   * @class
+   */
+
+  var Compressor = /*#__PURE__*/function () {
+    /**
+     * The constructor of Compressor.
+     * @param {File|Blob} file - The target image file for compressing.
+     * @param {Object} [options] - The options for compressing.
+     */
+    function Compressor(file, options) {
+      _classCallCheck(this, Compressor);
+
+      this.file = file;
+      this.image = new Image();
+      this.options = _objectSpread2(_objectSpread2({}, DEFAULTS), options);
+      this.aborted = false;
+      this.result = null;
+      this.init();
+    }
+
+    _createClass(Compressor, [{
+      key: "init",
+      value: function init() {
+        var _this = this;
+
+        var file = this.file,
+            options = this.options;
+
+        if (!isBlob(file)) {
+          this.fail(new Error('The first argument must be a File or Blob object.'));
+          return;
+        }
+
+        var mimeType = file.type;
+
+        if (!isImageType(mimeType)) {
+          this.fail(new Error('The first argument must be an image File or Blob object.'));
+          return;
+        }
+
+        if (!URL || !FileReader) {
+          this.fail(new Error('The current browser does not support image compression.'));
+          return;
+        }
+
+        if (!ArrayBuffer$1) {
+          options.checkOrientation = false;
+        }
+
+        if (URL && !options.checkOrientation) {
+          this.load({
+            url: URL.createObjectURL(file)
+          });
+        } else {
+          var reader = new FileReader();
+          var checkOrientation = options.checkOrientation && mimeType === 'image/jpeg';
+          this.reader = reader;
+
+          reader.onload = function (_ref) {
+            var target = _ref.target;
+            var result = target.result;
+            var data = {};
+
+            if (checkOrientation) {
+              // Reset the orientation value to its default value 1
+              // as some iOS browsers will render image with its orientation
+              var orientation = resetAndGetOrientation(result);
+
+              if (orientation > 1 || !URL) {
+                // Generate a new URL which has the default orientation value
+                data.url = arrayBufferToDataURL(result, mimeType);
+
+                if (orientation > 1) {
+                  _extends(data, parseOrientation(orientation));
+                }
+              } else {
+                data.url = URL.createObjectURL(file);
+              }
+            } else {
+              data.url = result;
+            }
+
+            _this.load(data);
+          };
+
+          reader.onabort = function () {
+            _this.fail(new Error('Aborted to read the image with FileReader.'));
+          };
+
+          reader.onerror = function () {
+            _this.fail(new Error('Failed to read the image with FileReader.'));
+          };
+
+          reader.onloadend = function () {
+            _this.reader = null;
+          };
+
+          if (checkOrientation) {
+            reader.readAsArrayBuffer(file);
+          } else {
+            reader.readAsDataURL(file);
+          }
+        }
+      }
+    }, {
+      key: "load",
+      value: function load(data) {
+        var _this2 = this;
+
+        var file = this.file,
+            image = this.image;
+
+        image.onload = function () {
+          _this2.draw(_objectSpread2(_objectSpread2({}, data), {}, {
+            naturalWidth: image.naturalWidth,
+            naturalHeight: image.naturalHeight
+          }));
+        };
+
+        image.onabort = function () {
+          _this2.fail(new Error('Aborted to load the image.'));
+        };
+
+        image.onerror = function () {
+          _this2.fail(new Error('Failed to load the image.'));
+        }; // Match all browsers that use WebKit as the layout engine in iOS devices,
+        // such as Safari for iOS, Chrome for iOS, and in-app browsers.
+
+
+        if (WINDOW.navigator && /(?:iPad|iPhone|iPod).*?AppleWebKit/i.test(WINDOW.navigator.userAgent)) {
+          // Fix the `The operation is insecure` error (#57)
+          image.crossOrigin = 'anonymous';
+        }
+
+        image.alt = file.name;
+        image.src = data.url;
+      }
+    }, {
+      key: "draw",
+      value: function draw(_ref2) {
+        var _this3 = this;
+
+        var naturalWidth = _ref2.naturalWidth,
+            naturalHeight = _ref2.naturalHeight,
+            _ref2$rotate = _ref2.rotate,
+            rotate = _ref2$rotate === void 0 ? 0 : _ref2$rotate,
+            _ref2$scaleX = _ref2.scaleX,
+            scaleX = _ref2$scaleX === void 0 ? 1 : _ref2$scaleX,
+            _ref2$scaleY = _ref2.scaleY,
+            scaleY = _ref2$scaleY === void 0 ? 1 : _ref2$scaleY;
+        var file = this.file,
+            image = this.image,
+            options = this.options;
+        var canvas = document.createElement('canvas');
+        var context = canvas.getContext('2d');
+        var aspectRatio = naturalWidth / naturalHeight;
+        var is90DegreesRotated = Math.abs(rotate) % 180 === 90;
+        var maxWidth = Math.max(options.maxWidth, 0) || Infinity;
+        var maxHeight = Math.max(options.maxHeight, 0) || Infinity;
+        var minWidth = Math.max(options.minWidth, 0) || 0;
+        var minHeight = Math.max(options.minHeight, 0) || 0;
+        var width = Math.max(options.width, 0) || naturalWidth;
+        var height = Math.max(options.height, 0) || naturalHeight;
+
+        if (is90DegreesRotated) {
+          var _ref3 = [maxHeight, maxWidth];
+          maxWidth = _ref3[0];
+          maxHeight = _ref3[1];
+          var _ref4 = [minHeight, minWidth];
+          minWidth = _ref4[0];
+          minHeight = _ref4[1];
+          var _ref5 = [height, width];
+          width = _ref5[0];
+          height = _ref5[1];
+        }
+
+        if (maxWidth < Infinity && maxHeight < Infinity) {
+          if (maxHeight * aspectRatio > maxWidth) {
+            maxHeight = maxWidth / aspectRatio;
+          } else {
+            maxWidth = maxHeight * aspectRatio;
+          }
+        } else if (maxWidth < Infinity) {
+          maxHeight = maxWidth / aspectRatio;
+        } else if (maxHeight < Infinity) {
+          maxWidth = maxHeight * aspectRatio;
+        }
+
+        if (minWidth > 0 && minHeight > 0) {
+          if (minHeight * aspectRatio > minWidth) {
+            minHeight = minWidth / aspectRatio;
+          } else {
+            minWidth = minHeight * aspectRatio;
+          }
+        } else if (minWidth > 0) {
+          minHeight = minWidth / aspectRatio;
+        } else if (minHeight > 0) {
+          minWidth = minHeight * aspectRatio;
+        }
+
+        if (height * aspectRatio > width) {
+          height = width / aspectRatio;
+        } else {
+          width = height * aspectRatio;
+        }
+
+        width = Math.floor(normalizeDecimalNumber(Math.min(Math.max(width, minWidth), maxWidth)));
+        height = Math.floor(normalizeDecimalNumber(Math.min(Math.max(height, minHeight), maxHeight)));
+        var destX = -width / 2;
+        var destY = -height / 2;
+        var destWidth = width;
+        var destHeight = height;
+
+        if (is90DegreesRotated) {
+          var _ref6 = [height, width];
+          width = _ref6[0];
+          height = _ref6[1];
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        if (!isImageType(options.mimeType)) {
+          options.mimeType = file.type;
+        }
+
+        var fillStyle = 'transparent'; // Converts PNG files over the `convertSize` to JPEGs.
+
+        if (file.size > options.convertSize && options.mimeType === 'image/png') {
+          fillStyle = '#fff';
+          options.mimeType = 'image/jpeg';
+        } // Override the default fill color (#000, black)
+
+
+        context.fillStyle = fillStyle;
+        context.fillRect(0, 0, width, height);
+
+        if (options.beforeDraw) {
+          options.beforeDraw.call(this, context, canvas);
+        }
+
+        if (this.aborted) {
+          return;
+        }
+
+        context.save();
+        context.translate(width / 2, height / 2);
+        context.rotate(rotate * Math.PI / 180);
+        context.scale(scaleX, scaleY);
+        context.drawImage(image, destX, destY, destWidth, destHeight);
+        context.restore();
+
+        if (options.drew) {
+          options.drew.call(this, context, canvas);
+        }
+
+        if (this.aborted) {
+          return;
+        }
+
+        var done = function done(result) {
+          if (!_this3.aborted) {
+            _this3.done({
+              naturalWidth: naturalWidth,
+              naturalHeight: naturalHeight,
+              result: result
+            });
+          }
+        };
+
+        if (canvas.toBlob) {
+          canvas.toBlob(done, options.mimeType, options.quality);
+        } else {
+          done(canvasToBlob(canvas.toDataURL(options.mimeType, options.quality)));
+        }
+      }
+    }, {
+      key: "done",
+      value: function done(_ref7) {
+        var naturalWidth = _ref7.naturalWidth,
+            naturalHeight = _ref7.naturalHeight,
+            result = _ref7.result;
+        var file = this.file,
+            image = this.image,
+            options = this.options;
+
+        if (URL && !options.checkOrientation) {
+          URL.revokeObjectURL(image.src);
+        }
+
+        if (result) {
+          // Returns original file if the result is greater than it and without size related options
+          if (options.strict && result.size > file.size && options.mimeType === file.type && !(options.width > naturalWidth || options.height > naturalHeight || options.minWidth > naturalWidth || options.minHeight > naturalHeight)) {
+            result = file;
+          } else {
+            var date = new Date();
+            result.lastModified = date.getTime();
+            result.lastModifiedDate = date;
+            result.name = file.name; // Convert the extension to match its type
+
+            if (result.name && result.type !== file.type) {
+              result.name = result.name.replace(REGEXP_EXTENSION, imageTypeToExtension(result.type));
+            }
+          }
+        } else {
+          // Returns original file if the result is null in some cases.
+          result = file;
+        }
+
+        this.result = result;
+
+        if (options.success) {
+          options.success.call(this, result);
+        }
+      }
+    }, {
+      key: "fail",
+      value: function fail(err) {
+        var options = this.options;
+
+        if (options.error) {
+          options.error.call(this, err);
+        } else {
+          throw err;
+        }
+      }
+    }, {
+      key: "abort",
+      value: function abort() {
+        if (!this.aborted) {
+          this.aborted = true;
+
+          if (this.reader) {
+            this.reader.abort();
+          } else if (!this.image.complete) {
+            this.image.onload = null;
+            this.image.onabort();
+          } else {
+            this.fail(new Error('The compression process has been aborted.'));
+          }
+        }
+      }
+      /**
+       * Get the no conflict compressor class.
+       * @returns {Compressor} The compressor class.
+       */
+
+    }], [{
+      key: "noConflict",
+      value: function noConflict() {
+        window.Compressor = AnotherCompressor;
+        return Compressor;
+      }
+      /**
+       * Change the default options.
+       * @param {Object} options - The new default options.
+       */
+
+    }, {
+      key: "setDefaults",
+      value: function setDefaults(options) {
+        _extends(DEFAULTS, options);
+      }
+    }]);
+
+    return Compressor;
+  }();
+
+  return Compressor;
+
+})));
 
 
 /***/ }),

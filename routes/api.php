@@ -9,6 +9,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\TankController;
 use App\Http\Controllers\PumpController;
 use App\Http\Controllers\RolePermissionController;
+use App\Http\Controllers\DailyPumpReportController;
 use App\Http\Controllers\PresenceController;
 
 /*
@@ -86,5 +87,7 @@ Route::middleware('auth:api')->group(function(){
     //operator APIs
     Route::group(['middleware' => 'role:operator'], function(){
         Route::get('/getPresenceToken', [PresenceController::class, 'getPresenceToken']);
+        Route::get('/getAvailablePumps', [PumpController::class, 'getAvailablePumps']);
+        Route::post('/uploadBuktiTotalizer', [DailyPumpReportController::class, 'uploadBuktiTotalizer']);
     });
 });

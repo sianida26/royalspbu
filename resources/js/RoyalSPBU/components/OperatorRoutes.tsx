@@ -17,6 +17,7 @@ export default function OperatorRoutes() {
     return auth.role !== Roles.OPERATOR ? <Redirect to={{pathname: "/login", state: {from: location}}} /> : (
         <Switch>
             {routes.map((route, i) => <Route key={i} path={route.path} exact={!route.isNotExact} component={route.component} />)}
+            <Redirect path="/login" to="/" />
             <Route>
                 <NotFound />
             </Route>
