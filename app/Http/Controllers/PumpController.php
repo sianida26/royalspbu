@@ -137,7 +137,7 @@ class PumpController extends Controller
         return Pump::all()->map(function($pump){
             return [
                 'id' => $pump->id,
-                'available' => true,
+                'available' => $pump->isAvailableForReporting(),
                 'nozzles' => $pump->nozzles->map(function($nozzle){
                     return [
                         'id' => $nozzle->id,

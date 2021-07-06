@@ -9,6 +9,7 @@ import { useAuth } from '../../../providers/AuthProvider'
 
 import PilihPompa from './PilihPompa'
 import IsiLaporan from './IsiLaporan'
+import PeriksaLaporan from './PeriksaLaporan'
 
 //TODO REFACTOR. This page needs so much refactoring
 
@@ -40,6 +41,7 @@ export interface Pump {
 }
 
 export interface Report extends Pump {
+    pumpNumber: number,
     nozzles: {
         id : number,
         finalTotalizator: number,
@@ -57,6 +59,7 @@ export interface Report extends Pump {
 const defaultPumpObj = {
     id: -1,
     available: false,
+    pumpNumber: -1,
     nozzles: []
 }
 
@@ -88,9 +91,10 @@ export default function Laporan() {
         .finally(() => setLoading(false))
     }
 
-    const handlePilihPompa = (pump: Pump) => {
+    const handlePilihPompa = (pump: Pump, n: number) => {
         setReport({
             ...pump,
+            pumpNumber: n,
             nozzles: pump.nozzles.map(nozzle => ({
                     ...nozzle,
                     finalTotalizator: 0,
@@ -104,51 +108,36 @@ export default function Laporan() {
         setStep(StepLaporan.IsiLaporan)
     }
 
-    const handleSubmitIsi = (pump: Pump) => {
-        //cek apakah sudah terisi semua
+    const handleSubmitIsi = (pump: Report) => {
+        // cek apakah sudah terisi semua
         // selectedPump.current = pump
-        // let anyEmpty = pump.nozzles.some(nozzle => (nozzle.data.finalTotalizator == undefined || nozzle.data.reportFilename == ""))
-        // if (anyEmpty) enqueueSnackbar('Anda harus mengisi semua masukan untuk melanjutkan',{variant: 'error'})
-        // else setStep(StepLaporan.PeriksaLaporan)
-        alert('belum diprogram')
+        let anyEmpty = pump.nozzles.some(nozzle => (nozzle.finalTotalizator == undefined || nozzle.reportFilename == ""))
+        if (anyEmpty) enqueueSnackbar('Anda harus mengisi semua masukan untuk melanjutkan',{variant: 'error'})
+        else {
+            setReport(pump)
+            setStep(StepLaporan.PeriksaLaporan)
+        }
+    }
+
+    const handleBackToPilihPompa = () => {
+        setStep(StepLaporan.PilihPompa)
+    }
+
+    const handleBackToIsiLaporan = () => {
+        setStep(StepLaporan.IsiLaporan)
     }
 
     const renderPilihPompa = () => {
         return isLoading? <div>Loading...</div>
-        : <PilihPompa pumps={pumps} handlePilihPompa={(pump) => handlePilihPompa(pump)} />
+        : <PilihPompa pumps={pumps} handlePilihPompa={(pump, n) => handlePilihPompa(pump, n)} />
     }
 
     const renderIsiLaporan = () => {
-        return <IsiLaporan report={report} handleSubmitIsi={(report) => handleSubmitIsi(report)} />
+        return <IsiLaporan report={report} handleSubmitIsi={(report) => handleSubmitIsi(report)} handleBack={() => handleBackToPilihPompa()} />
     }
 
     const renderPeriksaLaporan = () => {
-        // return (
-        //     <div className="tw-flex tw-flex-col tw-gap-2">
-        //         <p className="tw-text-center">Laporan pulau pompa {report.pump}</p>
-        //         {/* {
-        //             Object.entries(report.nozzles).map(([nozzle, totalisator]) => (
-        //                 <p>nozzle {nozzle} : {totalisator}</p>
-        //             ))
-        //         } */}
-        //         {
-        //             selectedPump.current.nozzles.map((nozzle, i) => {
-
-        //                 return (<div className="tw-w-full tw-flex tw-flex-col tw-border tw-p-2 tw-border-black" key={nozzle.id}>
-        //                     <p className="tw-text-center tw-font-bold">Nozzle {i+1}</p>
-        //                     <p>Nama Produk: {nozzle.data.productName}</p>
-        //                     <p>Totalisator Awal: {nozzle.data.initialTotalizator} L</p>
-        //                     <p>Totalisator AKhir: {nozzle.data.finalTotalizator} L</p>
-        //                     <p>Volume penjualan: {nozzle.totalizatorDifference} L</p>
-        //                     <p>Harga per liter: Rp{nozzle.data.price}</p>
-        //                     <p>Total pendapatan: Rp{nozzle.data.price*nozzle.totalizatorDifference}</p>
-        //                     <p>Bukti foto</p>
-        //                 </div>
-        //             )})
-        //         }
-        //         {/* <button className="tw-border tw-bg-gray-400" onClick={handleSubmitIsi}>Kirim</button> */}
-        //     </div>
-        // )
+        return <PeriksaLaporan report={report} handleBack={() => handleBackToIsiLaporan()} />
     }
 
     return (

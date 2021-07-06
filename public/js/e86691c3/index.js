@@ -11410,7 +11410,8 @@ var AuthProvider_1 = __webpack_require__(/*! ../../../providers/AuthProvider */ 
 
 function IsiLaporan(_a) {
   var report = _a.report,
-      handleSubmitIsi = _a.handleSubmitIsi;
+      handleSubmitIsi = _a.handleSubmitIsi,
+      handleBack = _a.handleBack;
   var axios = AuthProvider_1.useAuth().axios;
 
   var _b = react_1["default"].useState(report),
@@ -11436,9 +11437,7 @@ function IsiLaporan(_a) {
           })), [newData_1])
         });
       });
-    }
-
-    console.log("Failed to updating nozzle data with id " + id);
+    } else console.log("Failed to updating nozzle data with id " + id);
   };
 
   var handleInputTotalizator = function handleInputTotalizator(value, id) {
@@ -11456,9 +11455,11 @@ function IsiLaporan(_a) {
       //     uploadStatus: UploadStatus.COMPRESSING,
       //     uploadProgress: 0,
       // }))
+      var url_1 = URL.createObjectURL(event.target.files[0]);
+      console.log(url_1);
       setNozzleData(id, {
+        imageUrl: url_1,
         uploadErrorMsg: '',
-        imageUrl: URL.createObjectURL(event.target.files[0]),
         uploadStatus: _1.UploadStatus.COMPRESSING,
         uploadProgress: 0
       });
@@ -11467,16 +11468,20 @@ function IsiLaporan(_a) {
         success: function success(result) {
           var formData = new FormData();
           formData.append('image', result, 'image.jpeg');
+          setNozzleData(id, {
+            imageUrl: url_1,
+            uploadStatus: _1.UploadStatus.UPLOADING,
+            uploadProgress: 0
+          });
           axios({
             method: 'post',
             url: '/uploadBuktiTotalizer',
             data: formData,
             onUploadProgress: function onUploadProgress(progressEvent) {
-              // setPump(prev => prev.setNozzleData(id,{
-              //     uploadStatus: UploadStatus.UPLOADING,
-              //     uploadProgress: (progressEvent.loaded/progressEvent.total)*100,
-              // }))
+              console.log(progressEvent);
+              console.log('progressEvent');
               setNozzleData(id, {
+                imageUrl: url_1,
                 uploadStatus: _1.UploadStatus.UPLOADING,
                 uploadProgress: progressEvent.loaded / progressEvent.total * 100
               });
@@ -11489,6 +11494,7 @@ function IsiLaporan(_a) {
             // }))
 
             setNozzleData(id, {
+              imageUrl: url_1,
               uploadStatus: _1.UploadStatus.UPLOADED,
               uploadProgress: -1,
               reportFilename: response.data
@@ -11502,6 +11508,7 @@ function IsiLaporan(_a) {
 
 
             setNozzleData(id, {
+              imageUrl: url_1,
               uploadStatus: _1.UploadStatus.ERROR,
               uploadProgress: -1,
               uploadErrorMsg: ((_c = (_b = (_a = err.response) === null || _a === void 0 ? void 0 : _a.data) === null || _b === void 0 ? void 0 : _b.errors) === null || _c === void 0 ? void 0 : _c.image[0]) || 'Terjadi kesalahan ketika mengirim'
@@ -11518,6 +11525,7 @@ function IsiLaporan(_a) {
           // }))
 
           setNozzleData(id, {
+            imageUrl: url_1,
             uploadStatus: _1.UploadStatus.ERROR,
             uploadProgress: -1,
             uploadErrorMsg: 'File tidak bisa diproses'
@@ -11529,14 +11537,17 @@ function IsiLaporan(_a) {
 
   return react_1["default"].createElement("div", {
     className: "tw-flex tw-flex-col tw-gap-2"
-  }, pump.nozzles.map(function (nozzle, i) {
+  }, report.nozzles.map(function (_nozzle, i) {
+    var nozzle = pump.nozzles.find(function (x) {
+      return x.id === _nozzle.id;
+    });
     return react_1["default"].createElement("div", {
       key: nozzle.id
     }, react_1["default"].createElement("p", {
       className: "tw-font-bold"
     }, "Nozzle ", i + 1), react_1["default"].createElement("p", null, "Nama Produk: ", nozzle.productName), react_1["default"].createElement("p", null, "Totalisator Akhir"), react_1["default"].createElement("input", {
       type: "number",
-      value: nozzle.finalTotalizator,
+      value: nozzle.finalTotalizator || '',
       onChange: function onChange(e) {
         return handleInputTotalizator(e.target.value, nozzle.id);
       },
@@ -11560,6 +11571,11 @@ function IsiLaporan(_a) {
       className: "tw-text-red-500"
     }, nozzle.uploadErrorMsg));
   }), react_1["default"].createElement("button", {
+    className: "tw-border tw-bg-gray-400 mb-2",
+    onClick: function onClick() {
+      return handleBack();
+    }
+  }, "Kembali"), react_1["default"].createElement("button", {
     className: "tw-border tw-bg-gray-400",
     onClick: function onClick() {
       return handleSubmitIsi(pump);
@@ -11568,6 +11584,98 @@ function IsiLaporan(_a) {
 }
 
 exports.default = IsiLaporan;
+
+/***/ }),
+
+/***/ "./resources/js/RoyalSPBU/pages/operatorPages/Laporan/PeriksaLaporan.tsx":
+/*!*******************************************************************************!*\
+  !*** ./resources/js/RoyalSPBU/pages/operatorPages/Laporan/PeriksaLaporan.tsx ***!
+  \*******************************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var notistack_1 = __webpack_require__(/*! notistack */ "./node_modules/notistack/dist/notistack.esm.js");
+
+var AuthProvider_1 = __webpack_require__(/*! ../../../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx");
+
+function PeriksaLaporan(_a) {
+  var report = _a.report,
+      handleBack = _a.handleBack;
+  var axios = AuthProvider_1.useAuth().axios;
+  var enqueueSnackbar = notistack_1.useSnackbar().enqueueSnackbar;
+
+  var _b = react_1["default"].useState(false),
+      isLoading = _b[0],
+      setLoading = _b[1];
+
+  var handleSendReport = function handleSendReport() {
+    setLoading(true);
+    axios({
+      url: '/sendPumpReport',
+      method: 'post',
+      data: {
+        pumpId: report.id,
+        nozzles: report.nozzles.map(function (nozzle) {
+          return {
+            id: nozzle.id,
+            finalTotalizator: nozzle.finalTotalizator,
+            filename: nozzle.reportFilename
+          };
+        })
+      }
+    }).then(function (response) {
+      console.log(response);
+      enqueueSnackbar('Laporan berhasil dikirim', {
+        variant: 'success'
+      });
+    })["catch"](function (err) {
+      console.log(err);
+      enqueueSnackbar('Yah error', {
+        variant: 'error'
+      });
+    })["finally"](function () {
+      setLoading(false);
+    });
+  };
+
+  return react_1["default"].createElement("div", {
+    className: "tw-flex tw-flex-col tw-gap-2"
+  }, react_1["default"].createElement("p", {
+    className: "tw-text-center"
+  }, "Laporan pulau pompa ", report.pumpNumber + 1), report.nozzles.map(function (nozzle, i) {
+    var diff = Math.abs(nozzle.finalTotalizator - nozzle.initialTotalizator);
+    return react_1["default"].createElement("div", {
+      className: "tw-w-full tw-flex tw-flex-col tw-border tw-p-2 tw-border-black",
+      key: nozzle.id
+    }, react_1["default"].createElement("p", {
+      className: "tw-text-center tw-font-bold"
+    }, "Nozzle ", i + 1), react_1["default"].createElement("p", null, "Nama Produk: ", nozzle.productName), react_1["default"].createElement("p", null, "Totalisator Awal: ", nozzle.initialTotalizator, " L"), react_1["default"].createElement("p", null, "Totalisator AKhir: ", nozzle.finalTotalizator, " L"), react_1["default"].createElement("p", null, "Volume penjualan: ", diff, " L"), react_1["default"].createElement("p", null, "Harga per liter: Rp", nozzle.price), react_1["default"].createElement("p", null, "Total pendapatan: Rp", nozzle.price * diff), react_1["default"].createElement("p", null, "Bukti foto"), react_1["default"].createElement("img", {
+      src: nozzle.imageUrl
+    }));
+  }), react_1["default"].createElement("button", {
+    className: "tw-border tw-bg-gray-400",
+    onClick: handleBack
+  }, "Kembali"), react_1["default"].createElement("button", {
+    className: "tw-border tw-bg-gray-400",
+    onClick: handleSendReport
+  }, "Kirim"));
+}
+
+exports.default = PeriksaLaporan;
 
 /***/ }),
 
@@ -11601,7 +11709,7 @@ function PilihPompa(_a) {
     return react_1["default"].createElement("div", {
       key: pump.id,
       onClick: function onClick() {
-        return handlePilihPompa(pump);
+        pump.available ? handlePilihPompa(pump, i) : null;
       },
       className: "tw-w-24 tw-h-24 tw-border tw-border-black " + (!pump.available && 'tw-bg-gray-400')
     }, "pulau pompa " + (i + 1));
@@ -11658,7 +11766,9 @@ var AuthProvider_1 = __webpack_require__(/*! ../../../providers/AuthProvider */ 
 
 var PilihPompa_1 = __importDefault(__webpack_require__(/*! ./PilihPompa */ "./resources/js/RoyalSPBU/pages/operatorPages/Laporan/PilihPompa.tsx"));
 
-var IsiLaporan_1 = __importDefault(__webpack_require__(/*! ./IsiLaporan */ "./resources/js/RoyalSPBU/pages/operatorPages/Laporan/IsiLaporan.tsx")); //TODO REFACTOR. This page needs so much refactoring
+var IsiLaporan_1 = __importDefault(__webpack_require__(/*! ./IsiLaporan */ "./resources/js/RoyalSPBU/pages/operatorPages/Laporan/IsiLaporan.tsx"));
+
+var PeriksaLaporan_1 = __importDefault(__webpack_require__(/*! ./PeriksaLaporan */ "./resources/js/RoyalSPBU/pages/operatorPages/Laporan/PeriksaLaporan.tsx")); //TODO REFACTOR. This page needs so much refactoring
 //TODO buat alert kalau file tidak bisa diupload karena offline
 
 
@@ -11683,6 +11793,7 @@ var UploadStatus;
 var defaultPumpObj = {
   id: -1,
   available: false,
+  pumpNumber: -1,
   nozzles: []
 };
 
@@ -11729,8 +11840,9 @@ function Laporan() {
     });
   };
 
-  var _handlePilihPompa = function handlePilihPompa(pump) {
+  var _handlePilihPompa = function handlePilihPompa(pump, n) {
     setReport(__assign(__assign({}, pump), {
+      pumpNumber: n,
       nozzles: pump.nozzles.map(function (nozzle) {
         return __assign(__assign({}, nozzle), {
           finalTotalizator: 0,
@@ -11746,19 +11858,32 @@ function Laporan() {
   };
 
   var _handleSubmitIsi = function handleSubmitIsi(pump) {
-    //cek apakah sudah terisi semua
+    // cek apakah sudah terisi semua
     // selectedPump.current = pump
-    // let anyEmpty = pump.nozzles.some(nozzle => (nozzle.data.finalTotalizator == undefined || nozzle.data.reportFilename == ""))
-    // if (anyEmpty) enqueueSnackbar('Anda harus mengisi semua masukan untuk melanjutkan',{variant: 'error'})
-    // else setStep(StepLaporan.PeriksaLaporan)
-    alert('belum diprogram');
+    var anyEmpty = pump.nozzles.some(function (nozzle) {
+      return nozzle.finalTotalizator == undefined || nozzle.reportFilename == "";
+    });
+    if (anyEmpty) enqueueSnackbar('Anda harus mengisi semua masukan untuk melanjutkan', {
+      variant: 'error'
+    });else {
+      setReport(pump);
+      setStep(StepLaporan.PeriksaLaporan);
+    }
+  };
+
+  var handleBackToPilihPompa = function handleBackToPilihPompa() {
+    setStep(StepLaporan.PilihPompa);
+  };
+
+  var handleBackToIsiLaporan = function handleBackToIsiLaporan() {
+    setStep(StepLaporan.IsiLaporan);
   };
 
   var renderPilihPompa = function renderPilihPompa() {
     return isLoading ? react_1["default"].createElement("div", null, "Loading...") : react_1["default"].createElement(PilihPompa_1["default"], {
       pumps: pumps,
-      handlePilihPompa: function handlePilihPompa(pump) {
-        return _handlePilihPompa(pump);
+      handlePilihPompa: function handlePilihPompa(pump, n) {
+        return _handlePilihPompa(pump, n);
       }
     });
   };
@@ -11768,35 +11893,20 @@ function Laporan() {
       report: report,
       handleSubmitIsi: function handleSubmitIsi(report) {
         return _handleSubmitIsi(report);
+      },
+      handleBack: function handleBack() {
+        return handleBackToPilihPompa();
       }
     });
   };
 
-  var renderPeriksaLaporan = function renderPeriksaLaporan() {// return (
-    //     <div className="tw-flex tw-flex-col tw-gap-2">
-    //         <p className="tw-text-center">Laporan pulau pompa {report.pump}</p>
-    //         {/* {
-    //             Object.entries(report.nozzles).map(([nozzle, totalisator]) => (
-    //                 <p>nozzle {nozzle} : {totalisator}</p>
-    //             ))
-    //         } */}
-    //         {
-    //             selectedPump.current.nozzles.map((nozzle, i) => {
-    //                 return (<div className="tw-w-full tw-flex tw-flex-col tw-border tw-p-2 tw-border-black" key={nozzle.id}>
-    //                     <p className="tw-text-center tw-font-bold">Nozzle {i+1}</p>
-    //                     <p>Nama Produk: {nozzle.data.productName}</p>
-    //                     <p>Totalisator Awal: {nozzle.data.initialTotalizator} L</p>
-    //                     <p>Totalisator AKhir: {nozzle.data.finalTotalizator} L</p>
-    //                     <p>Volume penjualan: {nozzle.totalizatorDifference} L</p>
-    //                     <p>Harga per liter: Rp{nozzle.data.price}</p>
-    //                     <p>Total pendapatan: Rp{nozzle.data.price*nozzle.totalizatorDifference}</p>
-    //                     <p>Bukti foto</p>
-    //                 </div>
-    //             )})
-    //         }
-    //         {/* <button className="tw-border tw-bg-gray-400" onClick={handleSubmitIsi}>Kirim</button> */}
-    //     </div>
-    // )
+  var renderPeriksaLaporan = function renderPeriksaLaporan() {
+    return react_1["default"].createElement(PeriksaLaporan_1["default"], {
+      report: report,
+      handleBack: function handleBack() {
+        return handleBackToIsiLaporan();
+      }
+    });
   };
 
   return react_1["default"].createElement("div", {

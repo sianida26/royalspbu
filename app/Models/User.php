@@ -10,6 +10,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Permission\Traits\HasRoles;
 use Laravel\Passport\HasApiTokens;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable
 {
@@ -41,12 +44,34 @@ class User extends Authenticatable
      */
     protected $casts = [];
 
-    public function presenceToken(){
+    /**
+     * Get the presenceToken associated with the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function presenceToken(): HasOne
+    {
         return $this->hasOne(PresenceToken::class);
     }
 
-    public function presence(){
+    /**
+     * Get all of the presence for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function presences(): HasMany
+    {
         return $this->hasMany(Presence::class);
+    }
+
+    /**
+     * Get all of the dailyPumpReports for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function dailyPumpReports(): HasMany
+    {
+        return $this->hasMany(DailyPumpReport::class, 'reporter_id');
     }
 
 

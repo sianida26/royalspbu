@@ -5,6 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Carbon\Carbon;
 
 use Debugbar;
 
@@ -33,5 +37,13 @@ class Pump extends Model
 
     public function nozzles(){
         return $this->hasMany(Nozzle::class);
+    }
+
+    public function dailyPumpReports(){
+        return $this->hasMany(DailyPumpReport::class);
+    }
+
+    public function isAvailableForReporting(){
+        return !$this->dailyPumpReports()->whereDate('created_at', Carbon::today())->where('pump_id',1)->exists();
     }
 }

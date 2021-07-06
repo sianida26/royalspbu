@@ -6,6 +6,7 @@ import {useAuth} from '../../../providers/AuthProvider'
 
 interface Props{
     handleSubmitIsi: (report: Report) => void,
+    handleBack: () => void,
     report: Report,
 }
 
@@ -22,7 +23,7 @@ interface Nozzle {
     uploadStatus? : UploadStatus,
 }
 
-export default function IsiLaporan({report, handleSubmitIsi}: Props) {
+export default function IsiLaporan({report, handleSubmitIsi, handleBack}: Props) {
 
     const {axios} = useAuth()
     const [pump, setPump] = React.useState<Report>(report)
@@ -49,7 +50,7 @@ export default function IsiLaporan({report, handleSubmitIsi}: Props) {
                 ]
             }))
         }
-        console.log(`Failed to updating nozzle data with id ${id}`)
+        else console.log(`Failed to updating nozzle data with id ${id}`)
     }
 
     const handleInputTotalizator = (value: string, id: number) => {
@@ -67,9 +68,11 @@ export default function IsiLaporan({report, handleSubmitIsi}: Props) {
             //     uploadStatus: UploadStatus.COMPRESSING,
             //     uploadProgress: 0,
             // }))
+            let url = URL.createObjectURL(event.target.files![0])
+            console.log(url)
             setNozzleData(id, {
+                imageUrl: url,
                 uploadErrorMsg: '',
-                imageUrl: URL.createObjectURL(event.target.files![0]),
                 uploadStatus: UploadStatus.COMPRESSING,
                 uploadProgress: 0,
             })
@@ -81,17 +84,21 @@ export default function IsiLaporan({report, handleSubmitIsi}: Props) {
                     const formData = new FormData()
 
                     formData.append('image',result, 'image.jpeg')
+                    setNozzleData(id,{
+                        imageUrl: url,
+                        uploadStatus: UploadStatus.UPLOADING,
+                        uploadProgress: 0
+                    })
 
                     axios({
                         method: 'post', 
                         url: '/uploadBuktiTotalizer', 
                         data: formData, 
                         onUploadProgress: (progressEvent) => {
-                            // setPump(prev => prev.setNozzleData(id,{
-                            //     uploadStatus: UploadStatus.UPLOADING,
-                            //     uploadProgress: (progressEvent.loaded/progressEvent.total)*100,
-                            // }))
+                            console.log(progressEvent)
+                            console.log('progressEvent')
                             setNozzleData(id,{
+                                imageUrl: url,
                                 uploadStatus: UploadStatus.UPLOADING,
                                 uploadProgress: (progressEvent.loaded/progressEvent.total)*100,
                             })
@@ -105,6 +112,7 @@ export default function IsiLaporan({report, handleSubmitIsi}: Props) {
                         //     reportFilename: response.data
                         // }))
                         setNozzleData(id,{
+                            imageUrl: url,
                             uploadStatus: UploadStatus.UPLOADED,
                             uploadProgress: -1,
                             reportFilename: response.data
@@ -117,6 +125,7 @@ export default function IsiLaporan({report, handleSubmitIsi}: Props) {
                         //     uploadErrorMsg: err.response?.data?.errors?.image[0] || 'Terjadi kesalahan ketika mengirim'
                         // }))
                         setNozzleData(id, {
+                            imageUrl: url,
                             uploadStatus: UploadStatus.ERROR,
                             uploadProgress: -1,
                             uploadErrorMsg: err.response?.data?.errors?.image[0] || 'Terjadi kesalahan ketika mengirim'
@@ -133,6 +142,7 @@ export default function IsiLaporan({report, handleSubmitIsi}: Props) {
                     //     uploadErrorMsg: 'File tidak bisa diproses',
                     // }))
                     setNozzleData(id, {
+                        imageUrl: url,
                         uploadStatus: UploadStatus.ERROR,
                         uploadProgress: -1,
                         uploadErrorMsg: 'File tidak bisa diproses',
@@ -144,27 +154,33 @@ export default function IsiLaporan({report, handleSubmitIsi}: Props) {
     
     return (
         <div className="tw-flex tw-flex-col tw-gap-2">
-            {pump.nozzles.map((nozzle, i) => <div key={nozzle.id}>
-                <p className="tw-font-bold">Nozzle {i+1}</p>
-                <p>Nama Produk: {nozzle.productName}</p>
-                <p>Totalisator Akhir</p>
-                <input type="number" value={nozzle.finalTotalizator} onChange={(e) => handleInputTotalizator(e.target.value, nozzle.id)} className="tw-border tw-border-black tw-p-2" />
-                <img src={nozzle.imageUrl} />
-                <input type="file" accept="images/*" onChange={(event) => handleChooseImage(event,nozzle.id)} />
+            {report.nozzles.map((_nozzle, i) => 
                 {
-                    nozzle.uploadProgress >= 0 && (
-                        <div className="tw-flex tw-flex-col tw-w-full">
-                            <progress value={nozzle.uploadProgress} max={100}>{nozzle.uploadProgress}%</progress>
-                            <p className="">{
-                                nozzle.uploadStatus === UploadStatus.COMPRESSING ? 'Mengompres...'
-                                : 'Mengupload...'
-                            }</p>
-                        </div>
-                    )
-                }
-                <p className="tw-text-red-500">{nozzle.uploadErrorMsg}</p>
+                    let nozzle = pump.nozzles.find(x => x.id === _nozzle.id)!
+                    return (<div key={nozzle.id}>
+                        <p className="tw-font-bold">Nozzle {i+1}</p>
+                        <p>Nama Produk: {nozzle.productName}</p>
+                        <p>Totalisator Akhir</p>
+                        <input type="number" value={nozzle.finalTotalizator || ''} onChange={(e) => handleInputTotalizator(e.target.value, nozzle.id)} className="tw-border tw-border-black tw-p-2" />
+                        <img src={nozzle.imageUrl} />
+                        <input type="file" accept="images/*" onChange={(event) => handleChooseImage(event,nozzle.id)} />
+                        {
+                            nozzle.uploadProgress >= 0 && (
+                                <div className="tw-flex tw-flex-col tw-w-full">
+                                    <progress value={nozzle.uploadProgress} max={100}>{nozzle.uploadProgress}%</progress>
+                                    <p className="">{
+                                        nozzle.uploadStatus === UploadStatus.COMPRESSING ? 'Mengompres...'
+                                        : 'Mengupload...'
+                                    }</p>
+                                </div>
+                            )
+                        }
+                        <p className="tw-text-red-500">{nozzle.uploadErrorMsg}</p>
 
-            </div>)}
+                    </div>)
+                })
+            }
+            <button className="tw-border tw-bg-gray-400 mb-2" onClick={() => handleBack()}>Kembali</button>
             <button className="tw-border tw-bg-gray-400" onClick={() => handleSubmitIsi(pump)}>Selanjutnya</button>
         </div>
     )

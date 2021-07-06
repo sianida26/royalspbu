@@ -17,12 +17,9 @@ class CreateDailyPumpReportsTable extends Migration
             $table->id();
             $table->foreignId('pump_id')->constrained();
             $table->foreignId('reporter_id')->constrained('users');
-            $table->unsignedInteger('totalizator_initial');
-            $table->unsignedInteger('totalizator_final');
             $table->unsignedBigInteger('income');
-            $table->text('filename');
             $table->boolean('editable')->default(false);
-            $table->timestamp('created_at');
+            $table->timestamp('created_at')->useCurrent();
         });
     }
 

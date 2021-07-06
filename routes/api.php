@@ -89,5 +89,6 @@ Route::middleware('auth:api')->group(function(){
         Route::get('/getPresenceToken', [PresenceController::class, 'getPresenceToken']);
         Route::get('/getAvailablePumps', [PumpController::class, 'getAvailablePumps']);
         Route::post('/uploadBuktiTotalizer', [DailyPumpReportController::class, 'uploadBuktiTotalizer']);
+        Route::post('/sendPumpReport', [DailyPumpReportController::class, 'submitPumpReport']);
     });
 });
