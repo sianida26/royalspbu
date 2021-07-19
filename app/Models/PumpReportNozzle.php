@@ -44,6 +44,6 @@ class PumpReportNozzle extends Model
      */
     public function nozzle(): HasOne
     {
-        return $this->hasOne(Nozzle::class);
+        return $this->hasOne(Nozzle::class, 'id', 'nozzle_id');
     }
 }

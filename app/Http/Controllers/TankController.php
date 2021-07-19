@@ -15,7 +15,11 @@ class TankController extends Controller
     //
 
     public function getAllTanks(Request $request){
-        return Tank::all()->map(function($tank){
+
+        if ($request->onlyName){
+            return Tank::select('id','name')->get();
+        }
+        else return Tank::all()->map(function($tank){
             return [
                 'id' => $tank->id,
                 'name' => $tank->name,

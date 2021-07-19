@@ -141,7 +141,7 @@ export default function Laporan() {
     }
 
     return (
-        <div className="tw-max-w-screen tw-w-full">
+        <div className="tw-max-w-screen tw-w-full tw-p-2">
             <p className="tw-text-center">
                 {
                     step === StepLaporan.PilihPompa ? 'Pilih Pompa' : 

@@ -39,7 +39,7 @@ export default function Scan() {
     const videoElement = React.useRef<HTMLVideoElement>(null)
     const canvasElement = React.useRef<HTMLCanvasElement>(null)
     const scannerContainer = React.useRef<HTMLDivElement>(null)
-    let audio = new Audio('/storage/store-scanner-beep.mp3')
+    let audio = new Audio('/storage/assets/store-scanner-beep.mp3')
 
     const [scanResult, setScanResult] = React.useState<ScanResult>({
         status: ScanStatus.INIT,

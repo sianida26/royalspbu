@@ -6960,11 +6960,7 @@ var react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/reac
 
 var RouteSwitch_1 = __importDefault(__webpack_require__(/*! ./components/RouteSwitch */ "./resources/js/RoyalSPBU/components/RouteSwitch.tsx"));
 
-var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
-
 var AuthProvider_1 = __webpack_require__(/*! ./providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx");
-
-var Login_1 = __importDefault(__webpack_require__(/*! ./pages/guestPages/Login */ "./resources/js/RoyalSPBU/pages/guestPages/Login.tsx"));
 
 var Splash_1 = __importDefault(__webpack_require__(/*! ./pages/Splash */ "./resources/js/RoyalSPBU/pages/Splash.tsx"));
 
@@ -7008,23 +7004,6 @@ function App() {
         ];
       });
     });
-  };
-
-  var renderGuestRoutes = function renderGuestRoutes() {
-    return isBooting ? react_1["default"].createElement(Splash_1["default"], null) : react_1["default"].createElement(react_router_dom_1.Switch, null, react_1["default"].createElement(react_router_dom_1.Route, {
-      path: "/login",
-      exact: true,
-      component: Login_1["default"]
-    }), react_1["default"].createElement(react_router_dom_1.Redirect, {
-      to: "/login"
-    }));
-  }; // const OperatorRoutes = lazy(() => import ('./routes/OperatorRoutes'))
-  // const AdminRoutes = lazy(() => import ('./routes/AdminRoutes'))
-  // todo: desain page not found
-
-
-  var NotFoundRoute = function NotFoundRoute() {
-    return react_1["default"].createElement("div", null, "Page Not Found");
   };
 
   return isBooting ? react_1["default"].createElement(Splash_1["default"], null) : react_1["default"].createElement(react_1["default"].Fragment, null, react_1["default"].createElement(RouteSwitch_1["default"], null));
@@ -7800,10 +7779,605 @@ function Home() {
     onClick: function onClick() {
       return history.push('/pompa');
     }
-  }, "Pulau Pompa"));
+  }, "Pulau Pompa"), react_1["default"].createElement("div", {
+    className: "tw-py-8 tw-border tw-border-black",
+    onClick: function onClick() {
+      return history.push('/laporan');
+    }
+  }, "Laporan"), react_1["default"].createElement("div", {
+    className: "tw-py-8 tw-border tw-border-black",
+    onClick: function onClick() {
+      return history.push('/penerimaan');
+    }
+  }, "Penerimaan"));
 }
 
 exports.default = Home;
+
+/***/ }),
+
+/***/ "./resources/js/RoyalSPBU/pages/adminPages/penerimaan/DetailPenerimaan.tsx":
+/*!*********************************************************************************!*\
+  !*** ./resources/js/RoyalSPBU/pages/adminPages/penerimaan/DetailPenerimaan.tsx ***!
+  \*********************************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __assign = this && this.__assign || function () {
+  __assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+
+      for (var p in s) {
+        if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+      }
+    }
+
+    return t;
+  };
+
+  return __assign.apply(this, arguments);
+};
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var notistack_1 = __webpack_require__(/*! notistack */ "./node_modules/notistack/dist/notistack.esm.js");
+
+var react_router_1 = __webpack_require__(/*! react-router */ "./node_modules/react-router/esm/react-router.js");
+
+var AuthProvider_1 = __webpack_require__(/*! ../../../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx");
+
+var AdminConfigProvider_1 = __webpack_require__(/*! ../../../providers/AdminConfigProvider */ "./resources/js/RoyalSPBU/providers/AdminConfigProvider.tsx");
+
+function DetailPenerimaan() {
+  var history = react_router_1.useHistory();
+  var axios = AuthProvider_1.useAuth().axios;
+  var enqueueSnackbar = notistack_1.useSnackbar().enqueueSnackbar;
+
+  var _a = AdminConfigProvider_1.useAdminConfig(),
+      configs = _a.configs,
+      setConfig = _a.setConfig;
+
+  var _b = react_1["default"].useState(false),
+      isLoading = _b[0],
+      setLoading = _b[1];
+
+  var _c = react_1["default"].useState({
+    actualVolume: 0,
+    id: -1,
+    initialVolume: 0,
+    issueTimestamp: '',
+    issuer: '-',
+    pnbp: '',
+    pnbpVolume: 0,
+    receiveTimestamp: '',
+    receiver: '',
+    tankId: 0,
+    tankName: '',
+    truckId: ''
+  }),
+      formData = _c[0],
+      setFormData = _c[1];
+
+  react_1["default"].useEffect(function () {
+    //redirect to home if no data provided in context API
+    if (configs.detailPenerimaanObject.id < 0) {
+      history.replace('/');
+      return;
+    }
+
+    updateFormData(configs.detailPenerimaanObject);
+    setConfig({
+      detailPenerimaanObject: AdminConfigProvider_1.detailPenerimaanDefaultObject
+    }); //hapus objek
+  }, []);
+
+  var updateFormData = function updateFormData(newData) {
+    setFormData(function (prev) {
+      return __assign(__assign({}, prev), newData);
+    });
+  };
+
+  return react_1["default"].createElement("div", {
+    className: "tw-w-full tw-flex tw-flex-col tw-gap-2"
+  }, react_1["default"].createElement("p", null, "Hari/Tanggal Permintaan: ", formData.issueTimestamp), react_1["default"].createElement("p", null, "Hari/Tanggal Penerimaan: ", formData.receiveTimestamp), react_1["default"].createElement("p", null, "Pemohon: ", formData.issuer), react_1["default"].createElement("p", null, "Penerima: ", formData.receiver), react_1["default"].createElement("p", null, "Nama tangki: ", formData.tankName), react_1["default"].createElement("p", null, "Volume PNBP: ", formData.pnbpVolume), react_1["default"].createElement("p", null, "No Mobil Tangki: ", formData.truckId), react_1["default"].createElement("p", null, "No PNBP: ", formData.pnbp), react_1["default"].createElement("p", null, "Volume sebelum penerimaan: ", formData.initialVolume), react_1["default"].createElement("p", null, "Volume penerimaan aktual: ", formData.actualVolume), react_1["default"].createElement("p", null, "Selisih Volume: ", (formData.actualVolume || 0) - (formData.initialVolume || 0)));
+}
+
+exports.default = DetailPenerimaan;
+
+/***/ }),
+
+/***/ "./resources/js/RoyalSPBU/pages/adminPages/penerimaan/FormCreatePenerimaan.tsx":
+/*!*************************************************************************************!*\
+  !*** ./resources/js/RoyalSPBU/pages/adminPages/penerimaan/FormCreatePenerimaan.tsx ***!
+  \*************************************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var notistack_1 = __webpack_require__(/*! notistack */ "./node_modules/notistack/dist/notistack.esm.js");
+
+var react_router_1 = __webpack_require__(/*! react-router */ "./node_modules/react-router/esm/react-router.js");
+
+var AuthProvider_1 = __webpack_require__(/*! ../../../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx");
+
+var AdminConfigProvider_1 = __webpack_require__(/*! ../../../providers/AdminConfigProvider */ "./resources/js/RoyalSPBU/providers/AdminConfigProvider.tsx");
+
+function CreatePenerimaan() {
+  var _a;
+
+  var isEdit = ((_a = location.pathname.split('/').pop()) === null || _a === void 0 ? void 0 : _a.toLowerCase()) === "edit";
+  var history = react_router_1.useHistory();
+  var axios = AuthProvider_1.useAuth().axios;
+  var enqueueSnackbar = notistack_1.useSnackbar().enqueueSnackbar;
+
+  var _b = AdminConfigProvider_1.useAdminConfig(),
+      configs = _b.configs,
+      setConfig = _b.setConfig;
+
+  var _c = react_1["default"].useState(true),
+      isLoading = _c[0],
+      setLoading = _c[1];
+
+  var _d = react_1["default"].useState(-1),
+      id = _d[0],
+      setId = _d[1];
+
+  var _e = react_1["default"].useState([]),
+      tanks = _e[0],
+      setTanks = _e[1];
+
+  var _f = react_1["default"].useState(-1),
+      selectedTank = _f[0],
+      setSelectedTank = _f[1];
+
+  var _g = react_1["default"].useState(0),
+      volume = _g[0],
+      setVolume = _g[1];
+
+  react_1["default"].useEffect(function () {
+    if (isEdit) {
+      //redirect to home if no data provided in context API
+      if (configs.editRequestPenerimaanObject.id < 0) {
+        history.replace('/');
+        return;
+      }
+
+      setId(configs.editRequestPenerimaanObject.id);
+      setSelectedTank(configs.editRequestPenerimaanObject.tankId);
+      setVolume(configs.editRequestPenerimaanObject.volume);
+      setConfig({
+        editRequestPenerimaanObject: AdminConfigProvider_1.requestPenerimaanDefaultObejct
+      }); //hapus objek edit
+    }
+
+    requestAllTankNames();
+  }, []);
+
+  var requestAllTankNames = function requestAllTankNames() {
+    setLoading(true);
+    axios({
+      method: 'get',
+      url: '/admin/tank/getAll?onlyName=true'
+    }).then(function (result) {
+      var data = result.data;
+      setTanks(data.map(function (tank) {
+        return {
+          id: tank.id,
+          name: tank.name
+        };
+      }));
+      if (!isEdit) setSelectedTank(data[0].id);
+    })["catch"](function (error) {
+      var errorMessage = error.pesan ? error.pesan : "Terjadi kesalahan pada pengaturan request ini. Silakan hubungi Admin.";
+      enqueueSnackbar(errorMessage, {
+        variant: "error"
+      });
+    })["finally"](function () {
+      return setLoading(false);
+    });
+  };
+
+  var handleSubmit = function handleSubmit() {
+    axios({
+      method: 'post',
+      url: "/admin/penerimaan/" + (isEdit ? 'edit' : 'create'),
+      data: {
+        id: id,
+        tankId: selectedTank,
+        volume: volume
+      }
+    }).then(function () {
+      history.goBack();
+      console.log('created or edited.'); //todo buat aksi tampilkan snackbar
+    })["catch"](function () {
+      console.log('error'); //todo buat aksi tampilkan snackbar
+    });
+  };
+
+  return react_1["default"].createElement("div", {
+    className: "tw-w-full tw-flex tw-p-2 tw-flex-col"
+  }, react_1["default"].createElement("span", null, "Ini nanti tanggal"), react_1["default"].createElement("span", null, "nama tangki"), react_1["default"].createElement("select", {
+    value: selectedTank,
+    onChange: function onChange(e) {
+      return setSelectedTank(+e.target.value);
+    }
+  }, tanks.map(function (tank) {
+    return react_1["default"].createElement("option", {
+      key: tank.id,
+      value: tank.id
+    }, tank.name);
+  })), react_1["default"].createElement("span", null, "Volume PNBP"), react_1["default"].createElement("input", {
+    value: volume <= 0 ? "" : volume,
+    type: "number",
+    onChange: function onChange(e) {
+      return setVolume(+e.target.value);
+    },
+    className: "tw-border-b tw-w-full tw-border-black"
+  }), react_1["default"].createElement("button", {
+    className: "tw-w-full tw-border tw-border-black"
+  }, "Batal"), react_1["default"].createElement("button", {
+    className: "tw-w-full tw-border tw-border-black tw-mt-2",
+    onClick: handleSubmit
+  }, "Buat Permintaan"));
+}
+
+exports.default = CreatePenerimaan;
+
+/***/ }),
+
+/***/ "./resources/js/RoyalSPBU/pages/adminPages/penerimaan/KonfirmasiPenerimaan.tsx":
+/*!*************************************************************************************!*\
+  !*** ./resources/js/RoyalSPBU/pages/adminPages/penerimaan/KonfirmasiPenerimaan.tsx ***!
+  \*************************************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __assign = this && this.__assign || function () {
+  __assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+
+      for (var p in s) {
+        if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+      }
+    }
+
+    return t;
+  };
+
+  return __assign.apply(this, arguments);
+};
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var notistack_1 = __webpack_require__(/*! notistack */ "./node_modules/notistack/dist/notistack.esm.js");
+
+var react_router_1 = __webpack_require__(/*! react-router */ "./node_modules/react-router/esm/react-router.js");
+
+var AuthProvider_1 = __webpack_require__(/*! ../../../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx");
+
+var AdminConfigProvider_1 = __webpack_require__(/*! ../../../providers/AdminConfigProvider */ "./resources/js/RoyalSPBU/providers/AdminConfigProvider.tsx");
+
+function KonfirmasiPenerimaan() {
+  var history = react_router_1.useHistory();
+  var axios = AuthProvider_1.useAuth().axios;
+  var enqueueSnackbar = notistack_1.useSnackbar().enqueueSnackbar;
+
+  var _a = AdminConfigProvider_1.useAdminConfig(),
+      configs = _a.configs,
+      setConfig = _a.setConfig;
+
+  var _b = react_1["default"].useState(false),
+      isLoading = _b[0],
+      setLoading = _b[1];
+
+  var _c = react_1["default"].useState({
+    actualVolume: 0,
+    id: -1,
+    initialVolume: 0,
+    issueTimestamp: '',
+    issuer: '-',
+    pnbp: '',
+    pnbpVolume: 0,
+    receiveTimestamp: '',
+    receiver: '',
+    tankId: 0,
+    tankName: '',
+    truckId: ''
+  }),
+      formData = _c[0],
+      setFormData = _c[1];
+
+  react_1["default"].useEffect(function () {
+    //redirect to home if no data provided in context API
+    if (configs.konfirmasiPenerimaanObject.id < 0) {
+      history.replace('/');
+      return;
+    }
+
+    updateFormData(configs.konfirmasiPenerimaanObject);
+    setConfig({
+      konfirmasiPenerimaanObject: AdminConfigProvider_1.konfirmasiPenerimaanDefaultObejct
+    }); //hapus objek
+  }, []);
+
+  var handleSubmit = function handleSubmit() {
+    setLoading(true);
+    axios({
+      method: 'post',
+      url: '/admin/penerimaan/confirm',
+      data: formData
+    }).then(function (response) {
+      console.log(response);
+      history.replace('/penerimaan');
+    })["catch"](function (err) {
+      console.log(err);
+    })["finally"](function () {
+      setLoading(false);
+    });
+  };
+
+  var updateFormData = function updateFormData(newData) {
+    setFormData(function (prev) {
+      return __assign(__assign({}, prev), newData);
+    });
+  };
+
+  var handleFormChange = function handleFormChange(name, value) {
+    setFormData(function (prev) {
+      var _a;
+
+      return __assign(__assign({}, prev), (_a = {}, _a[name] = value, _a));
+    });
+  };
+
+  return react_1["default"].createElement("div", {
+    className: "tw-w-full tw-flex tw-flex-col tw-gap-2"
+  }, react_1["default"].createElement("p", null, "Pemohon: ", formData.issuer), react_1["default"].createElement("p", null, "Hari/tanggal: ", formData.issueTimestamp), react_1["default"].createElement("p", null, "Nama Tangki: ", formData.tankName), react_1["default"].createElement("p", null, "Volume PNBP: ", formData.pnbpVolume), react_1["default"].createElement("p", null, "-----"), react_1["default"].createElement("p", null, "Penerimaan"), react_1["default"].createElement("p", null, "No Mobil tangki"), react_1["default"].createElement("input", {
+    value: formData.truckId,
+    onChange: function onChange(e) {
+      return handleFormChange('truckId', e.target.value);
+    }
+  }), react_1["default"].createElement("p", null, "No PNBP"), react_1["default"].createElement("input", {
+    value: formData.pnbp,
+    onChange: function onChange(e) {
+      return handleFormChange('pnbp', e.target.value);
+    }
+  }), react_1["default"].createElement("p", null, "Volume sebelum penerimaan"), react_1["default"].createElement("input", {
+    value: formData.initialVolume,
+    onChange: function onChange(e) {
+      return handleFormChange('initialVolume', e.target.value);
+    },
+    type: "number"
+  }), react_1["default"].createElement("p", null, "Volume penerimaan aktual"), react_1["default"].createElement("input", {
+    value: formData.actualVolume,
+    onChange: function onChange(e) {
+      return handleFormChange('actualVolume', e.target.value);
+    },
+    type: "number"
+  }), react_1["default"].createElement("p", null, "Selisih volume: ", (formData.actualVolume || 0) - (formData.initialVolume || 0), " L"), react_1["default"].createElement("button", {
+    onClick: function onClick() {
+      return history.goBack();
+    }
+  }, "Batal"), react_1["default"].createElement("button", {
+    onClick: handleSubmit
+  }, "Simpan"));
+}
+
+exports.default = KonfirmasiPenerimaan;
+
+/***/ }),
+
+/***/ "./resources/js/RoyalSPBU/pages/adminPages/penerimaan/ListPenerimaan.tsx":
+/*!*******************************************************************************!*\
+  !*** ./resources/js/RoyalSPBU/pages/adminPages/penerimaan/ListPenerimaan.tsx ***!
+  \*******************************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var AdminConfigProvider_1 = __webpack_require__(/*! ../../../providers/AdminConfigProvider */ "./resources/js/RoyalSPBU/providers/AdminConfigProvider.tsx");
+
+var react_router_1 = __webpack_require__(/*! react-router */ "./node_modules/react-router/esm/react-router.js");
+
+var AuthProvider_1 = __webpack_require__(/*! ../../../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx");
+
+function ListPenerimaan() {
+  // todo: buat handle untuk edit konfirmasi penerimaan
+  var history = react_router_1.useHistory();
+  var axios = AuthProvider_1.useAuth().axios;
+
+  var _a = AdminConfigProvider_1.useAdminConfig(),
+      configs = _a.configs,
+      setConfig = _a.setConfig;
+
+  var _b = react_1["default"].useState([]),
+      ongoings = _b[0],
+      setOngoings = _b[1];
+
+  var _c = react_1["default"].useState([]),
+      finishedPenerimaans = _c[0],
+      setFinishedPenerimaan = _c[1];
+
+  var _d = react_1["default"].useState(true),
+      isLoading = _d[0],
+      setLoading = _d[1];
+
+  react_1["default"].useEffect(function () {
+    getAllPenerimaan();
+  }, []);
+
+  var getAllPenerimaan = function getAllPenerimaan() {
+    setLoading(true);
+    axios({
+      url: '/admin/penerimaan/all'
+    }).then(function (response) {
+      console.log(response.data);
+      var data = response.data;
+      setOngoings(data.filter(function (penerimaan) {
+        return penerimaan.receiveTimestamp === null;
+      }));
+      setFinishedPenerimaan(data.filter(function (penerimaan) {
+        return penerimaan.receiveTimestamp !== null;
+      }));
+    })["catch"](function (err) {
+      console.log(err);
+    })["finally"](function () {
+      setLoading(false);
+    });
+  };
+
+  var handleEditOngoing = function handleEditOngoing(penerimaan) {
+    setConfig({
+      editRequestPenerimaanObject: {
+        id: penerimaan.id,
+        tankId: penerimaan.tankId,
+        volume: penerimaan.pnbpVolume
+      }
+    });
+    history.push('/penerimaan/minta/edit');
+  };
+
+  var handleKonfirmasi = function handleKonfirmasi(penerimaan) {
+    setConfig({
+      konfirmasiPenerimaanObject: {
+        id: penerimaan.id,
+        tankId: penerimaan.tankId,
+        issueTimestamp: penerimaan.issueTimestamp,
+        issuer: penerimaan.issuer,
+        pnbpVolume: penerimaan.pnbpVolume,
+        tankName: penerimaan.tankName
+      }
+    });
+    history.push('/penerimaan/konfirmasi');
+  };
+
+  var handleDetail = function handleDetail(penerimaan) {
+    setConfig({
+      detailPenerimaanObject: {
+        actualVolume: penerimaan.actualVolume,
+        id: penerimaan.id,
+        initialVolume: penerimaan.initialVolume,
+        issueTimestamp: penerimaan.issueTimestamp,
+        issuer: penerimaan.issuer,
+        pnbp: penerimaan.pnbp,
+        pnbpVolume: penerimaan.pnbpVolume,
+        receiveTimestamp: penerimaan.receiveTimestamp,
+        receiver: penerimaan.receiver,
+        tankId: penerimaan.tankId,
+        tankName: penerimaan.tankName,
+        truckId: penerimaan.truckId
+      }
+    });
+    history.push('/penerimaan/detail');
+  };
+
+  var handleDelete = function handleDelete(id) {
+    setLoading(true);
+    axios({
+      url: '/admin/penerimaan/delete',
+      data: {
+        id: id
+      },
+      method: 'post'
+    }) //todo buat aksi snackbar
+    .then(function (response) {
+      getAllPenerimaan();
+    })["catch"](function (err) {
+      console.log(err.response);
+    })["finally"](function () {
+      setLoading(false);
+    });
+  };
+
+  return react_1["default"].createElement("div", {
+    className: "tw-flex tw-flex-col tw-w-full tw-p-2 tw-gap-2"
+  }, react_1["default"].createElement("button", {
+    className: "tw-w-full tw-border tw-border-black tw-py-2",
+    onClick: function onClick() {
+      history.push('/penerimaan/minta');
+    }
+  }, "Buat Permintaan"), react_1["default"].createElement("span", null, "Ongoing"), isLoading ? react_1["default"].createElement("span", null, "Loading...") : ongoings.length < 1 ? react_1["default"].createElement("span", null, "Tidak ada data") : ongoings.map(function (penerimaan) {
+    return react_1["default"].createElement("div", {
+      key: penerimaan.id,
+      className: "tw-w-full tw-border tw-border-black tw-flex tw-flex-col"
+    }, react_1["default"].createElement("p", null, "Hari, tanggal penerimaan: ", penerimaan.issueTimestamp), react_1["default"].createElement("p", null, "Pemohon: ", penerimaan.issuer), react_1["default"].createElement("p", null, "Nama Tangki: ", penerimaan.tankName), react_1["default"].createElement("p", null, "Volume PNBP: ", penerimaan.pnbpVolume), react_1["default"].createElement("button", {
+      onClick: function onClick() {
+        return handleEditOngoing(penerimaan);
+      }
+    }, "Edit"), react_1["default"].createElement("button", {
+      onClick: function onClick() {
+        return handleKonfirmasi(penerimaan);
+      }
+    }, "Sudah diterima"), react_1["default"].createElement("button", {
+      onClick: function onClick() {
+        return handleDelete(penerimaan.id);
+      }
+    }, "Hapus"));
+  }), react_1["default"].createElement("span", null, "History"), isLoading ? react_1["default"].createElement("span", null, "Loading...") : finishedPenerimaans.length < 1 ? react_1["default"].createElement("span", null, "Tidak ada data") : finishedPenerimaans.map(function (penerimaan) {
+    return react_1["default"].createElement("div", {
+      key: penerimaan.id,
+      className: "tw-w-full tw-border tw-border-black tw-flex tw-flex-col"
+    }, react_1["default"].createElement("p", null, "Hari, tanggal permintaan: ", penerimaan.receiveTimestamp), react_1["default"].createElement("p", null, "Nama Tangki: ", penerimaan.tankName), react_1["default"].createElement("button", {
+      onClick: function onClick() {
+        return handleDetail(penerimaan);
+      }
+    }, "Lihat"));
+  }));
+}
+
+exports.default = ListPenerimaan;
 
 /***/ }),
 
@@ -8515,7 +9089,7 @@ function Scan() {
   var videoElement = react_1["default"].useRef(null);
   var canvasElement = react_1["default"].useRef(null);
   var scannerContainer = react_1["default"].useRef(null);
-  var audio = new Audio('/storage/store-scanner-beep.mp3');
+  var audio = new Audio('/storage/assets/store-scanner-beep.mp3');
 
   var _b = react_1["default"].useState({
     status: ScanStatus.INIT,
@@ -9646,6 +10220,191 @@ function Products() {
 }
 
 exports.default = Products;
+
+/***/ }),
+
+/***/ "./resources/js/RoyalSPBU/pages/adminPages/reports/PompaHarian/Detail.tsx":
+/*!********************************************************************************!*\
+  !*** ./resources/js/RoyalSPBU/pages/adminPages/reports/PompaHarian/Detail.tsx ***!
+  \********************************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var react_router_1 = __webpack_require__(/*! react-router */ "./node_modules/react-router/esm/react-router.js");
+
+var AdminConfigProvider_1 = __webpack_require__(/*! ../../../../providers/AdminConfigProvider */ "./resources/js/RoyalSPBU/providers/AdminConfigProvider.tsx");
+
+var helper_1 = __webpack_require__(/*! ../../../../utils/helper */ "./resources/js/RoyalSPBU/utils/helper.ts");
+
+function Detail() {
+  var history = react_router_1.useHistory();
+  var configs = AdminConfigProvider_1.useAdminConfig().configs;
+
+  var _a = react_1["default"].useState(configs.pumpReportObejct),
+      report = _a[0],
+      setReport = _a[1];
+
+  react_1["default"].useEffect(function () {
+    if (configs.pumpReportObejct.id < 0) {
+      history.replace('/laporan/pompa-harian');
+    }
+  }, []);
+  return react_1["default"].createElement("div", {
+    className: "tw-flex tw-w-full tw-flex-col"
+  }, react_1["default"].createElement("p", null, "Pelapor: ", report.reporter), react_1["default"].createElement("p", null, "Hari, Tanggal: ", report.createdAt), react_1["default"].createElement("p", {
+    className: "tw-text-center"
+  }, "Laporan Pulau Pompa ", report.pumpNumber), report.nozzles.map(function (nozzle, i) {
+    var totalizatorDiff = Math.abs(nozzle.totalizatorFinal - nozzle.totalizatorInitial);
+    return react_1["default"].createElement("div", {
+      className: "tw-border tw-border-black tw-flex tw-flex-col tw-p-2",
+      key: i
+    }, react_1["default"].createElement("p", null, "Nozzle ", i + 1), react_1["default"].createElement("p", null, "Nama Produk: ", nozzle.productName), react_1["default"].createElement("p", null, "Totalisator Awal: ", nozzle.totalizatorInitial), react_1["default"].createElement("p", null, "Totalisator Akhir: ", nozzle.totalizatorFinal), react_1["default"].createElement("p", null, "Volume Penjualan: ", totalizatorDiff), react_1["default"].createElement("p", null, "Harga per liter: Rp.", nozzle.price), react_1["default"].createElement("p", null, "Total Pendapatan: Rp. ", nozzle.price * totalizatorDiff), react_1["default"].createElement("p", null, "Bukti Foto"), react_1["default"].createElement("img", {
+      src: "/storage/images/reports/" + nozzle.reportFilename
+    }));
+  }), react_1["default"].createElement("p", null, "Total Pendapatan: ", report.income), helper_1.isToday(new Date(report.createdAt)) && react_1["default"].createElement("button", {
+    className: "tw-w-full tw-py-2 tw-text-center tw-bg-green-300"
+  }, "Izinkan edit"));
+}
+
+exports.default = Detail;
+
+/***/ }),
+
+/***/ "./resources/js/RoyalSPBU/pages/adminPages/reports/PompaHarian/PompaHarian.tsx":
+/*!*************************************************************************************!*\
+  !*** ./resources/js/RoyalSPBU/pages/adminPages/reports/PompaHarian/PompaHarian.tsx ***!
+  \*************************************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var react_router_1 = __webpack_require__(/*! react-router */ "./node_modules/react-router/esm/react-router.js");
+
+var AuthProvider_1 = __webpack_require__(/*! ../../../../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx");
+
+var AdminConfigProvider_1 = __webpack_require__(/*! ../../../../providers/AdminConfigProvider */ "./resources/js/RoyalSPBU/providers/AdminConfigProvider.tsx");
+
+function PompaHarian() {
+  var history = react_router_1.useHistory();
+  var axios = AuthProvider_1.useAuth().axios;
+
+  var _a = react_1["default"].useState([]),
+      reports = _a[0],
+      setReports = _a[1];
+
+  var _b = react_1["default"].useState(true),
+      loading = _b[0],
+      setLoading = _b[1];
+
+  var _c = AdminConfigProvider_1.useAdminConfig(),
+      configs = _c.configs,
+      setConfig = _c.setConfig;
+
+  react_1["default"].useEffect(function () {
+    setLoading(true);
+    axios({
+      method: 'get',
+      url: '/admin/dailyPumpReport/all'
+    }).then(function (response) {
+      var data = response.data;
+      setReports(data);
+      console.log(response.data);
+    })["catch"](function (err) {
+      console.log(err);
+    })["finally"](function () {
+      setLoading(false);
+    });
+  }, []);
+
+  var handleReportClick = function handleReportClick(report) {
+    setConfig({
+      pumpReportObejct: report
+    });
+    history.push('/laporan/pompa-harian/detail');
+  };
+
+  return react_1["default"].createElement("div", {
+    className: "tw-w-full tw-flex tw-flex-col"
+  }, loading ? react_1["default"].createElement("div", null, "Loading...") : reports.length < 1 ? react_1["default"].createElement("div", null, "Tidak ada data") : react_1["default"].createElement("div", {
+    className: "tw-w-full tw-flex tw-flex-col"
+  }, reports.map(function (report) {
+    return react_1["default"].createElement("div", {
+      className: "tw-w-full tw-p-2 tw-border tw-border-black tw-my-2",
+      key: report.id,
+      onClick: function onClick() {
+        return handleReportClick(report);
+      }
+    }, react_1["default"].createElement("p", null, "Tanggal: ", report.createdAt), react_1["default"].createElement("p", null, "Pelapor: ", report.reporter), react_1["default"].createElement("p", null, "Nomor pompa: ", report.pumpNumber), react_1["default"].createElement("p", null, "Pemasukan pompa: ", report.income));
+  })));
+}
+
+exports.default = PompaHarian;
+
+/***/ }),
+
+/***/ "./resources/js/RoyalSPBU/pages/adminPages/reports/Reports.tsx":
+/*!*********************************************************************!*\
+  !*** ./resources/js/RoyalSPBU/pages/adminPages/reports/Reports.tsx ***!
+  \*********************************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+
+var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+
+var react_router_1 = __webpack_require__(/*! react-router */ "./node_modules/react-router/esm/react-router.js");
+
+function Reports() {
+  var history = react_router_1.useHistory();
+  return react_1["default"].createElement("div", {
+    className: "tw-w-full tw-flex tw-flex-col tw-p-2"
+  }, react_1["default"].createElement("p", null, "Laporan"), react_1["default"].createElement("div", {
+    className: "tw-w-full tw-border tw-border-black tw-py-8",
+    onClick: function onClick() {
+      return history.push('/laporan/pompa-harian');
+    }
+  }, "Laporan pompa harian"));
+}
+
+exports.default = Reports;
 
 /***/ }),
 
@@ -11357,9 +12116,9 @@ exports.default = Home;
 
 /***/ }),
 
-/***/ "./resources/js/RoyalSPBU/pages/operatorPages/Laporan/IsiLaporan.tsx":
+/***/ "./resources/js/RoyalSPBU/pages/operatorPages/laporan/IsiLaporan.tsx":
 /*!***************************************************************************!*\
-  !*** ./resources/js/RoyalSPBU/pages/operatorPages/Laporan/IsiLaporan.tsx ***!
+  !*** ./resources/js/RoyalSPBU/pages/operatorPages/laporan/IsiLaporan.tsx ***!
   \***************************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
@@ -11404,7 +12163,7 @@ var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/r
 
 var compressorjs_1 = __importDefault(__webpack_require__(/*! compressorjs */ "./node_modules/compressorjs/dist/compressor.js"));
 
-var _1 = __webpack_require__(/*! . */ "./resources/js/RoyalSPBU/pages/operatorPages/Laporan/index.tsx");
+var _1 = __webpack_require__(/*! . */ "./resources/js/RoyalSPBU/pages/operatorPages/laporan/index.tsx");
 
 var AuthProvider_1 = __webpack_require__(/*! ../../../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx");
 
@@ -11434,7 +12193,9 @@ function IsiLaporan(_a) {
         return __assign(__assign({}, prev), {
           nozzles: __spreadArray(__spreadArray([], prev.nozzles.filter(function (nozzle) {
             return nozzle.id !== id;
-          })), [newData_1])
+          })), [newData_1]).sort(function (a, b) {
+            return a.id > b.id ? 1 : -1;
+          })
         });
       });
     } else console.log("Failed to updating nozzle data with id " + id);
@@ -11587,9 +12348,9 @@ exports.default = IsiLaporan;
 
 /***/ }),
 
-/***/ "./resources/js/RoyalSPBU/pages/operatorPages/Laporan/PeriksaLaporan.tsx":
+/***/ "./resources/js/RoyalSPBU/pages/operatorPages/laporan/PeriksaLaporan.tsx":
 /*!*******************************************************************************!*\
-  !*** ./resources/js/RoyalSPBU/pages/operatorPages/Laporan/PeriksaLaporan.tsx ***!
+  !*** ./resources/js/RoyalSPBU/pages/operatorPages/laporan/PeriksaLaporan.tsx ***!
   \*******************************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
@@ -11612,10 +12373,13 @@ var notistack_1 = __webpack_require__(/*! notistack */ "./node_modules/notistack
 
 var AuthProvider_1 = __webpack_require__(/*! ../../../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx");
 
+var react_router_1 = __webpack_require__(/*! react-router */ "./node_modules/react-router/esm/react-router.js");
+
 function PeriksaLaporan(_a) {
   var report = _a.report,
       handleBack = _a.handleBack;
   var axios = AuthProvider_1.useAuth().axios;
+  var history = react_router_1.useHistory();
   var enqueueSnackbar = notistack_1.useSnackbar().enqueueSnackbar;
 
   var _b = react_1["default"].useState(false),
@@ -11629,6 +12393,7 @@ function PeriksaLaporan(_a) {
       method: 'post',
       data: {
         pumpId: report.id,
+        pumpNumber: report.pumpNumber,
         nozzles: report.nozzles.map(function (nozzle) {
           return {
             id: nozzle.id,
@@ -11639,6 +12404,7 @@ function PeriksaLaporan(_a) {
       }
     }).then(function (response) {
       console.log(response);
+      history.replace('/');
       enqueueSnackbar('Laporan berhasil dikirim', {
         variant: 'success'
       });
@@ -11666,8 +12432,13 @@ function PeriksaLaporan(_a) {
     }, "Nozzle ", i + 1), react_1["default"].createElement("p", null, "Nama Produk: ", nozzle.productName), react_1["default"].createElement("p", null, "Totalisator Awal: ", nozzle.initialTotalizator, " L"), react_1["default"].createElement("p", null, "Totalisator AKhir: ", nozzle.finalTotalizator, " L"), react_1["default"].createElement("p", null, "Volume penjualan: ", diff, " L"), react_1["default"].createElement("p", null, "Harga per liter: Rp", nozzle.price), react_1["default"].createElement("p", null, "Total pendapatan: Rp", nozzle.price * diff), react_1["default"].createElement("p", null, "Bukti foto"), react_1["default"].createElement("img", {
       src: nozzle.imageUrl
     }));
-  }), react_1["default"].createElement("button", {
-    className: "tw-border tw-bg-gray-400",
+  }), react_1["default"].createElement("p", {
+    className: "tw-font-bold"
+  }, "Pendapatan: ", report.nozzles.reduce(function (current, nozzle) {
+    var diff = Math.abs(nozzle.finalTotalizator - nozzle.initialTotalizator);
+    return nozzle.price * diff + current;
+  }, 0)), react_1["default"].createElement("button", {
+    className: "tw-border tw-bg-gray-400 tw-my-2",
     onClick: handleBack
   }, "Kembali"), react_1["default"].createElement("button", {
     className: "tw-border tw-bg-gray-400",
@@ -11679,9 +12450,9 @@ exports.default = PeriksaLaporan;
 
 /***/ }),
 
-/***/ "./resources/js/RoyalSPBU/pages/operatorPages/Laporan/PilihPompa.tsx":
+/***/ "./resources/js/RoyalSPBU/pages/operatorPages/laporan/PilihPompa.tsx":
 /*!***************************************************************************!*\
-  !*** ./resources/js/RoyalSPBU/pages/operatorPages/Laporan/PilihPompa.tsx ***!
+  !*** ./resources/js/RoyalSPBU/pages/operatorPages/laporan/PilihPompa.tsx ***!
   \***************************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
@@ -11720,9 +12491,9 @@ exports.default = PilihPompa;
 
 /***/ }),
 
-/***/ "./resources/js/RoyalSPBU/pages/operatorPages/Laporan/index.tsx":
+/***/ "./resources/js/RoyalSPBU/pages/operatorPages/laporan/index.tsx":
 /*!**********************************************************************!*\
-  !*** ./resources/js/RoyalSPBU/pages/operatorPages/Laporan/index.tsx ***!
+  !*** ./resources/js/RoyalSPBU/pages/operatorPages/laporan/index.tsx ***!
   \**********************************************************************/
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
@@ -11764,11 +12535,11 @@ var notistack_1 = __webpack_require__(/*! notistack */ "./node_modules/notistack
 
 var AuthProvider_1 = __webpack_require__(/*! ../../../providers/AuthProvider */ "./resources/js/RoyalSPBU/providers/AuthProvider.tsx");
 
-var PilihPompa_1 = __importDefault(__webpack_require__(/*! ./PilihPompa */ "./resources/js/RoyalSPBU/pages/operatorPages/Laporan/PilihPompa.tsx"));
+var PilihPompa_1 = __importDefault(__webpack_require__(/*! ./PilihPompa */ "./resources/js/RoyalSPBU/pages/operatorPages/laporan/PilihPompa.tsx"));
 
-var IsiLaporan_1 = __importDefault(__webpack_require__(/*! ./IsiLaporan */ "./resources/js/RoyalSPBU/pages/operatorPages/Laporan/IsiLaporan.tsx"));
+var IsiLaporan_1 = __importDefault(__webpack_require__(/*! ./IsiLaporan */ "./resources/js/RoyalSPBU/pages/operatorPages/laporan/IsiLaporan.tsx"));
 
-var PeriksaLaporan_1 = __importDefault(__webpack_require__(/*! ./PeriksaLaporan */ "./resources/js/RoyalSPBU/pages/operatorPages/Laporan/PeriksaLaporan.tsx")); //TODO REFACTOR. This page needs so much refactoring
+var PeriksaLaporan_1 = __importDefault(__webpack_require__(/*! ./PeriksaLaporan */ "./resources/js/RoyalSPBU/pages/operatorPages/laporan/PeriksaLaporan.tsx")); //TODO REFACTOR. This page needs so much refactoring
 //TODO buat alert kalau file tidak bisa diupload karena offline
 
 
@@ -11910,7 +12681,7 @@ function Laporan() {
   };
 
   return react_1["default"].createElement("div", {
-    className: "tw-max-w-screen tw-w-full"
+    className: "tw-max-w-screen tw-w-full tw-p-2"
   }, react_1["default"].createElement("p", {
     className: "tw-text-center"
   }, step === StepLaporan.PilihPompa ? 'Pilih Pompa' : step === StepLaporan.IsiLaporan ? 'Isi Laporan' : 'Periksa Laporan'), step === StepLaporan.PilihPompa ? renderPilihPompa() : step === StepLaporan.IsiLaporan ? renderIsiLaporan() : renderPeriksaLaporan());
@@ -11982,7 +12753,7 @@ var __importStar = this && this.__importStar || function (mod) {
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.useAdminConfig = exports.AdminConfigContext = exports.editRoleDefaultObject = exports.editPermissionDefaultObject = exports.editPumpDefaultObject = exports.editTankDefaultObject = exports.editProductDefaultObject = exports.editUserDefaultObject = void 0;
+exports.useAdminConfig = exports.AdminConfigContext = exports.detailPenerimaanDefaultObject = exports.konfirmasiPenerimaanDefaultObejct = exports.requestPenerimaanDefaultObejct = exports.pumpReportDefaultObejct = exports.editRoleDefaultObject = exports.editPermissionDefaultObject = exports.editPumpDefaultObject = exports.editTankDefaultObject = exports.editProductDefaultObject = exports.editUserDefaultObject = void 0;
 
 var react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
 
@@ -12018,6 +12789,43 @@ exports.editRoleDefaultObject = {
   name: '',
   permissions: []
 };
+exports.pumpReportDefaultObejct = {
+  createdAt: '',
+  editable: false,
+  id: -1,
+  income: 0,
+  nozzles: [],
+  pumpId: 0,
+  pumpNumber: 0,
+  reporter: ''
+};
+exports.requestPenerimaanDefaultObejct = {
+  id: -1,
+  tankId: -1,
+  volume: 0
+};
+exports.konfirmasiPenerimaanDefaultObejct = {
+  tankId: -1,
+  pnbpVolume: 0,
+  id: -1,
+  issueTimestamp: '',
+  issuer: '',
+  tankName: ''
+};
+exports.detailPenerimaanDefaultObject = {
+  actualVolume: 0,
+  id: -1,
+  initialVolume: 0,
+  issueTimestamp: '',
+  issuer: '',
+  pnbp: '',
+  pnbpVolume: 0,
+  receiveTimestamp: '',
+  receiver: '',
+  tankId: -1,
+  tankName: '',
+  truckId: ''
+};
 var contextDefaultValues = {
   configs: {
     editUserObject: exports.editUserDefaultObject,
@@ -12025,7 +12833,11 @@ var contextDefaultValues = {
     editTankObject: exports.editTankDefaultObject,
     editPumpObject: exports.editPumpDefaultObject,
     editPermissionObject: exports.editPermissionDefaultObject,
-    editRoleObejct: exports.editRoleDefaultObject
+    editRoleObejct: exports.editRoleDefaultObject,
+    pumpReportObejct: exports.pumpReportDefaultObejct,
+    editRequestPenerimaanObject: exports.requestPenerimaanDefaultObejct,
+    konfirmasiPenerimaanObject: exports.konfirmasiPenerimaanDefaultObejct,
+    detailPenerimaanObject: exports.detailPenerimaanDefaultObject
   },
   setConfig: function setConfig() {}
 };
@@ -12439,6 +13251,20 @@ var FormRole_1 = __importDefault(__webpack_require__(/*! ../pages/adminPages/rol
 
 var Logout_1 = __importDefault(__webpack_require__(/*! ../pages/Logout */ "./resources/js/RoyalSPBU/pages/Logout.tsx"));
 
+var Reports_1 = __importDefault(__webpack_require__(/*! ../pages/adminPages/reports/Reports */ "./resources/js/RoyalSPBU/pages/adminPages/reports/Reports.tsx"));
+
+var PompaHarian_1 = __importDefault(__webpack_require__(/*! ../pages/adminPages/reports/PompaHarian/PompaHarian */ "./resources/js/RoyalSPBU/pages/adminPages/reports/PompaHarian/PompaHarian.tsx"));
+
+var Detail_1 = __importDefault(__webpack_require__(/*! ../pages/adminPages/reports/PompaHarian/Detail */ "./resources/js/RoyalSPBU/pages/adminPages/reports/PompaHarian/Detail.tsx"));
+
+var ListPenerimaan_1 = __importDefault(__webpack_require__(/*! ../pages/adminPages/penerimaan/ListPenerimaan */ "./resources/js/RoyalSPBU/pages/adminPages/penerimaan/ListPenerimaan.tsx"));
+
+var FormCreatePenerimaan_1 = __importDefault(__webpack_require__(/*! ../pages/adminPages/penerimaan/FormCreatePenerimaan */ "./resources/js/RoyalSPBU/pages/adminPages/penerimaan/FormCreatePenerimaan.tsx"));
+
+var KonfirmasiPenerimaan_1 = __importDefault(__webpack_require__(/*! ../pages/adminPages/penerimaan/KonfirmasiPenerimaan */ "./resources/js/RoyalSPBU/pages/adminPages/penerimaan/KonfirmasiPenerimaan.tsx"));
+
+var DetailPenerimaan_1 = __importDefault(__webpack_require__(/*! ../pages/adminPages/penerimaan/DetailPenerimaan */ "./resources/js/RoyalSPBU/pages/adminPages/penerimaan/DetailPenerimaan.tsx"));
+
 var routes = [{
   path: '/',
   component: Home_1["default"]
@@ -12502,6 +13328,30 @@ var routes = [{
 }, {
   path: '/roles/edit',
   component: FormRole_1["default"]
+}, {
+  path: '/laporan',
+  component: Reports_1["default"]
+}, {
+  path: '/laporan/pompa-harian',
+  component: PompaHarian_1["default"]
+}, {
+  path: '/laporan/pompa-harian/detail',
+  component: Detail_1["default"]
+}, {
+  path: '/penerimaan',
+  component: ListPenerimaan_1["default"]
+}, {
+  path: '/penerimaan/minta',
+  component: FormCreatePenerimaan_1["default"]
+}, {
+  path: '/penerimaan/minta/edit',
+  component: FormCreatePenerimaan_1["default"]
+}, {
+  path: '/penerimaan/konfirmasi',
+  component: KonfirmasiPenerimaan_1["default"]
+}, {
+  path: '/penerimaan/detail',
+  component: DetailPenerimaan_1["default"]
 }];
 exports.default = routes;
 
@@ -12622,7 +13472,7 @@ var Absen_1 = __importDefault(__webpack_require__(/*! ../pages/operatorPages/Abs
 
 var Logout_1 = __importDefault(__webpack_require__(/*! ../pages/Logout */ "./resources/js/RoyalSPBU/pages/Logout.tsx"));
 
-var Laporan_1 = __importDefault(__webpack_require__(/*! ../pages/operatorPages/Laporan */ "./resources/js/RoyalSPBU/pages/operatorPages/Laporan/index.tsx"));
+var laporan_1 = __importDefault(__webpack_require__(/*! ../pages/operatorPages/laporan */ "./resources/js/RoyalSPBU/pages/operatorPages/laporan/index.tsx"));
 
 var routes = [{
   path: '/',
@@ -12635,7 +13485,7 @@ var routes = [{
   component: Logout_1["default"]
 }, {
   path: '/laporan',
-  component: Laporan_1["default"]
+  component: laporan_1["default"]
 }];
 exports.default = routes;
 
@@ -12753,7 +13603,7 @@ exports.default = DB;
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.uniqueArray = void 0;
+exports.isToday = exports.uniqueArray = void 0;
 
 var uniqueArray = function uniqueArray(arr) {
   return arr.filter(function (x, i) {
@@ -12762,6 +13612,13 @@ var uniqueArray = function uniqueArray(arr) {
 };
 
 exports.uniqueArray = uniqueArray;
+
+function isToday(date) {
+  var today = new Date();
+  return date.getDate() == today.getDate() && date.getMonth() == today.getMonth() && date.getFullYear() == today.getFullYear();
+}
+
+exports.isToday = isToday;
 
 /***/ }),
 

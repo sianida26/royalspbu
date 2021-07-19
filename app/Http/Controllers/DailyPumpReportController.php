@@ -17,6 +17,33 @@ class DailyPumpReportController extends Controller
 {
     //
 
+    public function all(Request $request){
+        return DailyPumpReport::all()->map(function($report){
+            Debugbar::info('report id: '.$report->id);
+            $nozzles = $report->nozzles()->get()->map(function($nozzle){
+                Debugbar::info('report_nozzle id: '.$nozzle->id);
+                Debugbar::info('nozzle id: '.$nozzle->nozzle->id);
+                return [
+                    'productName' => $nozzle->nozzle->productName(),
+                    'totalizatorInitial' => $nozzle->totalizator_initial,
+                    'totalizatorFinal' => $nozzle->totalizator_final,
+                    'reportFilename' => $nozzle->report_filename,
+                    'price' => $nozzle->nozzle->price(),
+                ];
+            });
+            return [
+                'createdAt' => $report->created_at,
+                'editable' => $report->editable,
+                'id' => $report->id,
+                'income' => $report->income,
+                'nozzles' => $nozzles,
+                'pumpId' => $report->pump_id,
+                'pumpNumber' => $report->pump_number,
+                'reporter' => $report->reporterName(),
+            ];
+        });
+    }
+
     public function uploadBuktiTotalizer(Request $request){
         
         $messages = [
@@ -40,6 +67,7 @@ class DailyPumpReportController extends Controller
 
         $rules = [
             'pumpId' => ['required', 'exists:pumps,id'],
+            'pumpNumber' => ['required', 'integer'],
             'nozzles' => ['required'],
             'nozzles.*.id' => ['required', 'exists:nozzles,id'],
             'nozzles.*.finalTotalizator' => ['required','integer'],
@@ -49,14 +77,14 @@ class DailyPumpReportController extends Controller
         $messages = [
             'required' => 'Harus diisi',
             'exists' => ':attribute tidak ada',
-            'number' => 'Harus berupa angka',
+            'integer' => 'Harus berupa angka',
         ];
 
         $request->validate($rules, $messages);
 
         abort_if(
             DailyPumpReport::whereDate('created_at',Carbon::today())->where('pump_id',$request->pumpId)->exists(),
-            422,
+            501,
             'Anda sudah membuat laporan'
         );
 
@@ -71,12 +99,10 @@ class DailyPumpReportController extends Controller
             $nozzleModel->save();
 
             $price = $nozzleModel->price();
-            $totalizatorDiff = $nozzleModel->totalizator - $initialTotalizator;
-            Debugbar::info('final: '.$nozzleModel->totalizator.', initial:'.$initialTotalizator);
+            $totalizatorDiff = abs($nozzleModel->totalizator - $initialTotalizator);
+            Debugbar::info($totalizatorDiff);
             // Debugbar::info($price);
             $totalIncome += $totalizatorDiff*$price;
-
-            Storage::move('temp/'.$nozzle['filename'],'public/images/reports/'.$nozzle['filename']);
 
             return new PumpReportNozzle([
                 'nozzle_id' => $nozzle['id'],
@@ -89,11 +115,17 @@ class DailyPumpReportController extends Controller
         Debugbar::info($totalIncome);
         $report = DailyPumpReport::create([
             'pump_id' => $request->pumpId,
+            'pump_number' => $request->pumpNumber+1,
             'reporter_id' => $userId,
             'income' => $totalIncome,
         ]);
 
         $report->nozzles()->saveMany($nozzles);
+
+        //move report files
+        collect($request->nozzles)->map(function($nozzle){
+            Storage::move('temp/'.$nozzle['filename'],'public/images/reports/'.$nozzle['filename']);
+        });
 
         return $report;
     }

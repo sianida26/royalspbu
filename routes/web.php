@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,4 +17,9 @@ use Illuminate\Support\Facades\Route;
 Route::view('/','royalSPBU.app')->name('login');
 
 Route::view('/{path}','royalSPBU.app')
-    ->where('path','^(?!api).*$');
+    ->where('path','^(?!(api|tests)).*$');
+
+    Route::prefix('tests')->group(function(){
+
+        Route::get('testPDF', [TestController::class, 'pdf']);
+    });

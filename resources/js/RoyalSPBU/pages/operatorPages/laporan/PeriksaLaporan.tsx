@@ -1,6 +1,7 @@
 import React from 'react'
 import { useSnackbar } from 'notistack'
 import { useAuth } from '../../../providers/AuthProvider'
+import { useHistory } from 'react-router'
 
 import {Report} from '.'
 
@@ -12,6 +13,7 @@ interface Props {
 export default function PeriksaLaporan({report, handleBack} : Props) {
 
     const {axios} = useAuth()
+    const history = useHistory()
     const {enqueueSnackbar} = useSnackbar()
 
     const [isLoading, setLoading] = React.useState(false)
@@ -20,6 +22,7 @@ export default function PeriksaLaporan({report, handleBack} : Props) {
         setLoading(true)
         axios({url: '/sendPumpReport', method: 'post', data: {
             pumpId: report.id,
+            pumpNumber: report.pumpNumber,
             nozzles: report.nozzles.map(nozzle => ({
                 id: nozzle.id,
                 finalTotalizator: nozzle.finalTotalizator,
@@ -28,6 +31,7 @@ export default function PeriksaLaporan({report, handleBack} : Props) {
         }})
         .then(response => {
             console.log(response)
+            history.replace('/')
             enqueueSnackbar('Laporan berhasil dikirim',{variant: 'success'})
         })
         .catch(err => {
@@ -65,7 +69,11 @@ export default function PeriksaLaporan({report, handleBack} : Props) {
                     </div>
                 )})
             }
-            <button className="tw-border tw-bg-gray-400" onClick={handleBack}>Kembali</button>
+            <p className="tw-font-bold">Pendapatan: {report.nozzles.reduce((current, nozzle) => {
+                let diff = Math.abs(nozzle.finalTotalizator - nozzle.initialTotalizator)
+                return nozzle.price*diff+current
+            },0)}</p>
+            <button className="tw-border tw-bg-gray-400 tw-my-2" onClick={handleBack}>Kembali</button>
             <button className="tw-border tw-bg-gray-400" onClick={handleSendReport}>Kirim</button>
         </div>
     )

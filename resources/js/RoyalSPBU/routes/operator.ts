@@ -1,7 +1,7 @@
 import Home from '../pages/operatorPages/Home'
 import Absen from '../pages/operatorPages/Absen'
 import Logout from '../pages/Logout'
-import Laporan from '../pages/operatorPages/Laporan'
+import Laporan from '../pages/operatorPages/laporan'
 import { IRoute } from '../types'
 
 const routes: IRoute[] = [

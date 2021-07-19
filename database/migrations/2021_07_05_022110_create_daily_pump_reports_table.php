@@ -16,6 +16,7 @@ class CreateDailyPumpReportsTable extends Migration
         Schema::create('daily_pump_reports', function (Blueprint $table) {
             $table->id();
             $table->foreignId('pump_id')->constrained();
+            $table->unsignedInteger('pump_number');
             $table->foreignId('reporter_id')->constrained('users');
             $table->unsignedBigInteger('income');
             $table->boolean('editable')->default(false);

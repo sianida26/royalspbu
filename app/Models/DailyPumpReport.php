@@ -57,4 +57,8 @@ class DailyPumpReport extends Model
     {
         return $this->hasMany(PumpReportNozzle::class, 'report_id');
     }
+
+    public function reporterName() {
+        return $this->reporter()->first()->name;
+    }
 }

@@ -39,6 +39,47 @@ export const editRoleDefaultObject = {
     permissions: [],
 }
 
+export const pumpReportDefaultObejct = {
+    createdAt : '',
+    editable: false,
+    id: -1,
+    income: 0,
+    nozzles: [],
+    pumpId: 0,
+    pumpNumber: 0,
+    reporter: '',
+}
+
+export const requestPenerimaanDefaultObejct = {
+    id: -1,
+    tankId: -1,
+    volume: 0,
+}
+
+export const konfirmasiPenerimaanDefaultObejct = {
+    tankId: -1,
+    pnbpVolume: 0,
+    id: -1,
+    issueTimestamp: '',
+    issuer: '',
+    tankName: '',
+}
+
+export const detailPenerimaanDefaultObject = {
+    actualVolume : 0,
+    id: -1,
+    initialVolume : 0,
+    issueTimestamp: '',
+    issuer: '',
+    pnbp: '',
+    pnbpVolume: 0,
+    receiveTimestamp: '',
+    receiver: '',
+    tankId: -1,
+    tankName: '',
+    truckId: '',
+}
+
 const contextDefaultValues: AdminConfigContextState = {
     configs: {
         editUserObject: editUserDefaultObject,
@@ -47,6 +88,10 @@ const contextDefaultValues: AdminConfigContextState = {
         editPumpObject: editPumpDefaultObject,
         editPermissionObject: editPermissionDefaultObject,
         editRoleObejct: editRoleDefaultObject,
+        pumpReportObejct: pumpReportDefaultObejct,
+        editRequestPenerimaanObject: requestPenerimaanDefaultObejct,
+        konfirmasiPenerimaanObject: konfirmasiPenerimaanDefaultObejct,
+        detailPenerimaanObject: detailPenerimaanDefaultObject,
     },
     setConfig: () => {}
 }

@@ -52,6 +52,53 @@ export interface RoleObject{
     permissions: IPermission[]
 }
 
+export interface PumpReportObject{
+    createdAt : string,
+    editable: boolean,
+    id: number,
+    income: number,
+    nozzles: {
+        price: number,
+        productName: string,
+        reportFilename: string,
+        totalizatorFinal: number,
+        totalizatorInitial: number,
+    }[],
+    pumpId: number,
+    pumpNumber: number,
+    reporter: string,
+}
+
+export interface RequestPenerimaanObejct{
+    tankId: number,
+    volume: number
+    id: number,
+}
+
+export interface KonfirmasiPenerimaanObject{
+    tankId: number,
+    pnbpVolume: number
+    id: number,
+    issueTimestamp: string,
+    issuer: string,
+    tankName: string,
+}
+
+export interface DetailPenerimaanObject{
+    actualVolume : number,
+    id: number,
+    initialVolume : number,
+    issueTimestamp: string,
+    issuer: string,
+    pnbp: string,
+    pnbpVolume: number,
+    receiveTimestamp: string,
+    receiver: string,
+    tankId: number,
+    tankName: string,
+    truckId: string
+}
+
 export interface IConfig {
 }
 
@@ -62,6 +109,10 @@ export interface IAdminConfig {
     editPumpObject? : PumpObject
     editPermissionObject? : IPermission
     editRoleObejct? : RoleObject
+    pumpReportObejct? : PumpReportObject
+    editRequestPenerimaanObject? : RequestPenerimaanObejct
+    konfirmasiPenerimaanObject? : KonfirmasiPenerimaanObject
+    detailPenerimaanObject? : DetailPenerimaanObject
 }
 
 export interface IAuth {

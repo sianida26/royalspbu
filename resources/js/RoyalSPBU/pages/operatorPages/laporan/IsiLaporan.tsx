@@ -47,7 +47,7 @@ export default function IsiLaporan({report, handleSubmitIsi, handleBack}: Props)
                 nozzles: [
                     ...prev.nozzles.filter((nozzle) => nozzle.id !== id),
                     newData,
-                ]
+                ].sort((a,b) => (a.id > b.id) ? 1 : -1)
             }))
         }
         else console.log(`Failed to updating nozzle data with id ${id}`)

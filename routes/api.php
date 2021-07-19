@@ -11,6 +11,7 @@ use App\Http\Controllers\PumpController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\DailyPumpReportController;
 use App\Http\Controllers\PresenceController;
+use App\Http\Controllers\PenerimaanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -81,6 +82,18 @@ Route::middleware('auth:api')->group(function(){
         Route::prefix('presence')->group(function(){
             Route::get('list', [PresenceController::class, 'list']);
             Route::post('scan', [PresenceController::class, 'scan']);
+        });
+
+        Route::prefix('dailyPumpReport')->group(function(){
+            Route::get('all', [DailyPumpReportController::class, 'all']);
+        });
+
+        Route::prefix('penerimaan')->group(function(){
+            Route::get('all', [PenerimaanController::class, 'all']);
+            Route::post('create', [PenerimaanController::class, 'create']);
+            Route::post('edit', [PenerimaanController::class, 'edit']);
+            Route::post('delete', [PenerimaanController::class, 'delete']);
+            Route::post('confirm', [PenerimaanController::class, 'confirm']);
         });
     });
 

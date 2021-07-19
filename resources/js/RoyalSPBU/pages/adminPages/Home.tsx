@@ -23,6 +23,12 @@ export default function Home() {
             <div className="tw-py-8 tw-border tw-border-black" onClick={() => history.push('/pompa')}>
                 Pulau Pompa
             </div>
+            <div className="tw-py-8 tw-border tw-border-black" onClick={() => history.push('/laporan')}>
+                Laporan
+            </div>
+            <div className="tw-py-8 tw-border tw-border-black" onClick={() => history.push('/penerimaan')}>
+                Penerimaan
+            </div>
         </div>
     )
 }

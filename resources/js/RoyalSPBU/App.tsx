@@ -44,27 +44,6 @@ export default function App() {
             })
     }
 
-    const renderGuestRoutes = () => {
-
-        return isBooting ? <Splash /> :  (
-            <Switch>
-                <Route path="/login" exact component={Login} />
-                <Redirect to="/login" />
-                {/* <Route component={NotFoundRoute} /> */}
-            </Switch>
-        )
-    }
-
-    // const OperatorRoutes = lazy(() => import ('./routes/OperatorRoutes'))
-    // const AdminRoutes = lazy(() => import ('./routes/AdminRoutes'))
-
-    // todo: desain page not found
-    const NotFoundRoute = () => {
-        return (
-            <div>Page Not Found</div>
-        )
-    }
-
     return isBooting? <Splash /> : (
         <>
             <RouteSwitch />

@@ -23,6 +23,15 @@ import FormRole from '../pages/adminPages/roles/FormRole'
 import { IRoute } from '../types'
 import Logout from '../pages/Logout'
 
+import Reports from '../pages/adminPages/reports/Reports'
+import PompaHarian from '../pages/adminPages/reports/PompaHarian/PompaHarian'
+import DetailPompaHarian from '../pages/adminPages/reports/PompaHarian/Detail'
+
+import ListPenerimaan from '../pages/adminPages/penerimaan/ListPenerimaan'
+import CreatePenerimaan from '../pages/adminPages/penerimaan/FormCreatePenerimaan'
+import KonfirmasiPenerimaan from '../pages/adminPages/penerimaan/KonfirmasiPenerimaan'
+import DetailPenerimaan from '../pages/adminPages/penerimaan/DetailPenerimaan'
+
 const routes: IRoute[] = [
     {
         path: '/',
@@ -107,7 +116,39 @@ const routes: IRoute[] = [
     {
         path: '/roles/edit',
         component: FormRole,
-    }
+    },
+    {
+        path: '/laporan',
+        component: Reports,
+    },
+    {
+        path: '/laporan/pompa-harian',
+        component: PompaHarian,
+    },
+    {
+        path: '/laporan/pompa-harian/detail',
+        component: DetailPompaHarian,
+    },
+    {
+        path: '/penerimaan',
+        component: ListPenerimaan,
+    },
+    {
+        path: '/penerimaan/minta',
+        component: CreatePenerimaan
+    },
+    {
+        path: '/penerimaan/minta/edit',
+        component: CreatePenerimaan,
+    },
+    {
+        path: '/penerimaan/konfirmasi',
+        component: KonfirmasiPenerimaan,
+    },
+    {
+        path: '/penerimaan/detail',
+        component: DetailPenerimaan,
+    },
 ]
 
 export default routes

@@ -44,6 +44,6 @@ class Pump extends Model
     }
 
     public function isAvailableForReporting(){
-        return !$this->dailyPumpReports()->whereDate('created_at', Carbon::today())->where('pump_id',1)->exists();
+        return !$this->dailyPumpReports()->whereDate('created_at', Carbon::today())->where('pump_id',$this->id)->exists();
     }
 }

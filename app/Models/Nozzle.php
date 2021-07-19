@@ -66,4 +66,8 @@ class Nozzle extends Model
     public function price(){
         return $this->tank->product->price;
     }
+
+    public function productName(){
+        return $this->tank->product->name;
+    }
 }
