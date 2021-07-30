@@ -1,4 +1,7 @@
-import React from 'react'
+import React, {ButtonHTMLAttributes, forwardRef, LegacyRef} from 'react'
+
+import moment from 'moment'
+import DatePicker from 'react-datepicker'
 
 import {useHistory} from 'react-router'
 
@@ -24,6 +27,11 @@ interface Nozzle {
     totalizatorInitial: number,
 }
 
+interface CalendarProps {
+    value: string,
+    onClick: React.MouseEventHandler<HTMLButtonElement>
+}
+
 export default function PompaHarian() {
 
     const history = useHistory()
@@ -31,11 +39,17 @@ export default function PompaHarian() {
 
     const [reports, setReports] = React.useState<Report[]>([])
     const [loading, setLoading] = React.useState(true)
+    const [isCalendarOpen, setIsCalendarOpen] = React.useState(false)
+    const [date, setDate] = React.useState(new Date())
     const {configs, setConfig} = useAdminConfig()
 
     React.useEffect(() => {
+        
+    },[])
+
+    React.useEffect(() => {
         setLoading(true)
-        axios({method: 'get', url: '/admin/dailyPumpReport/all'})
+        axios({method: 'get', url: `/admin/dailyPumpReport/all?date=${moment(date).format('L')}`})
         .then(response => {
             let data : Report[] = response.data
             setReports(data)
@@ -47,7 +61,7 @@ export default function PompaHarian() {
         .finally(() => {
             setLoading(false)
         })
-    },[])
+    },[date])
 
     const handleReportClick = (report: Report) => {
         setConfig({
@@ -56,8 +70,35 @@ export default function PompaHarian() {
         history.push('/laporan/pompa-harian/detail')
     }
 
+    const handleClickCalendarButton = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault()
+        setIsCalendarOpen(!isCalendarOpen)
+    }
+
+    const handleDateChange = (d: Date) => {
+        setIsCalendarOpen(false)
+        setDate(d)
+    }
+
+    const CalendarComponent = (props: React.DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>, ref: React.Ref<HTMLButtonElement>) => {
+        return (
+            <button onClick={props.onClick} ref={ref}>
+                {props.value}
+            </button>
+        )
+    }
+
     return (
         <div className="tw-w-full tw-flex tw-flex-col">
+            <DatePicker 
+                selected={date}
+                onChange={(d) => {
+                    if (!(d instanceof Date)) return
+                    setDate(d)
+                }}
+                customInput={React.createElement(React.forwardRef(CalendarComponent))}
+                maxDate={new Date()}
+            />
             {
                 loading? <div>Loading...</div>
                 : reports.length < 1 ? <div>Tidak ada data</div>

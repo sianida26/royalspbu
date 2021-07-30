@@ -7,6 +7,8 @@ import { SnackbarProvider } from 'notistack'
 import ConfigProvider from './providers/ConfigProvider'
 import AuthProvider from './providers/AuthProvider'
 
+import "react-datepicker/dist/react-datepicker.css";
+
 render(
     <SnackbarProvider maxSnack={3}>
         <ConfigProvider>

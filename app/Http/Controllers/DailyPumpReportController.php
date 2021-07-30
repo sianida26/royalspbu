@@ -18,7 +18,10 @@ class DailyPumpReportController extends Controller
     //
 
     public function all(Request $request){
-        return DailyPumpReport::all()->map(function($report){
+
+        $date = Carbon::createFromFormat('m#d#Y',$request->date);
+
+        return DailyPumpReport::whereDate('created_at',$date)->get()->map(function($report){
             Debugbar::info('report id: '.$report->id);
             $nozzles = $report->nozzles()->get()->map(function($nozzle){
                 Debugbar::info('report_nozzle id: '.$nozzle->id);

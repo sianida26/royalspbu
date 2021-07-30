@@ -32,6 +32,8 @@ import CreatePenerimaan from '../pages/adminPages/penerimaan/FormCreatePenerimaa
 import KonfirmasiPenerimaan from '../pages/adminPages/penerimaan/KonfirmasiPenerimaan'
 import DetailPenerimaan from '../pages/adminPages/penerimaan/DetailPenerimaan'
 
+import TotalisatorHarian from '../pages/adminPages/reports/TotalisatorHarian/TotalisatorHarian'
+
 const routes: IRoute[] = [
     {
         path: '/',
@@ -128,6 +130,10 @@ const routes: IRoute[] = [
     {
         path: '/laporan/pompa-harian/detail',
         component: DetailPompaHarian,
+    },
+    {
+        path: '/laporan/totalisator-harian',
+        component: TotalisatorHarian,
     },
     {
         path: '/penerimaan',
