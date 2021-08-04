@@ -33,6 +33,7 @@ import KonfirmasiPenerimaan from '../pages/adminPages/penerimaan/KonfirmasiPener
 import DetailPenerimaan from '../pages/adminPages/penerimaan/DetailPenerimaan'
 
 import TotalisatorHarian from '../pages/adminPages/reports/TotalisatorHarian/TotalisatorHarian'
+import FormTotalisatorHarian from '../pages/adminPages/reports/TotalisatorHarian/FormLaporan'
 
 const routes: IRoute[] = [
     {
@@ -134,6 +135,10 @@ const routes: IRoute[] = [
     {
         path: '/laporan/totalisator-harian',
         component: TotalisatorHarian,
+    },
+    {
+        path: '/laporan/totalisator-harian/buat',
+        component: FormTotalisatorHarian,
     },
     {
         path: '/penerimaan',

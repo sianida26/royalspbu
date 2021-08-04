@@ -61,4 +61,57 @@ class DailyPumpReport extends Model
     public function reporterName() {
         return $this->reporter()->first()->name;
     }
+
+    public static function getReportsOnDate($date){
+        return self::whereDate('created_at',$date);
+    }
+
+    public static function getPenjualanByTanksOnDate($date){
+        $penjualanData = self::getReportsOnDate($date)
+            ->get()
+            ->map(function($report) use ($date){
+                return collect($report->nozzles->map(function($nozzle) use ($date){
+
+                    $tank = $nozzle->getTank();
+                    $soldVolume = $nozzle->getTotalizatorDiff();
+
+                    return [
+                        'tankId' => $tank->id,
+                        'tankName' => $tank->getNameOnDate($date),
+                        'price' => $tank->getProductOnDate($date)->price,
+                        'volume' => $soldVolume,
+                    ];
+                }));
+            })
+            ->flatten(1)
+            ->groupBy('tankId')
+            ->map(function($group){
+                $nozzles = collect($group);
+                $volume = $nozzles->sum('volume');
+                $price = $nozzles->first()['price'];
+                return [
+                    'tankName' => $nozzles->first()['tankName'],
+                    'volume' => $volume,
+                    'price' => $price,
+                    'income' => $volume*$price,
+                ];
+            })
+            ->sortBy('tankName');
+        
+        $penjualanDefault = Tank::getTanksOnDate($date)
+            ->groupBy('id')
+            ->map(function($_tank) use ($date){
+                $tank = $_tank[0];
+                $product = $tank->getProductOnDate($date);
+                return [
+                    'tankName' => $tank->name,
+                    'volume' => 0,
+                    'price' => $product->price,
+                    'income' => 0,
+                ];
+            });
+        return $penjualanData
+            ->union($penjualanDefault)
+            ->values();
+    }
 }

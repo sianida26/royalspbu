@@ -10,6 +10,7 @@ use App\Http\Controllers\TankController;
 use App\Http\Controllers\PumpController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\DailyPumpReportController;
+use App\Http\Controllers\TotalizatorReportController;
 use App\Http\Controllers\PresenceController;
 use App\Http\Controllers\PenerimaanController;
 
@@ -86,6 +87,15 @@ Route::middleware('auth:api')->group(function(){
 
         Route::prefix('dailyPumpReport')->group(function(){
             Route::get('all', [DailyPumpReportController::class, 'all']);
+        });
+
+        Route::prefix('totalizatorReport')->group(function(){
+            Route::get('getAllPengeluaranTypes', [TotalizatorReportController::class, 'getAllPengeluaranTypes']);
+            Route::post('getFormReportData', [TotalizatorReportController::class, 'getFormReportData']);
+            Route::post('getLaporan', [TotalizatorReportController::class, 'getLaporan']);
+            Route::post('uploadBuktiPengeluaran', [TotalizatorReportController::class, 'uploadBuktiPengeluaran']);
+            Route::post('uploadBuktiTabungan', [TotalizatorReportController::class, 'uploadBuktiTabungan']);
+            Route::post('submit', [TotalizatorReportController::class, 'submit']);
         });
 
         Route::prefix('penerimaan')->group(function(){

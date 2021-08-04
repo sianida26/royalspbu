@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
+use Carbon\Carbon;
+
 /**
  * table name : penerimaans
  * columns:
@@ -60,5 +62,36 @@ class Penerimaan extends Model
     public function tank(): HasOne
     {
         return $this->hasOne(Tank::class, 'id', 'tank_id');
+    }
+
+    /**
+     * Get the array of models where penerimaan diterima on given date
+     */
+    public static function getPenerimaansOnDate($date)
+    {
+        // if ($date = null) $date = Carbon::now();
+        return self::whereDate('receive_timestamp',$date);
+    }
+
+    public static function getVolumePerTanksOnDate($date)
+    {
+        // if ($date = null) $date = Carbon::now();
+        $tankNames = Tank::getTanksOnDate($date);
+        
+        $penerimaans = self::getPenerimaansOnDate($date)->get();
+        
+        return collect($tankNames->map(function($tank) use ($penerimaans){
+            $penerimaan = $penerimaans
+                ->where('tank_id',$tank->id)
+                ->first();
+            $volume = 0;
+            if ($penerimaan !== null) {
+                $volume = $penerimaan->pnbp_volume;
+            }
+            return collect([
+                'tankName' => $tank->name,
+                'volume' => $volume,
+            ]);
+        }));
     }
 }

@@ -46,4 +46,12 @@ class PumpReportNozzle extends Model
     {
         return $this->hasOne(Nozzle::class, 'id', 'nozzle_id');
     }
+
+    public function getTank(){
+        return $this->nozzle->tank;
+    }
+
+    public function getTotalizatorDiff(){
+        return abs($this->totalizator_final - $this->totalizator_initial); //todo buat logic pas udah 99999
+    }
 }

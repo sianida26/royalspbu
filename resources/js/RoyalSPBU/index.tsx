@@ -8,6 +8,7 @@ import ConfigProvider from './providers/ConfigProvider'
 import AuthProvider from './providers/AuthProvider'
 
 import "react-datepicker/dist/react-datepicker.css";
+import 'react-perfect-scrollbar/dist/css/styles.css';
 
 render(
     <SnackbarProvider maxSnack={3}>

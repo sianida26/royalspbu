@@ -19,7 +19,7 @@ class DailyPumpReportController extends Controller
 
     public function all(Request $request){
 
-        $date = Carbon::createFromFormat('m#d#Y',$request->date);
+        $date = Carbon::createFromFormat('j-n-Y',$request->date);
 
         return DailyPumpReport::whereDate('created_at',$date)->get()->map(function($report){
             Debugbar::info('report id: '.$report->id);

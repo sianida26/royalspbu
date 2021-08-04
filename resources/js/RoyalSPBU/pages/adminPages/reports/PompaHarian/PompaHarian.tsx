@@ -49,7 +49,7 @@ export default function PompaHarian() {
 
     React.useEffect(() => {
         setLoading(true)
-        axios({method: 'get', url: `/admin/dailyPumpReport/all?date=${moment(date).format('L')}`})
+        axios({method: 'get', url: `/admin/dailyPumpReport/all?date=${moment(date).format('D-M-YYYY')}`})
         .then(response => {
             let data : Report[] = response.data
             setReports(data)

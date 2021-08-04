@@ -71,6 +71,7 @@ export default instance
 // axios({method:'get', url: '/getUserDetail'})
 // .then(result => { //handle success response
 //     let data = result.data;
+//     console.log(data) //todo remove log
 // })
 // .catch(error =>{ //handle error response
 //     let errorMessage = error.pesan ? error.pesan : "Terjadi kesalahan pada pengaturan request ini. Silakan hubungi Admin.";
@@ -78,6 +79,7 @@ export default instance
 //         //Request was made but no response was received
 //     } else if (error.response){
 //         //Error caused from the server
+//         console.log(error.response) //todo remove log
 //         let errorCode = error.response.status
 //         switch(errorCode){
 //             case 400: /*bad request*/ break; 
@@ -100,5 +102,5 @@ export default instance
 //         //Something happened in setting up the request that triggered an Error
 //     }
 //     //you can show error notification here
-//     enqueueSnackbar(errorMessage,{variant:"error"});
+//     if (errorMessage) enqueueSnackbar(errorMessage,{variant:"error"});
 // });

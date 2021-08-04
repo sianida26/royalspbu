@@ -93,18 +93,24 @@ class TankController extends Controller
         $product = Product::find($request->productId);
         $tank = Tank::findOrFail($request->id);
 
-        $tank->name = $request->name;
-        $tank->stock = $request->stock;
-
-        if ($tank->name !== $request->name || $tank->product_id !== $request->productId){
-            $tank->history = $tank->history->push([
+        if (($tank->name !== $request->name) || ($tank->product_id !== $request->productId)){
+            Debugbar::info('terpanggil');
+            $newHistory = $tank->history->push([
                 'timestamp' => Carbon::now(),
                 'name' => $request->name,
                 'productId' => $request->productId,
             ]);
         }
-        $tank->product()->associate($product);
+
+        $tank->name = $request->name;
+        $tank->stock = $request->stock;
+
+        $newHistory = $tank->history;
+
+        Debugbar::info($newHistory);
+        $tank->history = $newHistory;
         $tank->save();
+        $tank->product()->associate($product);
         return ['name' => $product->name];
     }
 

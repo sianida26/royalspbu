@@ -70,13 +70,14 @@ class ProductController extends Controller
 
         $product = Product::findOrFail($request->id);
 
-        $product->name = $request->name;
-        $product->price = $request->price;
         $product->history = $product->history->push([
             'timestamp' => Carbon::now(),
             'name' => $request->name,
             'price' => $request->price,
         ]);
+
+        $product->name = $request->name;
+        $product->price = $request->price;
         $product->save();
         return $product;
     }

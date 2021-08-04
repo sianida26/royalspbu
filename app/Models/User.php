@@ -74,6 +74,16 @@ class User extends Authenticatable
         return $this->hasMany(DailyPumpReport::class, 'reporter_id');
     }
 
+    /**
+     * Get all of the totalizatorReports for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function totalizatorReports(): HasMany
+    {
+        return $this->hasMany(TotalizatorReport::class, 'reporter_id');
+    }
+
 
     // helper functions
     public function isTodayPresence(){
