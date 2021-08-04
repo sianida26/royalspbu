@@ -5,13 +5,15 @@
 import React from 'react'
 
 import Compressor from 'compressorjs'
-import PerfectScrollbar from 'react-perfect-scrollbar'
 import { useSnackbar } from 'notistack'
+import PerfectScrollbar from 'react-perfect-scrollbar'
+import * as uuid from 'uuid'
 
 import { TextField, Button, InputAdornment, CircularProgress } from '@material-ui/core'
 import { Autocomplete } from '@material-ui/lab'
 import CloseIcon from '@material-ui/icons/Close'
 import AddIcon from '@material-ui/icons/Add'
+import EditIcon from '@material-ui/icons/Edit'
 import InsertPhotoIcon from '@material-ui/icons/InsertPhoto'
 
 import GreenButton from '../GreenButton'
@@ -26,16 +28,17 @@ interface OptionType {
 
 interface Pengeluaran {
     id: number | string,
-    pengeluaran: string,
+    name: string,
     amount: number,
-    fileName: string,
+    reportFilename: string | null,
 }
 
 interface ComponentProps {
-    show: boolean,
     data: Pengeluaran,
+    isEdit: boolean,
+    show: boolean,
     closeModal: () => void,
-    onSubmit: (pengeluaran: string, amount: number, fileName: string) => void
+    onSubmit: (pengeluaran: string, amount: number, fileName: string, id: number|string) => void
 }
 
 export default function ModalPengeluaran(props: ComponentProps) {
@@ -53,8 +56,10 @@ export default function ModalPengeluaran(props: ComponentProps) {
     const [isUploading, setUploading] = React.useState(false)
     const [isUploadSuccess, setUploadSuccess] = React.useState(false)
     const [fileName, setFileName] = React.useState('')
+    const [fileUrl, setFileUrl] = React.useState('')
     const [uploadError, setUploadError] = React.useState('')
     const [id, setId] = React.useState<string|number>(-1)
+    const [isOldItem, setIsOldItem] = React.useState(false)
 
     React.useEffect(() => {
         getAllPengeluaranTypes()
@@ -62,18 +67,24 @@ export default function ModalPengeluaran(props: ComponentProps) {
 
     React.useEffect(() => {
         //setting all states into their default value
-        setId(props.data.id)
-        setPengeluaran(props.data.pengeluaran)
-        setPengeluaranError('')
-        setAmount(props.data.amount)
-        setAmountError('')
-        setUploading(false)
-        setUploadSuccess(false)
-        setFileName(props.data.fileName)
-        setUploadError('')
         if (props.show) {
+            //on open
+            let oldItem: boolean = typeof props.data.id === 'number' //if id is a number, thus a old pengeluaran item
+            setPengeluaran(props.data.name)
+            setPengeluaranError('')
+            setAmount(props.data.amount)
+            setAmountError('')
+            setUploading(false)
+            setUploadSuccess(false)
+            setFileName(props.data.reportFilename || '')
+            setFileUrl(oldItem ? `/storage/images/receipts/pengeluaran/${props.data.reportFilename}` : '')
+            setUploadError('')
+            setId(props.data.id)
+            setIsOldItem(oldItem)
             pengeluaranTypeRef.current?.focus() //todo fix
-        } 
+        } else {
+            //on close
+        }
     }, [props.show])
 
     const handleCloseModal = () => {
@@ -96,7 +107,7 @@ export default function ModalPengeluaran(props: ComponentProps) {
             setAmountError('')
         }
 
-        if (!(pengeluaranError && amountError)) props.onSubmit(pengeluaran, amount, fileName)
+        if (!(pengeluaranError && amountError)) props.onSubmit(pengeluaran, amount, fileName, isOldItem ? id : uuid.v1())
     }
 
     const handleChooseImage = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -146,6 +157,7 @@ export default function ModalPengeluaran(props: ComponentProps) {
             setUploadSuccess(true)
             let data = result.data;
             setFileName(data)
+            setFileUrl(`/storage/temp/${data}`)
         })
         .catch(error =>{ //handle error response
             setUploadSuccess(false)
@@ -171,7 +183,7 @@ export default function ModalPengeluaran(props: ComponentProps) {
         <div className={`${props.show ? 'tw-fixed' : 'tw-hidden' } tw-w-screen tw-h-screen tw-bg-black tw-bg-opacity-75 tw-grid tw-place-items-center tw-overflow-y-auto`}>
             <PerfectScrollbar className="tw-w-screen tw-h-screen tw-grid tw-place-items-center">
                 <div className="tw-max-w-md tw-w-full tw-bg-white tw-rounded-xl tw-py-4 tw-px-8 tw-flex tw-flex-col">
-                    <h1 className="tw-text-center tw-text-xl tw-font-bold">Tambah Pengeluaran</h1>
+                    <h1 className="tw-text-center tw-text-xl tw-font-bold">{props.isEdit ? 'Edit' : 'Tambah'} Pengeluaran</h1>
                     <form onSubmit={handleSubmit} className="tw-flex tw-flex-col tw-gap-4">
                         <Autocomplete
                             options={pengeluaranTypes}
@@ -197,7 +209,8 @@ export default function ModalPengeluaran(props: ComponentProps) {
                         />
                         <div className="tw-px-3 tw-pt-4 tw-pb-3 tw-border tw-border-gray-500 tw-rounded-lg tw-relative tw-mt-3">
                             <span className="tw-absolute tw-left-2 tw--top-3 tw-px-2 tw-bg-white tw-text-sm tw-text-gray-500">Bukti Struk</span>
-                            {fileName && <img src={`/storage/temp/${fileName}`} alt="Bukti Struk" className="tw-mb-4"></img>}
+                            {/* todo: ambil gambar dari server yang misal edit */}
+                            {fileName && <img src={fileUrl} alt="Bukti Struk" className="tw-mb-4"></img>}
                             <input accept="image/*" className="tw-hidden" id="modal-button-upload-file" type="file" onChange={e => handleChooseImage(e)} disabled={isUploading} />
                             <label htmlFor="modal-button-upload-file">
                                 {
@@ -214,7 +227,7 @@ export default function ModalPengeluaran(props: ComponentProps) {
                         </div>
                         <div className="tw-flex tw-justify-between">
                             <Button variant="outlined" color="secondary" disabled={isUploading} startIcon={<CloseIcon />} onClick={handleCloseModal}>Batal</Button>
-                            <GreenButton startIcon={<AddIcon />} disabled={isUploading} onClick={handleSubmit} type="submit">Tambah</GreenButton>
+                            <GreenButton startIcon={props.isEdit ? <EditIcon /> : <AddIcon />} disabled={isUploading} onClick={handleSubmit} type="submit">{props.isEdit? 'Edit' : 'Tambah'}</GreenButton>
                         </div>
                     </form>
                 </div>

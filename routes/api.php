@@ -95,6 +95,8 @@ Route::middleware('auth:api')->group(function(){
             Route::post('getLaporan', [TotalizatorReportController::class, 'getLaporan']);
             Route::post('uploadBuktiPengeluaran', [TotalizatorReportController::class, 'uploadBuktiPengeluaran']);
             Route::post('uploadBuktiTabungan', [TotalizatorReportController::class, 'uploadBuktiTabungan']);
+            Route::post('create', [TotalizatorReportController::class, 'create']);
+            Route::post('edit', [TotalizatorReportController::class, 'edit']); //todo delete create and edit
             Route::post('submit', [TotalizatorReportController::class, 'submit']);
         });
 

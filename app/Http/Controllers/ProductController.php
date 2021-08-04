@@ -39,7 +39,7 @@ class ProductController extends Controller
 
         $history = collect([
             [
-                'timestamp' => Carbon::now(),
+                'timestamp' => Carbon::today(),
                 'name' => $request->name,
                 'price' => $request->price,
             ]
@@ -71,7 +71,7 @@ class ProductController extends Controller
         $product = Product::findOrFail($request->id);
 
         $product->history = $product->history->push([
-            'timestamp' => Carbon::now(),
+            'timestamp' => Carbon::today(),
             'name' => $request->name,
             'price' => $request->price,
         ]);

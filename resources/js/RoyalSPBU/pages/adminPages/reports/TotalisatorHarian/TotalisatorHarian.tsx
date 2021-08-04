@@ -46,13 +46,14 @@ export default function TotalisatorHarian() {
 
     const history = useHistory()
     const {enqueueSnackbar} = useSnackbar()
+    const {axios} = useAuth()
+    const { setConfig } = useAdminConfig()
 
     const [date, setDate] = React.useState(new Date())
     const [loading, setLoading] = React.useState(true)
     const [report, setReport] = React.useState<Report|null>(null)
     const [showModal, setShowModal] = React.useState(false)
     const [imageUrl, setImageUrl] = React.useState('')
-    const {axios} = useAuth()
 
     React.useEffect(() => {
         requestLaporan()
@@ -122,6 +123,18 @@ export default function TotalisatorHarian() {
         setShowModal(false)
     }
 
+    const handleEdit = () => {
+        console.log('aku keklik')
+        setConfig({
+            editLaporanTotalisatorObject: {
+                date,
+                pengeluaran: report?.pengeluaran || [],
+                tabungan: report?.tabungan || null,
+            }
+        })
+        history.push('/laporan/totalisator-harian/edit')
+    }
+
     const CalendarComponent = (props: React.DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>, ref: React.Ref<HTMLButtonElement>) => {
         return (
             <button onClick={props.onClick} ref={ref} className="tw-w-full tw-py-2 tw-border tw-border-black">
@@ -164,7 +177,7 @@ export default function TotalisatorHarian() {
                 <h1 className="tw-mt-3 tw-font-bold tw-text-center">Biaya</h1>
                 {
                     report.pengeluaran.map(pengeluaran => {
-
+                        
                         return <div className="tw-border tw-border-black tw-flex tw-flex-col tw-py-2">
                             <p>{pengeluaran.name}</p>
                             <p>Biaya: {pengeluaran.amount}</p>
@@ -182,7 +195,7 @@ export default function TotalisatorHarian() {
                 <span>Penjualan kotor: {totalPenjualanKotor}</span>
                 <span>Total biaya: {totalPengeluaran}</span>
                 <span className="tw-font-bold">Total Pendapatan Bersih: Rp{totalPenjualanKotor-totalPengeluaran}</span>
-                <button className="tw-border tw-border-black tw-py-2 tw-my-2">Edit</button>
+                <button className="tw-border tw-border-black tw-py-2 tw-my-2" onClick={handleEdit}>Edit</button>
                 <button className="tw-border tw-border-black tw-py-2 tw-my-2">Download PDF</button>
             </div>
         )

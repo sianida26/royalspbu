@@ -99,6 +99,20 @@ export interface DetailPenerimaanObject{
     truckId: string
 }
 
+export interface EditLaporanTotalisatorObject{
+    date: Date | null,
+    pengeluaran: {
+        id: number,
+        reportFilename: string|null,
+        name: string,
+        amount: number,
+    }[],
+    tabungan: null|{
+        amount: number,
+        report_filename: string,
+    },
+}
+
 export interface IConfig {
 }
 
@@ -113,6 +127,7 @@ export interface IAdminConfig {
     editRequestPenerimaanObject? : RequestPenerimaanObejct
     konfirmasiPenerimaanObject? : KonfirmasiPenerimaanObject
     detailPenerimaanObject? : DetailPenerimaanObject
+    editLaporanTotalisatorObject? : EditLaporanTotalisatorObject
 }
 
 export interface IAuth {

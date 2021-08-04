@@ -103,9 +103,9 @@ class TotalizatorReportController extends Controller
         $rules = [
             'date' => ['required', 'date_format:j-n-Y'],
             'pengeluaran.*.id' => ['required', new UuidOrNumber],
-            'pengeluaran.*.pengeluaran' => ['required'],
+            'pengeluaran.*.name' => ['required'],
             'pengeluaran.*.amount' => ['required', 'integer', 'min:0'],
-            'pengeluaran.*.fileName' => ['present'],
+            'pengeluaran.*.reportFilename' => ['present'],
             'tabungan.amount' => ['required', 'integer', 'min:0'],
             'tabungan.fileName' => ['present'],
         ];
@@ -120,41 +120,98 @@ class TotalizatorReportController extends Controller
 
         $request->validate($rules, $messages);
 
-        $report = new TotalizatorReport;
+        $date = Carbon::createFromFormat('j-n-Y',$request->date);
+        $isEdit = false;
+
+        $report = TotalizatorReport::whereDate('created_at', $date); //check if already reported today
+        if ($report->exists()){
+            $report = $report->first();
+            $isEdit = true;
+        } else {
+            $report = new TotalizatorReport;
+            $report->created_at = $date;
+        }
+
         $report->reporter()->associate(Auth::user());
+
+        // deleting deleted pengeluaran
+        if ($isEdit) {
+            Pengeluaran::whereDate('created_at',$date)
+                ->get()
+                ->map(function($pengeluaran) use ($request){
+                    if (!collect($request->pengeluaran)->pluck('id')->contains($pengeluaran->id)) {
+                        //if deleted
+                        
+                        //delete receipt
+                        Storage::delete('public/images/receipts/pengeluaran/'.$pengeluaran->report_filename);
+
+                        //delete model
+                        $pengeluaran->delete();
+                    }
+                });
+        }
 
         //processing pengeluaran
         $pengeluaranModels = collect($request->pengeluaran)
-            ->map(function($pengeluaran){
+            ->map(function($pengeluaran) use ($date){
 
                 $pengeluaranModel = new Pengeluaran;
+                $pengeluaranModel->created_at = $date;
+                $isEdit = false;
 
                 //if old item
                 if (!Str::isUuid($pengeluaran['id'])){
                     $pengeluaranModel = Pengeluaran::findOrFail($pengeluaran['id']);
+                    $isEdit = true;
+                }
+
+                //handling receipt
+                if ($isEdit && $pengeluaran['reportFilename'] !== $pengeluaranModel->report_filename){
+                    //if old item changes
+
+                    //delete old receipt
+                    Storage::delete('public/images/receipts/pengeluaran/'.$pengeluaranModel->report_filename);
+
+                    //move receipt
+                    Storage::move('public/temp/'.$pengeluaran['reportFilename'], 'public/images/receipts/pengeluaran/'.$pengeluaran['reportFilename']);
+                } else if ($pengeluaran['reportFilename'] !== null && Storage::disk('local')->exists('public/temp/'.$pengeluaran['reportFilename'])){
+                    //if new item, move receipt from temp folder
+                    Storage::move('public/temp/'.$pengeluaran['reportFilename'], 'public/images/receipts/pengeluaran/'.$pengeluaran['reportFilename']);
                 }
                 
                 //create new PengeluaranType if new
                 $pengeluaranType = PengeluaranTypes::firstOrCreate(
-                    ['name' => $pengeluaran['pengeluaran']],
-                    ['name' => $pengeluaran['pengeluaran']]
+                    ['name' => $pengeluaran['name']],
+                    ['name' => $pengeluaran['name']]
                 );
 
                 $pengeluaranModel->type()->associate($pengeluaranType);
                 $pengeluaranModel->amount = $pengeluaran['amount'];
-                $pengeluaranModel->report_filename = $pengeluaran['fileName'];
-
-                //move receipt
-                if ($pengeluaran['fileName'] !== null && Storage::disk('local')->exists('public/temp/'.$pengeluaran['fileName'])){
-                    Storage::move('public/temp/'.$pengeluaran['fileName'], 'public/images/receipts/pengeluaran/'.$pengeluaran['fileName']);
-                }
+                $pengeluaranModel->report_filename = $pengeluaran['reportFilename'];
                 
                 return $pengeluaranModel;
             });
 
             
         // processing tabungan
-        $tabungan = new Tabungan;
+        $tabungan = Tabungan::whereDate('created_at', $date); //check if already reported today
+        if ($tabungan->exists()){
+            $tabungan = $tabungan->first();
+        } else {
+            $tabungan = new Tabungan;
+            $tabungan->created_at = $date;
+        }
+
+        if ($isEdit){
+            if ($tabungan->report_filename !== null && $request->tabungan['fileName'] !== $tabungan->report_filename) {
+
+                //delete old receipt
+                Storage::delete('public/images/receipts/tabungan/'.$tabungan->report_filename);
+
+                $tabungan->report_filename == null;
+            }
+        }
+
         if ($request->tabungan['fileName'] !== null){
             //write to database if filename is not null
             $filename = $request->tabungan['fileName'];
@@ -162,8 +219,6 @@ class TotalizatorReportController extends Controller
             $tabungan->amount = $request->tabungan['amount'];
             $tabungan->report_filename = $filename;
 
-
-            //move receipt
             if ($filename && Storage::disk('local')->exists('public/temp/'.$filename)){
                 Storage::move('public/temp/'.$filename, 'public/images/receipts/tabungan/'.$filename);
             }

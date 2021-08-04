@@ -8,14 +8,15 @@ import * as uuid from 'uuid'
 
 import ModalPengeluaran from '../../../../components/modals/ModalPengeluaran'
 import {useAuth} from '../../../../providers/AuthProvider'
+import { editTotalisatorReportDefaultObject, useAdminConfig } from '../../../../providers/AdminConfigProvider'
 
 import 'moment/locale/id'
 
 interface Pengeluaran {
     id: number | string, //if string (uuid), new item. if number, old item
-    pengeluaran: string,
+    name: string,
     amount: number,
-    fileName: string,
+    reportFilename: string | null,
 }
 
 interface Penerimaan {
@@ -36,44 +37,72 @@ interface ReportData {
     totalIncome: number,
 }
 
+interface ModalOptions{
+    show: boolean,
+    isEdit: boolean,
+}
+
 const defaultModalData: Pengeluaran = {
-    id: -1,
-    pengeluaran: '',
+    id: '',
+    name: '',
     amount: 0,
-    fileName: '',
+    reportFilename: '',
+}
+
+const defaultModalOptions: ModalOptions = {
+    show: false,
+    isEdit: false,
 }
 
 export default function FormLaporan() {
 
+    const isEdit = location.pathname.split('/').pop()?.toLowerCase() === "edit"
+    
     const history = useHistory()
     const {axios} = useAuth()
-    const {enqueueSnackbar} = useSnackbar()
+    const { enqueueSnackbar } = useSnackbar()
+    const { configs, setConfig } = useAdminConfig()
 
     const [isRequestingData, setRequestingData] = React.useState(true)
-    const [isModalShow, setModalShow] = React.useState(false)
+    const [modalOptions, setModalOptions] = React.useState<ModalOptions>(defaultModalOptions)
     const [pengeluarans, setPengeluarans] = React.useState<Pengeluaran[]>([])
     const [modalData, setModalData] = React.useState<Pengeluaran>(defaultModalData)
     const [savings, setSavings] = React.useState(0)
     const [isUploading, setUploading] = React.useState(false)
     const [uploadError, setUploadError] = React.useState('')
     const [isUploadSuccess, setUploadSuccess] = React.useState(false)
-    const [savingsFileName, setSavingsFileName] = React.useState('')
+    const [savingsFileUrl, setSavingsFileUrl] = React.useState('')
     const [penerimaans, setPenerimaans] = React.useState<Penerimaan[]>([])
     const [penjualans, setPenjualans] = React.useState<Penjualan[]>([])
     const [totalIncome, setTotalIncome] = React.useState(0)
     const [isSubmitting, setSubmitting] = React.useState(false)
+    const [date, setDate] = React.useState(new Date())
 
     React.useEffect(() => {
+        if (isEdit){
+            if (configs.editLaporanTotalisatorObject?.date === null) {
+                history.replace('/laporan/totalisator-harian')
+                return
+            }
+            setDate(configs.editLaporanTotalisatorObject!.date)
+            setPengeluarans(configs.editLaporanTotalisatorObject!.pengeluaran)
+            setSavings(configs.editLaporanTotalisatorObject?.tabungan?.amount || 0)
+            if (configs.editLaporanTotalisatorObject?.tabungan?.report_filename){
+                setSavingsFileUrl(`/storage/images/receipts/tabungan/${configs.editLaporanTotalisatorObject?.tabungan?.report_filename}`)
+            }
+            setConfig({editLaporanTotalisatorObject: editTotalisatorReportDefaultObject}) //reset to default
+        }
         requestReportData()
     }, [])
 
     const requestReportData = () => {
         setRequestingData(true)
+        let reportDate = configs.editLaporanTotalisatorObject?.date || date
         axios({
             method: 'post',
             url: '/admin/totalizatorReport/getFormReportData',
             data: {
-                date: moment().format('D-M-YYYY'),
+                date: moment(reportDate).format('D-M-YYYY'),
             }
         })
         .then(result => { //handle success response
@@ -94,21 +123,48 @@ export default function FormLaporan() {
     }
 
     const handleCloseModal = () => {
-        setModalShow(false)
+        setModalOptions(defaultModalOptions)
         setModalData(defaultModalData) //reset modal data
     }
 
-    const handleAddPengeluaran = (pengeluaran: string, amount: number, fileName: string) => {
-        setPengeluarans([
-            ...pengeluarans,
-            {id: uuid.v1(),pengeluaran, amount, fileName}
-        ])
+    const handleSubmitPengeluaran = (pengeluaran: string, amount: number, fileName: string, id: number|string) => {
+        let submittedData = {
+            id,
+            name: pengeluaran, 
+            amount, 
+            reportFilename: fileName
+        }
+
+        if (isEdit){
+            setPengeluarans(
+                prev => [
+                    ...prev.filter(x => x.id !== id),
+                    submittedData,   
+                ]
+            )
+        } else {
+            setPengeluarans([
+                ...pengeluarans,
+                submittedData
+            ])
+        }
+        
         handleCloseModal()
     }
 
     const handleEditClick = (pengeluaran: Pengeluaran) => {
         setModalData(pengeluaran)
-        setModalShow(true)
+        setModalOptions({
+            isEdit: true,
+            show: true
+        })
+    }
+
+    const handleAddPengeluaranClick = () => {
+        setModalOptions({
+            isEdit: false,
+            show: true
+        })
     }
 
     const handleDeleteClick = (pengeluaran: Pengeluaran) => {
@@ -136,13 +192,13 @@ export default function FormLaporan() {
         setSubmitting(true)
         axios({
             method: 'post',
-            url: '/admin/totalizatorReport/submit',
+            url: `/admin/totalizatorReport/${isEdit ? 'submit' : 'submit'}`, //todo simplify
             data: {
-                date: moment().format('D-M-YYYY'),
+                date: moment(date).format('D-M-YYYY'),
                 pengeluaran: pengeluarans,
                 tabungan: {
                     amount: savings,
-                    fileName: savingsFileName,
+                    fileName: savingsFileUrl.split('/').pop()!,
                 },
             }
         })
@@ -200,7 +256,7 @@ export default function FormLaporan() {
             setUploadError('')
             setUploadSuccess(true)
             let data = result.data;
-            setSavingsFileName(data)
+            setSavingsFileUrl(`/storage/temp/${data}`)
         })
         .catch(error =>{ //handle error response
             setUploadSuccess(false)
@@ -225,7 +281,7 @@ export default function FormLaporan() {
     return isRequestingData ? <span>Meminta Data....</span> : (
         <div className="tw-w-full tw-flex tw-flex-col">
             <span>Pelapor: <span className="tw-font-semibold">Fulan bin Anonim</span></span>
-            <span>Hari, Tanggal: <span className="tw-font-semibold">{moment().locale('id').format('dddd, LL')}</span></span>
+            <span>Hari, Tanggal: <span className="tw-font-semibold">{moment(date).locale('id').format('dddd, LL')}</span></span>
             <h1 className="tw-font-bold tw-text-lg text-center">Penerimaan BBM</h1>
             {
                 penerimaans.map(penerimaan => <p>{penerimaan.tankName}: {penerimaan.volume || '-'}</p>)
@@ -259,7 +315,7 @@ export default function FormLaporan() {
                 pengeluarans.length > 0 ? <div>{pengeluarans.map((pengeluaran, i) => (
                         <div key={pengeluaran.id} className="tw-w-full tw-border tw-border-black tw-flex tw-flex-col tw-gap-2">
                             <span>{i+1}</span>
-                            <span>{pengeluaran.pengeluaran}</span>
+                            <span>{pengeluaran.name}</span>
                             <span>{pengeluaran.amount}</span>
                             <span onClick={() => handleDeleteClick(pengeluaran)}>Hapus</span>
                             <span onClick={() => handleEditClick(pengeluaran)}>Edit</span>
@@ -270,15 +326,15 @@ export default function FormLaporan() {
                 </div>
                 : <span>Tidak ada pengeluaran</span>
             }
-            <button className="tw-w-full tw-border tw-border-black tw-py-2" onClick={() => {setModalShow(true)}}>Tambah</button>
-            <ModalPengeluaran show={isModalShow} closeModal={handleCloseModal} onSubmit={handleAddPengeluaran} data={modalData}  />
+            <button className="tw-w-full tw-border tw-border-black tw-py-2" onClick={handleAddPengeluaranClick}>Tambah</button>
+            <ModalPengeluaran show={modalOptions.show} isEdit={modalOptions.isEdit} closeModal={handleCloseModal} onSubmit={handleSubmitPengeluaran} data={modalData}  />
 
             <h1 className="tw-font-bold tw-text-lg tw-text-center">Tabungan</h1>
             <span>Nominal</span>
             <input className="tw-border tw-border-black" type="number" min="0" value={savings || ''} onChange={(e) => setSavings(+e.target.value)} />
             <p>Bukti Pembayaran</p>
             {
-                savingsFileName && <img src={`/storage/temp/${savingsFileName}`} alt="Bukti Struk" className=""></img>
+                savingsFileUrl && <img src={`${savingsFileUrl}`} alt="Bukti Struk" className=""></img>
             }
             <input accept="image/*" className="tw-hidden" id="button-upload-savings" type="file" onChange={e => handleChooseImage(e)} disabled={isUploading} />
             <label htmlFor="button-upload-savings">

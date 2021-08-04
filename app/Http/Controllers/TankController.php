@@ -51,7 +51,7 @@ class TankController extends Controller
         $history = collect(
             [
                 [
-                    'timestamp' => Carbon::now(),
+                    'timestamp' => Carbon::today(),
                     'name' => $request->name,
                     'productId' => $request->productId,
                 ]
@@ -96,7 +96,7 @@ class TankController extends Controller
         if (($tank->name !== $request->name) || ($tank->product_id !== $request->productId)){
             Debugbar::info('terpanggil');
             $newHistory = $tank->history->push([
-                'timestamp' => Carbon::now(),
+                'timestamp' => Carbon::today(),
                 'name' => $request->name,
                 'productId' => $request->productId,
             ]);

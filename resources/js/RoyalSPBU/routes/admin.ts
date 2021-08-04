@@ -141,6 +141,10 @@ const routes: IRoute[] = [
         component: FormTotalisatorHarian,
     },
     {
+        path: '/laporan/totalisator-harian/edit',
+        component: FormTotalisatorHarian,
+    },
+    {
         path: '/penerimaan',
         component: ListPenerimaan,
     },

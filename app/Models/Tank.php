@@ -49,14 +49,14 @@ class Tank extends Model
 
     public function getNameOnDate($date){
         $last = $this->history->last(function($value) use ($date){
-            return $date >= Carbon::create($value['timestamp']);
+            return $date->gte(Carbon::create($value['timestamp']));
         });
         return $last['name'];
     }
 
     public function getProductOnDate($date){
         $last = $this->history->last(function($value) use ($date){
-            return $date >= Carbon::create($value['timestamp']);
+            return $date->gte(Carbon::create($value['timestamp']));
         });
         $productId = $last['productId'];
         $product = Product::findOrFail($productId);
@@ -74,7 +74,7 @@ class Tank extends Model
             ->get()
             ->map(function($tank) use ($date){
                 $last = $tank->history->last(function($value) use ($date){
-                    return $date >= Carbon::create($value['timestamp']);
+                    return $date->gte(Carbon::create($value['timestamp']));
                 });
                 if ($last !== null){
                     $tank->name = $last['name'];

@@ -50,7 +50,7 @@ class PumpController extends Controller
             $nozzleModel = new Nozzle;
             $history = [
                 [
-                    'timestamp' => Carbon::now(),
+                    'timestamp' => Carbon::today(),
                     'tankId' => $nozzle['tankId'],
                 ]
             ];
@@ -97,7 +97,7 @@ class PumpController extends Controller
                     $tank = Tank::findOrFail($nozzleForm['tankId']);
                     $nozzle->tank()->associate($tank);
                     $nozzle->history = $nozzle->history->push([
-                        'timestamp' => Carbon::now(),
+                        'timestamp' => Carbon::today(),
                         'tankId' => $nozzleForm['tankId'],
                     ]);
                 }
@@ -109,7 +109,7 @@ class PumpController extends Controller
             $nozzle = new Nozzle;
             $history = [
                 [
-                    'timestamp' => Carbon::now(),
+                    'timestamp' => Carbon::today(),
                     'tankId' => $nozzleForm['tankId'],
                 ]
             ];

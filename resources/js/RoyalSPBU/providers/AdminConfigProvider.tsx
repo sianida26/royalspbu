@@ -80,6 +80,12 @@ export const detailPenerimaanDefaultObject = {
     truckId: '',
 }
 
+export const editTotalisatorReportDefaultObject = {
+    date: null,
+    pengeluaran: [],
+    tabungan: null,
+}
+
 const contextDefaultValues: AdminConfigContextState = {
     configs: {
         editUserObject: editUserDefaultObject,
@@ -92,6 +98,7 @@ const contextDefaultValues: AdminConfigContextState = {
         editRequestPenerimaanObject: requestPenerimaanDefaultObejct,
         konfirmasiPenerimaanObject: konfirmasiPenerimaanDefaultObejct,
         detailPenerimaanObject: detailPenerimaanDefaultObject,
+        editLaporanTotalisatorObject: editTotalisatorReportDefaultObject,
     },
     setConfig: () => {}
 }
