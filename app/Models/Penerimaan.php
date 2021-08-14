@@ -64,6 +64,10 @@ class Penerimaan extends Model
         return $this->hasOne(Tank::class, 'id', 'tank_id');
     }
 
+    public function getVolumeDiff(){
+        return $this->actual_volume - $this->pnbp_volume;
+    }
+
     /**
      * Get the array of models where penerimaan diterima on given date
      */

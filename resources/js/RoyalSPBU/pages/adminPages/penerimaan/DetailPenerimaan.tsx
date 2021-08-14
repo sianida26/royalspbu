@@ -75,7 +75,7 @@ export default function DetailPenerimaan() {
             <p>No PNBP: {formData.pnbp}</p>
             <p>Volume sebelum penerimaan: {formData.initialVolume}</p>
             <p>Volume penerimaan aktual: {formData.actualVolume}</p>
-            <p>Selisih Volume: {(formData.actualVolume || 0) - (formData.initialVolume || 0)}</p>
+            <p>Selisih Volume: {(formData.actualVolume || 0) - (formData.pnbpVolume || 0)}</p>
         </div>
     )
 }

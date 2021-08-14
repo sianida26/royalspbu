@@ -59,10 +59,23 @@ class Tank extends Model
             return $date->gte(Carbon::create($value['timestamp']));
         });
         $productId = $last['productId'];
-        $product = Product::findOrFail($productId);
+        $product = Product::withTrashed()->findOrFail($productId);
         $product->name = $product->getNameOnDate($date);
         $product->price = $product->getPriceOnDate($date);
         return $product;
+    }
+
+    public function getVolumeOutOnDate($date){
+        return $this->nozzles()
+            ->get()
+            ->reduce(function($carry, $nozzle) use ($date){
+                return $carry + $nozzle->pumpReports()
+                    ->whereDate('created_at',$date)
+                    ->get()
+                    ->reduce(function($carry, $report){
+                        return $carry + $report->getTotalizatorDiff();
+                    },0);
+            }, 0);
     }
 
     public static function getTanksOnDate($date){
@@ -84,5 +97,9 @@ class Tank extends Model
             });
     }
 
-
+    public static function findOrFailOnDate($id,$date){
+        $model = self::getTanksOnDate($date)->where('id',$id)->first();
+        if ($model !== null) return $model;
+        throw new \Illuminate\Database\Eloquent\ModelNotFoundException;
+    }
 }

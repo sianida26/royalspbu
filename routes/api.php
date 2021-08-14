@@ -13,6 +13,7 @@ use App\Http\Controllers\DailyPumpReportController;
 use App\Http\Controllers\TotalizatorReportController;
 use App\Http\Controllers\PresenceController;
 use App\Http\Controllers\PenerimaanController;
+use App\Http\Controllers\PersediaanReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -98,6 +99,11 @@ Route::middleware('auth:api')->group(function(){
             Route::post('create', [TotalizatorReportController::class, 'create']);
             Route::post('edit', [TotalizatorReportController::class, 'edit']); //todo delete create and edit
             Route::post('submit', [TotalizatorReportController::class, 'submit']);
+        });
+
+        Route::prefix('persediaanReport')->group(function(){
+            Route::post('getReportData',[PersediaanReportController::class, 'getReportData']);
+            Route::post('submitReport', [PersediaanReportController::class, 'submit']);
         });
 
         Route::prefix('penerimaan')->group(function(){

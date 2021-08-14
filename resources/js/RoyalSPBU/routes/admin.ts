@@ -35,6 +35,11 @@ import DetailPenerimaan from '../pages/adminPages/penerimaan/DetailPenerimaan'
 import TotalisatorHarian from '../pages/adminPages/reports/TotalisatorHarian/TotalisatorHarian'
 import FormTotalisatorHarian from '../pages/adminPages/reports/TotalisatorHarian/FormLaporan'
 
+import PersediaanBBM from '../pages/adminPages/reports/PersediaanBBM/PersediaanBBM'
+import FormPersediaanBBM from '../pages/adminPages/reports/PersediaanBBM/FormPersediaanBBM'
+
+import MonthlyReports from '../pages/adminPages/monthlyReports/MonthlyReports'
+
 const routes: IRoute[] = [
     {
         path: '/',
@@ -143,6 +148,18 @@ const routes: IRoute[] = [
     {
         path: '/laporan/totalisator-harian/edit',
         component: FormTotalisatorHarian,
+    },
+    {
+        path: '/laporan/persediaan',
+        component: PersediaanBBM,
+    },
+    {
+        path: '/laporan/persediaan/detail',
+        component: FormPersediaanBBM,
+    },
+    {
+        path: '/laporan-bulanan',
+        component: MonthlyReports,
     },
     {
         path: '/penerimaan',

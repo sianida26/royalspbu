@@ -84,6 +84,16 @@ class User extends Authenticatable
         return $this->hasMany(TotalizatorReport::class, 'reporter_id');
     }
 
+    /**
+     * Get all of the persediaanReports for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function persediaanReports(): HasMany
+    {
+        return $this->hasMany(PersediaanReport::class, 'reporter_id');
+    }
+
 
     // helper functions
     public function isTodayPresence(){

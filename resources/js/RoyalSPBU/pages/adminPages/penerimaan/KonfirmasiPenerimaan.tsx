@@ -105,7 +105,7 @@ export default function KonfirmasiPenerimaan() {
             <input value={formData.initialVolume} onChange={(e) => handleFormChange('initialVolume', e.target.value)} type="number" />
             <p>Volume penerimaan aktual</p>
             <input value={formData.actualVolume} onChange={(e) => handleFormChange('actualVolume', e.target.value)} type="number" />
-            <p>Selisih volume: {(formData.actualVolume || 0) - (formData.initialVolume || 0)} L</p>
+            <p>Selisih volume: {(formData.actualVolume || 0) - (formData.pnbpVolume || 0)} L</p>
             <button onClick={() => history.goBack()}>Batal</button>
             <button onClick={handleSubmit}>Simpan</button>
         </div>

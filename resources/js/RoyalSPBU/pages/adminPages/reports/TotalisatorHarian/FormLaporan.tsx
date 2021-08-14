@@ -92,12 +92,13 @@ export default function FormLaporan() {
             }
             setConfig({editLaporanTotalisatorObject: editTotalisatorReportDefaultObject}) //reset to default
         }
+        setDate(configs.createLaporanTotalisatorDate!)
         requestReportData()
     }, [])
 
     const requestReportData = () => {
         setRequestingData(true)
-        let reportDate = configs.editLaporanTotalisatorObject?.date || date
+        let reportDate = configs.editLaporanTotalisatorObject?.date || configs.createLaporanTotalisatorDate!
         axios({
             method: 'post',
             url: '/admin/totalizatorReport/getFormReportData',
@@ -192,7 +193,7 @@ export default function FormLaporan() {
         setSubmitting(true)
         axios({
             method: 'post',
-            url: `/admin/totalizatorReport/${isEdit ? 'submit' : 'submit'}`, //todo simplify
+            url: `/admin/totalizatorReport/${isEdit ? 'submit' : 'submit'}`, //todo
             data: {
                 date: moment(date).format('D-M-YYYY'),
                 pengeluaran: pengeluarans,

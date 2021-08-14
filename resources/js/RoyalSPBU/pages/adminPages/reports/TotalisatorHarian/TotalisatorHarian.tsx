@@ -135,6 +135,13 @@ export default function TotalisatorHarian() {
         history.push('/laporan/totalisator-harian/edit')
     }
 
+    const handleCreateLaporanClick = () => {
+        setConfig({
+            createLaporanTotalisatorDate: date,
+        })
+        history.push('/laporan/totalisator-harian/buat')
+    }
+
     const CalendarComponent = (props: React.DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>, ref: React.Ref<HTMLButtonElement>) => {
         return (
             <button onClick={props.onClick} ref={ref} className="tw-w-full tw-py-2 tw-border tw-border-black">
@@ -203,7 +210,7 @@ export default function TotalisatorHarian() {
 
     const renderTambahLaporan = () => {
 
-        return <button className="tw-w-full tw-py-2 tw-border tw-border-black" onClick={() => history.push('/laporan/totalisator-harian/buat')}>Buat Laporan</button>
+        return <button className="tw-w-full tw-py-2 tw-border tw-border-black" onClick={handleCreateLaporanClick}>Buat Laporan</button>
     }
 
     return (

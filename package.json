@@ -12,6 +12,8 @@
     "devDependencies": {
         "@types/react-measure": "^2.0.6",
         "axios": "^0.21.1",
+        "browser-sync": "^2.27.5",
+        "browser-sync-webpack-plugin": "^2.3.0",
         "file-loader": "^6.2.0",
         "laravel-mix": "^6.0.6",
         "lodash": "^4.17.19",

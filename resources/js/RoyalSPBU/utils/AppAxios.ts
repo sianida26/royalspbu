@@ -103,4 +103,7 @@ export default instance
 //     }
 //     //you can show error notification here
 //     if (errorMessage) enqueueSnackbar(errorMessage,{variant:"error"});
-// });
+// })
+// .finally(() => {
+//     //
+// })

@@ -14,6 +14,9 @@ export default function Reports() {
             <div className="tw-w-full tw-border tw-border-black tw-py-8" onClick={() => history.push('/laporan/totalisator-harian') }>
                 Laporan totalisator harian
             </div>
+            <div className="tw-w-full tw-border tw-border-black tw-py-8" onClick={() => history.push('/laporan/persediaan') }>
+                Laporan persediaan BBM
+            </div>
         </div>
     )
 }

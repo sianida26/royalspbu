@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, FC } from "react";
 import { AdminConfigContextState, IAdminConfig } from "../types";
+import { persediaanReportDefaultObject } from "../constants/adminConfigDefaultValues";
 
 export const editUserDefaultObject = {
     id: -1,
@@ -99,6 +100,9 @@ const contextDefaultValues: AdminConfigContextState = {
         konfirmasiPenerimaanObject: konfirmasiPenerimaanDefaultObejct,
         detailPenerimaanObject: detailPenerimaanDefaultObject,
         editLaporanTotalisatorObject: editTotalisatorReportDefaultObject,
+        createLaporanTotalisatorDate: new Date(),
+        persediaanReportDate: new Date(),
+        persediaanReport: persediaanReportDefaultObject,
     },
     setConfig: () => {}
 }

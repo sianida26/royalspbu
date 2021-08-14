@@ -1,5 +1,7 @@
-import { AxiosInstance } from "axios"
 import React, { ReactElement } from "react"
+import { AxiosInstance } from "axios"
+
+import { IPersediaanReport } from "./interfaces/reports/PersediaanReport"
 
 export enum Roles {
     OPERATOR = 'operator',
@@ -128,6 +130,9 @@ export interface IAdminConfig {
     konfirmasiPenerimaanObject? : KonfirmasiPenerimaanObject
     detailPenerimaanObject? : DetailPenerimaanObject
     editLaporanTotalisatorObject? : EditLaporanTotalisatorObject
+    createLaporanTotalisatorDate? : Date
+    persediaanReportDate? : Date
+    persediaanReport? : IPersediaanReport
 }
 
 export interface IAuth {

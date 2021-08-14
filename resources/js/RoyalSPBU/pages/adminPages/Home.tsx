@@ -24,7 +24,10 @@ export default function Home() {
                 Pulau Pompa
             </div>
             <div className="tw-py-8 tw-border tw-border-black" onClick={() => history.push('/laporan')}>
-                Laporan
+                Laporan Harian
+            </div>
+            <div className="tw-py-8 tw-border tw-border-black" onClick={() => history.push('/laporan-bulanan')}>
+                Laporan Bulanan
             </div>
             <div className="tw-py-8 tw-border tw-border-black" onClick={() => history.push('/penerimaan')}>
                 Penerimaan
