@@ -32,5 +32,9 @@ mix.postCss('resources/css/app.css', 'public/css', [
     require('tailwindcss'),
 ]);
 
+mix.postCss('resources/css/roboto.css', 'public/css')
+
 // output untuk app
 mix.ts("resources/js/RoyalSPBU/index.tsx","public/js/e86691c3").react()
+
+mix.browserSync('localhost:8000')

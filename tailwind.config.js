@@ -1,3 +1,5 @@
+const colors = require('tailwindcss/colors')
+
 module.exports = {
   prefix: 'tw-',
   purge: [
@@ -9,6 +11,10 @@ module.exports = {
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
+      colors: {
+        sky: colors.lightBlue,
+        primary: colors.lightBlue,
+      },
       maxHeight: {
         '3/4': '75%',
       },

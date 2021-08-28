@@ -44,6 +44,7 @@ Route::middleware('auth:api')->group(function(){
             Route::post('/edit', [UserController::class, 'editUser']);
             Route::post('/delete', [UserController::class, 'deleteUser']);
             Route::post('/resetPassword', [UserController::class, 'resetUserPassword']);
+            Route::post('/submitNewPassword', [UserController::class, 'submitNewPassword']);
         });
 
         Route::prefix('permission')->group(function(){

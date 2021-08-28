@@ -39,6 +39,7 @@ import PersediaanBBM from '../pages/adminPages/reports/PersediaanBBM/PersediaanB
 import FormPersediaanBBM from '../pages/adminPages/reports/PersediaanBBM/FormPersediaanBBM'
 
 import MonthlyReports from '../pages/adminPages/monthlyReports/MonthlyReports'
+import Profile from '../pages/adminPages/profile/Profile'
 
 const routes: IRoute[] = [
     {
@@ -48,6 +49,10 @@ const routes: IRoute[] = [
     {
         path: '/logout',
         component: Logout,
+    },
+    {
+        path: '/profil',
+        component: Profile,
     },
     {
         path: '/user',

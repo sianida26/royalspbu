@@ -1,4 +1,5 @@
 import React from 'react'
+import AdminHeaderSidebar from '../../components/AdminHeaderSidebar'
 
 import { useHistory } from 'react-router-dom'
 
@@ -8,6 +9,7 @@ export default function Home() {
 
     return (
         <div className="tw-flex tw-w-full tw-flex-col tw-gap-3">
+            <AdminHeaderSidebar title="Home" />
             <div className="tw-py-8 tw-border tw-border-black" onClick={() => history.push('/user') }>
                 List User
             </div>
