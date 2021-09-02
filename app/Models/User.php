@@ -2,17 +2,21 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\SoftDeletes;
+
 use Spatie\Permission\Traits\HasRoles;
+
 use Laravel\Passport\HasApiTokens;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+
 
 class User extends Authenticatable
 {
@@ -94,9 +98,26 @@ class User extends Authenticatable
         return $this->hasMany(PersediaanReport::class, 'reporter_id');
     }
 
+    public static function getUsersOnDate($date){
+        return self::withTrashed()
+            ->whereDate('created_at','<=',$date)
+            ->where(function($query) use ($date){
+                return $query->whereNull('deleted_at')
+                    ->orWhereDate('deleted_at','<=',$date);
+            })
+            ->get();
+    }
 
     // helper functions
     public function isTodayPresence(){
-        return $this->presence()->whereDate('timestamp', Carbon::today())->exists();
+        return $this->presences()->whereDate('timestamp', Carbon::today())->exists();
+    }
+
+    public function isPresenceOnDate($date){
+        return $this->presences()->whereDate('timestamp', $date)->exists();
+    }
+
+    public function getPresenceOnDate($date){
+        return $this->presences()->whereDate('timestamp', $date)->first();
     }
 }

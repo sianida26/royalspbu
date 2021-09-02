@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Models\PresenceToken;
-use App\Models\Presence;
-use App\Models\User;
-use Illuminate\Support\Arr;
-use Carbon\Carbon;
 use Debugbar;
+
+use App\Models\Presence;
+use App\Models\PresenceToken;
+use App\Models\User;
+
+use Carbon\Carbon;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
+
 
 class PresenceController extends Controller
 {
@@ -60,12 +64,31 @@ class PresenceController extends Controller
 
     public function list(Request $request){
 
-        $operators = User::role('operator')->get();
-        return $operators->map(function($user){
+        $rules = [
+            'date' => ['required','date_format:d-m-Y'],
+        ];
+
+        $messages = [
+            'required' => 'Data harus tersedia',
+            'date_format' => 'Format :attribute tidak sesuai'
+        ];
+
+        $request->validate($rules, $messages);
+
+        $date = Carbon::createFromFormat('d-m-Y',$request->date)->startOfDay();
+
+        $operators = User::getUsersOnDate($date)
+            ->filter(function($user){
+                return $user->hasRole('operator');
+            })
+            ->values();
+
+        return $operators->map(function($user) use ($date){
             return [
                 'name' => $user->name,
                 'id' => $user->id,
-                'status' => $user->isTodayPresence(),
+                'status' => $user->isPresenceOnDate($date),
+                'time' => $user->getPresenceOnDate($date)->timestamp,
             ];
         });
     }

@@ -75,9 +75,7 @@ export default instance
 // })
 // .catch(error =>{ //handle error response
 //     let errorMessage = error.pesan ? error.pesan : "Terjadi kesalahan pada pengaturan request ini. Silakan hubungi Admin.";
-//     if (error.request){
-//         //Request was made but no response was received
-//     } else if (error.response){
+//     if (error.response){
 //         //Error caused from the server
 //         console.log(error.response) //todo remove log
 //         let errorCode = error.response.status
@@ -98,6 +96,8 @@ export default instance
 //             default: /* Other errors */
 //                 errorMessage=`Ups. terjadi error (${errorCode})`;
 //         }
+//     } else if (error.request){
+//         //Request was made but no response was received
 //     } else {
 //         //Something happened in setting up the request that triggered an Error
 //     }
