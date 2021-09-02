@@ -17,8 +17,6 @@ const path = require("path");
 mix.webpackConfig({
 
     output: {
-        // path: path.join(__dirname, "public/js"),
-        // filename: "[name].bundle.js",
         chunkFilename: "js/e86691c3/[chunkhash:8].js",
     },    
 
