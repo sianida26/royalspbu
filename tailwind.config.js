@@ -6,14 +6,17 @@ module.exports = {
     './storage/framework/views/*.php',
     './resources/**/*.blade.php',
     './resources/**/*.js',
-    './resources/**/*.vue',
+    './resources/**/*.jsx',
+    './resources/**/*.ts',
+    './resources/**/*.tsx',
   ],
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
       colors: {
-        sky: colors.lightBlue,
-        primary: colors.lightBlue,
+        sky: colors.sky,
+        primary: colors.sky,
+        orange: colors.orange,
       },
       maxHeight: {
         '3/4': '75%',

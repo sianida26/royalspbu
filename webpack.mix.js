@@ -1,4 +1,5 @@
 const mix = require('laravel-mix');
+const path = require("path");
 
 /*
  |--------------------------------------------------------------------------
@@ -14,6 +15,13 @@ const mix = require('laravel-mix');
 // mix.js('resources/js/app.js', 'public/js')
 
 mix.webpackConfig({
+
+    output: {
+        // path: path.join(__dirname, "public/js"),
+        // filename: "[name].bundle.js",
+        chunkFilename: "js/e86691c3/[chunkhash:8].js",
+    },    
+
     module:{
         rules: [
             {
@@ -23,8 +31,13 @@ mix.webpackConfig({
                         loader: 'file-loader',
                     }
                 ]
-            }
-        ]
+            },
+            {
+                test: /\.tsx?$/,
+                include: path.join(__dirname, "src"),
+                loader: "ts-loader",
+            },
+        ],
     }
 })
     
@@ -35,6 +48,9 @@ mix.postCss('resources/css/app.css', 'public/css', [
 mix.postCss('resources/css/roboto.css', 'public/css')
 
 // output untuk app
-mix.ts("resources/js/RoyalSPBU/index.tsx","public/js/e86691c3").react()
+mix.ts("resources/js/RoyalSPBU/index.tsx","public/js/e86691c3")
+    .react()
+
+mix.version()
 
 mix.browserSync('localhost:8000')

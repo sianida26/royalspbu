@@ -53,7 +53,8 @@ class PresenceController extends Controller
 
         return [
             'name' => $user->name,
-            'timestamp' => $presence->timestamp->format('d M Y; H:i:s'),
+            // 'timestamp' => $presence->timestamp->format('d M Y; H:i:s'),
+            'timestamp' => $presence->timestamp->format('H:i'),
         ];
     }
 

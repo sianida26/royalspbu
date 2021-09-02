@@ -14,12 +14,12 @@ import Splash from '../pages/Splash'
 
 export default function RouteSwitch() {
 
+    const { auth } = useAuth()
+
     // const adminRoutes = React.lazy(() => import('../routes/AdminRoutes'))
     const AdminRoutes = React.lazy(() => import('./AdminRoutes'))
     const DeveloperRoutes = React.lazy(() => import('./DeveloperRoutes'))
     const OperatorRoutes = React.lazy(() => import('./OperatorRoutes'))
-
-    const {auth} = useAuth()
 
     return (
         <Router>
