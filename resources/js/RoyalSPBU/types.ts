@@ -16,6 +16,7 @@ export interface UserObject{
     name: string,
     isActive: boolean,
     roleId: number,
+    roleName: string,
 }
 
 export interface ProductObject {

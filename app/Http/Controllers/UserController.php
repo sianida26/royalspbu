@@ -37,9 +37,11 @@ class UserController extends Controller
         
         return User::all()->map(function($user){
             $roleId = -1;
+            $roleName = '';
             if ($user->roles->isNotEmpty()){
                 $role = $user->roles->first();
                 $roleId = $role->id;
+                $roleName = $role->name;
             }
             return [
                 'id' => $user->id,
@@ -47,6 +49,7 @@ class UserController extends Controller
                 'username' => $user->username,
                 'isActive' => $user->is_active,
                 'roleId' => $roleId,
+                'roleName' => $roleName,
             ];
         });
     }

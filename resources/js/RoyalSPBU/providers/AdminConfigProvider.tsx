@@ -7,6 +7,7 @@ export const editUserDefaultObject = {
     isActive: false,
     name: '',
     roleId: -1,
+    roleName: '',
     username: '',
 }
 
