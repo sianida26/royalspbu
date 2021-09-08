@@ -1,4 +1,7 @@
 import React, { createContext, useContext, useState, FC } from "react";
+
+import User from "../models/User";
+
 import { AdminConfigContextState, IAdminConfig } from "../types";
 import { persediaanReportDefaultObject } from "../constants/adminConfigDefaultValues";
 
@@ -90,7 +93,7 @@ export const editTotalisatorReportDefaultObject = {
 
 const contextDefaultValues: AdminConfigContextState = {
     configs: {
-        editUserObject: editUserDefaultObject,
+        editUserObject: new User(),
         editProductObject: editProductDefaultObject,
         editTankObject: editTankDefaultObject,
         editPumpObject: editPumpDefaultObject,

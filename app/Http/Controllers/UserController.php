@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Debugbar;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
@@ -166,8 +167,6 @@ class UserController extends Controller
         return $user->makeHidden(['created_at','updated_at','password']);
     }
 
-    // TODO: add confirmation with password
-
     /**
      * Delete user
      * 
@@ -189,13 +188,30 @@ class UserController extends Controller
      * }
      */
     function deleteUser(Request $request){
-        $user = User::findOrFail($request->id);
-        $user->delete();
-        return [
-            'username' => $user->username,
-            'name' => $user->name,
-            'message' => 'User berhasil dihapus',
-        ];
+
+        $deleter = Auth::user();
+
+        if ($request->id == $deleter->id) {
+            abort(422, 'Anda tidak bisa menghapus diri anda sendiri');
+            return;
+        }
+
+        if (Hash::check($request->password, $deleter->password)){
+            $user = User::findOrFail($request->id);
+
+            if ($user->hasRole('developer') && !$deleter->hasRole('developer')){
+                abort(422, 'Anda tidak bisa menghapus developer');
+                return;
+            }
+            $user->delete();
+            return [
+                'username' => $user->username,
+                'name' => $user->name,
+                'message' => 'User berhasil dihapus',
+            ];
+        } else {
+            abort(422, 'Password salah');
+        }
     }
 
     /**

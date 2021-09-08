@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react'
 import {useSnackbar} from 'notistack'
 import {useHistory} from 'react-router-dom'
+
+import User from '../../../models/User'
 import { useAdminConfig, editUserDefaultObject } from '../../../providers/AdminConfigProvider'
 
 import {useAuth} from '../../../providers/AuthProvider'
@@ -69,7 +71,7 @@ export default function FormUser(props: Props) {
                 password: '',
             })
 
-            setConfig({editUserObject: editUserDefaultObject}) //hapus objek edit user
+            setConfig({editUserObject: new User()}) //hapus objek edit user
         }
     }, [])
 

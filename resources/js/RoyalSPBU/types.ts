@@ -1,6 +1,8 @@
 import React, { ReactElement } from "react"
 import { AxiosInstance } from "axios"
 
+import User from "./models/User"
+
 import { IPersediaanReport } from "./interfaces/reports/PersediaanReport"
 
 export enum Roles {
@@ -8,15 +10,6 @@ export enum Roles {
     SUPERVISOR = 'supervisor',
     DEVELOPER = 'developer',
     ADMIN = 'admin',
-}
-
-export interface UserObject{
-    id: number,
-    username: string,
-    name: string,
-    isActive: boolean,
-    roleId: number,
-    roleName: string,
 }
 
 export interface ProductObject {
@@ -120,7 +113,7 @@ export interface IConfig {
 }
 
 export interface IAdminConfig {
-    editUserObject? : UserObject
+    editUserObject? : User
     editProductObject? : ProductObject
     editTankObject? : TankObject
     editPumpObject? : PumpObject

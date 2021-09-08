@@ -4,11 +4,12 @@ import { useSnackbar } from 'notistack'
 import { useHistory } from 'react-router-dom'
 
 import AdminHeaderSidebar from '../../../components/AdminHeaderSidebar'
+import ModalDeleteUser from '../../../components/modals/ModalDeleteUser'
+import User from '../../../models/User'
 import useWindowSize from '../../../hooks/useWindowSize'
 
 import { useAdminConfig } from '../../../providers/AdminConfigProvider'
 import { useAuth } from '../../../providers/AuthProvider'
-import { UserObject } from '../../../types'
 
 import {
     InputAdornment,
@@ -34,7 +35,6 @@ interface ServerResponse {
     isActive: boolean,
 }
 
-//TODO: prevent self delete
 //TODO: Lanjutkan buat tampilan modal
 //TODO: rapikan file ini
 export default function Users() {
@@ -47,19 +47,21 @@ export default function Users() {
     const windowSize = useWindowSize()
 
     const [errorMsg, setErrorMsg] = useState('')
-    const [filteredUsers, setFilteredUsers] = useState<UserObject[]>([])
+    const [filteredUsers, setFilteredUsers] = useState<User[]>([])
     const [isError, setError] = useState(false)
     const [isLoading, setLoading] = useState(true)
-    const [isScreenLarge, setIsScreenLarge] = useState(window.innerWidth >= 1200)
+    const [isScreenLarge, setScreenLarge] = useState(window.innerWidth >= 1200)
+    const [isModalDeleteShow, setModalDeleteShow] = useState(false)
     const [search, setSearch] = useState('')
-    const [users, setUsers] = useState<UserObject[]>([])
+    const [selectedUser, setSelectedUser] = useState(new User())
+    const [users, setUsers] = useState<User[]>([])
 
     useEffect(() => {
         requestListUser()
     }, [])
 
     useEffect(() => {
-        setIsScreenLarge(windowSize.width >= 1200) //if screen width > 1200 the show table instead of list
+        setScreenLarge(windowSize.width >= 1200) //if screen width > 1200 the show table instead of list
     }, [windowSize.width])
 
     useEffect(() => {
@@ -83,13 +85,13 @@ export default function Users() {
         axios({method:'get', url: '/admin/user/getAll'})
         .then(result => { //handle success response
             let data : ServerResponse[] = result.data;
-            setUsers(data.map(_user => ({
+            setUsers(data.map(_user => new User({
                 id: _user.id,
-                username: _user.username,
-                name: _user.name,
-                roleId: _user.roleId, //todo ubah
-                roleName: _user.roleName,
                 isActive: _user.isActive,
+                name: _user.name,
+                roleId: _user.roleId,
+                roleName: _user.roleName,
+                username: _user.username,
             })))
         })
         .catch(error =>{ //handle error response
@@ -174,38 +176,31 @@ export default function Users() {
         </div>
     </div>
 
-    const handleEditUser = (x: UserObject) => {
+    //TODO: move this function to modal
+    const handleEditUser = (x: User) => {
         setConfig({
             editUserObject: x
         })
         history.push('/user/edituser');
     }
 
-    const handleDeleteUser = (x: UserObject) => {
-        //TODO: Tambah konfirmasi dengan password
-        axios({method:'post', url: '/admin/user/delete', data: {id: x.id, /*password: */}})
-        .then(result => { //handle success response
-            let data = result.data;
-            enqueueSnackbar(`User ${x.username} berhasil dihapus`,{variant: 'warning'})
-            requestListUser()
-        })
-        .catch(error =>{ //handle error response
-            let errorMessage = error.pesan ? error.pesan : "Terjadi kesalahan pada pengaturan request ini. Silakan hubungi admin.";
-            if (error.response){
-                //Error caused from the server
-                let errorCode = error.response.status
-                switch(errorCode){
-                    case 401: {
-                        errorMessage = "Password Salah"
-                    } break;
-                }
-            }
-            //you can show error notification here
-            enqueueSnackbar(errorMessage,{variant:"error"});
-        });
+    const handleClickDeleteUser = (user: User) => {
+        if (user.isNotDefined()) return
+        setSelectedUser(user)
+        setModalDeleteShow(true)
     }
 
-    const handleResetPassword = (x: UserObject) => {
+    const handleCloseModal = () => {
+        setModalDeleteShow(false)
+    }
+
+    const handleFinishDelete = () => {
+        setModalDeleteShow(false)
+        requestListUser()
+    }
+
+    //TODO: move this function to modal
+    const handleResetPassword = (x: User) => {
         //TODO: Tambah konfirmasi dengan password
         axios({method:'post', url: '/admin/user/resetPassword', data: {id: x.id, /*password: */}})
         .then(result => { //handle success response
@@ -284,7 +279,7 @@ export default function Users() {
                                 <Tooltip title="Reset password">
                                     <span 
                                         className="tw-rounded-full tw-h-8 tw-w-8 tw-grid tw-place-items-center tw-border tw-border-green-500 tw-bg-white"
-                                        onClick={() => handleResetPassword(user)}
+                                        // onClick={() => handleResetPassword(user)}
                                     >
                                         <i className="tw-text-green-500 bi-recycle" />
                                     </span>
@@ -294,7 +289,7 @@ export default function Users() {
                                 <Tooltip title="Edit User">
                                     <span 
                                         className="tw-rounded-full tw-h-8 tw-w-8 tw-grid tw-place-items-center tw-border tw-border-orange-500 tw-bg-white"
-                                        onClick={() => handleEditUser(user)}
+                                        // onClick={() => handleEditUser(user)}
                                     >
                                         <i className="tw-text-orange-500 bi-pencil" />
                                     </span>
@@ -304,7 +299,7 @@ export default function Users() {
                                 <Tooltip title="Delete User">
                                     <span 
                                         className="tw-rounded-full tw-h-8 tw-w-8 tw-grid tw-place-items-center tw-border tw-border-red-500 tw-bg-white"
-                                        onClick={() => handleDeleteUser(user)}
+                                        onClick={() => handleClickDeleteUser(user)}
                                     >
                                         <i className="tw-text-red-500 bi-trash" />
                                     </span>
@@ -348,7 +343,7 @@ export default function Users() {
                             {/* edit */}
                             <span 
                                 className="tw-rounded-full tw-h-8 tw-w-8 tw-grid tw-place-items-center tw-border tw-border-orange-500 tw-bg-white"
-                                onClick={() => handleEditUser(x)}
+                                // onClick={() => handleEditUser(x)} //TODO: add action
                             >
                                 <i className="tw-text-orange-500 bi-pencil" />
                             </span>
@@ -356,7 +351,7 @@ export default function Users() {
                             {/* reset password */}
                             <span 
                                 className="tw-flex-grow tw-h-8 tw-rounded-full tw-border tw-bg-green-500 tw-grid tw-place-items-center tw-text-white tw-font-light tw-text-sm"
-                                onClick={() => handleResetPassword(x)}
+                                // onClick={() => handleResetPassword(x)} //TODO: add action
                             >
                                 Reset password
                             </span>
@@ -364,7 +359,7 @@ export default function Users() {
                             {/* delete */}
                             <span 
                                 className="tw-rounded-full tw-h-8 tw-w-8 tw-grid tw-place-items-center tw-border tw-border-red-500 tw-bg-white"
-                                onClick={() => handleDeleteUser(x)}
+                                onClick={() => handleClickDeleteUser(x)}
                             >
                                 <i className="tw-text-red-500 bi-trash" />
                             </span>
@@ -453,6 +448,7 @@ export default function Users() {
                             fullWidth
                             placeholder="Cari"
                             type="search"
+                            autoComplete="off"
                             onChange={(e) => handleSearchChange(e.target.value)}
                             InputProps={{
                                 startAdornment: <InputAdornment position="start">
@@ -498,6 +494,7 @@ export default function Users() {
                     }
                 </div>
             </div>
+            <ModalDeleteUser onClose={handleCloseModal} onFinished={handleFinishDelete} show={isModalDeleteShow} user={selectedUser} />
         </div>
     )
 }
