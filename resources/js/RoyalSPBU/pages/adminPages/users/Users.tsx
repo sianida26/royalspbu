@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom'
 
 import AdminHeaderSidebar from '../../../components/AdminHeaderSidebar'
 import ModalDeleteUser from '../../../components/modals/ModalDeleteUser'
+import ModalResetPassword from '../../../components/modals/ModalResetPassword'
 import User from '../../../models/User'
 import useWindowSize from '../../../hooks/useWindowSize'
 
@@ -27,12 +28,15 @@ import {
 
 
 interface ServerResponse {
-    id: number,
-    username: string,
-    name: string,
-    roleId: number,
-    roleName: string,
-    isActive: boolean,
+    defaultPassword: string,
+    users: {
+        id: number,
+        username: string,
+        name: string,
+        roleId: number,
+        roleName: string,
+        isActive: boolean,
+    }[],
 }
 
 //TODO: Lanjutkan buat tampilan modal
@@ -46,12 +50,14 @@ export default function Users() {
     const {configs, setConfig} = useAdminConfig()
     const windowSize = useWindowSize()
 
+    const [defaultPassword, setDefaultPassword] = useState('')
     const [errorMsg, setErrorMsg] = useState('')
     const [filteredUsers, setFilteredUsers] = useState<User[]>([])
     const [isError, setError] = useState(false)
     const [isLoading, setLoading] = useState(true)
     const [isScreenLarge, setScreenLarge] = useState(window.innerWidth >= 1200)
     const [isModalDeleteShow, setModalDeleteShow] = useState(false)
+    const [isModalResetShow, setModalResetShow] = useState(false)
     const [search, setSearch] = useState('')
     const [selectedUser, setSelectedUser] = useState(new User())
     const [users, setUsers] = useState<User[]>([])
@@ -84,8 +90,8 @@ export default function Users() {
         setLoading(true)
         axios({method:'get', url: '/admin/user/getAll'})
         .then(result => { //handle success response
-            let data : ServerResponse[] = result.data;
-            setUsers(data.map(_user => new User({
+            let data : ServerResponse = result.data;
+            setUsers(data.users.map(_user => new User({
                 id: _user.id,
                 isActive: _user.isActive,
                 name: _user.name,
@@ -93,6 +99,7 @@ export default function Users() {
                 roleName: _user.roleName,
                 username: _user.username,
             })))
+            setDefaultPassword(data.defaultPassword)
         })
         .catch(error =>{ //handle error response
             let errorMessage = error.pesan ? error.pesan : "Terjadi kesalahan pada pengaturan request ini. Silakan hubungi Admin.";
@@ -192,6 +199,7 @@ export default function Users() {
 
     const handleCloseModal = () => {
         setModalDeleteShow(false)
+        setModalResetShow(false)
     }
 
     const handleFinishDelete = () => {
@@ -199,29 +207,15 @@ export default function Users() {
         requestListUser()
     }
 
-    //TODO: move this function to modal
-    const handleResetPassword = (x: User) => {
-        //TODO: Tambah konfirmasi dengan password
-        axios({method:'post', url: '/admin/user/resetPassword', data: {id: x.id, /*password: */}})
-        .then(result => { //handle success response
-            let data = result.data;
-            enqueueSnackbar(`User ${x.username} berhasil direset password`,{variant: 'success'})
-            requestListUser()
-        })
-        .catch(error =>{ //handle error response
-            let errorMessage = error.pesan ? error.pesan : "Terjadi kesalahan pada pengaturan request ini. Silakan hubungi admin.";
-            if (error.response){
-                //Error caused from the server
-                let errorCode = error.response.status
-                switch(errorCode){
-                    case 401: {
-                        errorMessage = "Password Salah"
-                    } break;
-                }
-            }
-            //you can show error notification here
-            enqueueSnackbar(errorMessage,{variant:"error"});
-        });
+    const handleFinishResetPassword = () => {
+        setModalResetShow(false)
+        requestListUser()
+    }
+
+    const handleClickResetPassword = (user: User) => {
+        if (user.isNotDefined()) return
+        setSelectedUser(user)
+        setModalResetShow(true)
     }
 
     const renderDataOnLargeScreen = () => (
@@ -279,7 +273,7 @@ export default function Users() {
                                 <Tooltip title="Reset password">
                                     <span 
                                         className="tw-rounded-full tw-h-8 tw-w-8 tw-grid tw-place-items-center tw-border tw-border-green-500 tw-bg-white"
-                                        // onClick={() => handleResetPassword(user)}
+                                        onClick={() => handleClickResetPassword(user)}
                                     >
                                         <i className="tw-text-green-500 bi-recycle" />
                                     </span>
@@ -313,28 +307,28 @@ export default function Users() {
     )
 
     const renderDataOnSmallScreen = () => (
-        filteredUsers.map(x => (
-            <div key={x.id} className="tw-w-full tw-bg-white tw-shadow-md tw-border tw-border-gray-300 tw-rounded-lg tw-p-4 tw-flex tw-flex-col">
+        filteredUsers.map(user => (
+            <div key={user.id} className="tw-w-full tw-bg-white tw-shadow-md tw-border tw-border-gray-300 tw-rounded-lg tw-p-4 tw-flex tw-flex-col">
                 <div className="tw-flex tw-items-center tw-gap-4">
-                    <i className={`bi-person-circle tw-text-3xl ${x.isActive ? 'tw-text-green-500' : 'tw-text-red-500'}`} />
-                    <span className="tw-font-semibold tw-text-xl">{x.name}</span>
+                    <i className={`bi-person-circle tw-text-3xl ${user.isActive ? 'tw-text-green-500' : 'tw-text-red-500'}`} />
+                    <span className="tw-font-semibold tw-text-xl">{user.name}</span>
                 </div>
                 <div className="tw-pr-4 tw-pl-12">
                     <table className="tw-mt-2 tw-text-left">
                         <tr>
                             <th className="tw-w-24">Username</th>
-                            <td>{x.username}</td>
+                            <td>{user.username}</td>
                         </tr>
                         <tr>
                             <th className="tw-w-24">Status</th>
                             <td className="tw-flex tw-gap-2 tw-items-center">
-                                <span className={`tw-w-3 tw-h-3 ${x.isActive ? 'tw-bg-green-500' : 'tw-bg-red-500'} tw-rounded-full`} />
-                                <span>{x.isActive ? 'Aktif' : 'Tidak Aktif'}</span>
+                                <span className={`tw-w-3 tw-h-3 ${user.isActive ? 'tw-bg-green-500' : 'tw-bg-red-500'} tw-rounded-full`} />
+                                <span>{user.isActive ? 'Aktif' : 'Tidak Aktif'}</span>
                             </td>
                         </tr>
                         <tr>
                             <th className="tw-w-24">Role</th>
-                            <td>{x.roleName}</td>
+                            <td>{user.roleName}</td>
                         </tr>
                     </table>
 
@@ -351,7 +345,7 @@ export default function Users() {
                             {/* reset password */}
                             <span 
                                 className="tw-flex-grow tw-h-8 tw-rounded-full tw-border tw-bg-green-500 tw-grid tw-place-items-center tw-text-white tw-font-light tw-text-sm"
-                                // onClick={() => handleResetPassword(x)} //TODO: add action
+                                onClick={() => handleClickResetPassword(user)}
                             >
                                 Reset password
                             </span>
@@ -359,7 +353,7 @@ export default function Users() {
                             {/* delete */}
                             <span 
                                 className="tw-rounded-full tw-h-8 tw-w-8 tw-grid tw-place-items-center tw-border tw-border-red-500 tw-bg-white"
-                                onClick={() => handleClickDeleteUser(x)}
+                                onClick={() => handleClickDeleteUser(user)}
                             >
                                 <i className="tw-text-red-500 bi-trash" />
                             </span>
@@ -494,7 +488,21 @@ export default function Users() {
                     }
                 </div>
             </div>
-            <ModalDeleteUser onClose={handleCloseModal} onFinished={handleFinishDelete} show={isModalDeleteShow} user={selectedUser} />
+
+            <ModalDeleteUser 
+                onClose={handleCloseModal} 
+                onFinished={handleFinishDelete} 
+                show={isModalDeleteShow} 
+                user={selectedUser} 
+            />
+
+            <ModalResetPassword 
+                defaultPassword={defaultPassword}
+                onClose={handleCloseModal} 
+                onFinished={handleFinishResetPassword}
+                show={isModalResetShow} 
+                user={selectedUser} 
+            />
         </div>
     )
 }

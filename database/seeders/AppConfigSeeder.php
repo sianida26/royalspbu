@@ -21,8 +21,7 @@ class AppConfigSeeder extends Seeder
         ]);
 
         $data->each(function($value, $key){
-            if (AppConfig::where('key', $key)->exists()) return;
-            $model = new AppConfig;
+            $model = AppConfig::firstOrNew(['key', $key]);
             $model->key = $key;
             $model->value = $value;
             $model->save();

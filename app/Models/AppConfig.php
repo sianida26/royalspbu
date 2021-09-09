@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class AppConfig extends Model
 {
     use HasFactory;
+
+    public static function getValue(string $key){
+        return self::where('key',$key)->firstOrFail()->value;
+    }
 }

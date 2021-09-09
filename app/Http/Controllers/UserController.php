@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
+use App\Models\AppConfig;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
 
@@ -35,8 +36,8 @@ class UserController extends Controller
      * @bodyParam [].is_active boolean status aktif user
      */
     function getAllUser(Request $request){
-        
-        return User::all()->map(function($user){
+
+        $users = User::all()->map(function($user){
             $roleId = -1;
             $roleName = '';
             if ($user->roles->isNotEmpty()){
@@ -53,6 +54,13 @@ class UserController extends Controller
                 'roleName' => $roleName,
             ];
         });
+
+        $defaultPassword = AppConfig::getValue('default_password');
+
+        return [
+            'users' => $users,
+            'defaultPassword' => $defaultPassword,
+        ];
     }
 
     /**
@@ -237,14 +245,22 @@ class UserController extends Controller
      * }
      */
     function resetUserPassword(Request $request){
-        $user = User::findOrFail($request->id);
-        $user->password = Hash::make('default'); //TODO: Ganti password default melalui config
-        $user->save();
-        return [
-            'username' => $user->username,
-            'name' => $user->name,
-            'message' => 'User berhasil direset password',
-        ];
+
+        $resetter = Auth::user();
+
+        if (Hash::check($request->password, $resetter->password)){
+            $user = User::findOrFail($request->id);
+            $defaultPassword = AppConfig::getValue('default_password');
+            $user->password = Hash::make($defaultPassword);
+            $user->save();
+            return [
+                'username' => $user->username,
+                'name' => $user->name,
+                'message' => 'User berhasil direset password',
+            ];
+        } else {
+            abort(422, 'Password salah');
+        }
     }
 
     function getAllRoles(Request $request){
