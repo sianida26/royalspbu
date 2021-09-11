@@ -104,6 +104,9 @@ class UserController extends Controller
             'isActive' => ['required', 'boolean'],
         ], $messages);
 
+        abort(200);
+        return;
+
         $user = User::create([
             'username' => $request->username,
             'name' => $request->name,

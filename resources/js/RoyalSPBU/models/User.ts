@@ -3,29 +3,41 @@ interface ConstructorProps{
     name?: string
     username?: string
     roleId?: number
+    password?: string
     roleName?: string
     isActive?: boolean
+}
+
+interface UserProps {
+    id: number,
+    name: string,
+    username: string,
+    roleId: number,
+    password: string,
+    roleName: string,
+    isActive: boolean,
 }
 
 export default class User{
 
     private _isDefined = false
 
-    id = -1
-    name = ''
-    username = ''
-    roleId = -1
-    roleName = ''
-    isActive = false
+    private properties: UserProps = {
+        id: -1,
+        name: '',
+        username: '',
+        password: '',
+        roleId: -1,
+        roleName: '',
+        isActive: false,
+    }
 
     constructor(props?: ConstructorProps){
         if (props === undefined) return
-        this.id = props.id || -1
-        this.name = props.name || ''
-        this.username = props.username || ''
-        this.roleId = props.roleId || -1
-        this.roleName = props.roleName || ''
-        this.isActive = props.isActive || false
+        this.properties = {
+            ...this.properties,
+            ...props,
+        }
         this._isDefined = true
     }
 
@@ -35,5 +47,45 @@ export default class User{
 
     isNotDefined(): boolean{
         return !this._isDefined
+    }
+
+    toObject(): UserProps {
+        return this.properties
+    }
+
+    set(props: ConstructorProps): this{
+        this.properties = {
+            ...this.properties,
+            ...props,
+        }
+        return this
+    }
+
+    get id(){
+        return this.properties.id
+    }
+
+    get name(){
+        return this.properties.name
+    }
+
+    get username(){
+        return this.properties.username
+    }
+
+    get roleId(){
+        return this.properties.roleId
+    }
+
+    get roleName(){
+        return this.properties.roleName
+    }
+
+    get isActive(){
+        return this.properties.isActive
+    }
+
+    get password(){
+        return this.properties.password
     }
 }

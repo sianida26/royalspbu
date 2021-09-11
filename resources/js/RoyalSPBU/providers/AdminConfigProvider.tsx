@@ -2,17 +2,15 @@ import React, { createContext, useContext, useState, FC } from "react";
 
 import User from "../models/User";
 
-import { AdminConfigContextState, IAdminConfig } from "../types";
+import { IAdminConfig } from "../types";
 import { persediaanReportDefaultObject } from "../constants/adminConfigDefaultValues";
 
-export const editUserDefaultObject = {
-    id: -1,
-    isActive: false,
-    name: '',
-    roleId: -1,
-    roleName: '',
-    username: '',
+type AdminConfigContextState = {
+    configs: IAdminConfig
+    setConfig: (newConfig: IAdminConfig) => void
 }
+
+//TODO: move iadminconfig from types to here
 
 export const editProductDefaultObject = {
     id: -1,

@@ -147,11 +147,6 @@ export type ConfigContextState = {
     setConfig: (newConfig: IConfig) => void
 }
 
-export type AdminConfigContextState = {
-    configs: IAdminConfig
-    setConfig: (newConfig: IAdminConfig) => void
-}
-
 export type AuthContextState = {
     auth: IAuth
     axios: AxiosInstance
