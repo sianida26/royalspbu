@@ -118,6 +118,7 @@ export default function FormUser(props: Props) {
     }
 
     const handleFormSubmit = () => {
+        setLoading(true)
         axios({method:'post', url: isEdit?  '/admin/user/edit' :'/admin/user/add', data: formData})
         .then(result => { //handle success response
             setFormErrors({})
@@ -216,30 +217,32 @@ export default function FormUser(props: Props) {
                         onChange={(e) => handleFormChange("name",e.target.value)}
                     />
                 </div>
-                <div>
-                    <TextField
-                        fullWidth
-                        autoComplete="new-password"
-                        label="Password"
-                        name="Password"
-                        disabled={isLoading}
-                        error={!!formErrors.password}
-                        helperText={formErrors.password}
-                        type={isShowPassword ? 'text' : 'password'}
-                        value={formData.password}
-                        onChange={(e) => handleFormChange("password",e.target.value)}
-                        InputProps={{
-                            endAdornment: <InputAdornment position="end">
-                                <IconButton
-                                    aria-label="toggle password visibility"
-                                    onClick={handleToggleVisibility}
-                                >
-                                    {isShowPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
-                                </IconButton>
-                            </InputAdornment>
-                        }}
-                    />
-                </div>
+                {
+                    !isEdit && <div>
+                        <TextField
+                            fullWidth
+                            autoComplete="new-password"
+                            label="Password"
+                            name="Password"
+                            disabled={isLoading}
+                            error={!!formErrors.password}
+                            helperText={formErrors.password}
+                            type={isShowPassword ? 'text' : 'password'}
+                            value={formData.password}
+                            onChange={(e) => handleFormChange("password",e.target.value)}
+                            InputProps={{
+                                endAdornment: <InputAdornment position="end">
+                                    <IconButton
+                                        aria-label="toggle password visibility"
+                                        onClick={handleToggleVisibility}
+                                    >
+                                        {isShowPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                                    </IconButton>
+                                </InputAdornment>
+                            }}
+                        />
+                    </div>
+                }
                 <div>
                     <FormControl>
                         <InputLabel id="label-role">Role</InputLabel>

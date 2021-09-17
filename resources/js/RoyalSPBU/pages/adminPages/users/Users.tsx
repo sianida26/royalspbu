@@ -337,7 +337,7 @@ export default function Users() {
                             {/* edit */}
                             <span 
                                 className="tw-rounded-full tw-h-8 tw-w-8 tw-grid tw-place-items-center tw-border tw-border-orange-500 tw-bg-white"
-                                // onClick={() => handleEditUser(x)} //TODO: add action
+                                onClick={() => handleEditUser(user)}
                             >
                                 <i className="tw-text-orange-500 bi-pencil" />
                             </span>
