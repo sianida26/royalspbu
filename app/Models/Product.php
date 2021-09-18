@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -34,6 +36,29 @@ class Product extends Model
     protected $casts = [
         'history' => AsCollection::class,
     ];
+
+    public function recordedSave(){
+
+        if ($this->history === null){
+
+            $this->history = collect([
+                [
+                    'timestamp' => Carbon::today(),
+                    'name' => $this->name,
+                    'price' => $this->price,
+                ]
+            ]);
+        } 
+
+        else {
+            $this->history = $this->history->push([
+                'timestamp' => Carbon::today(),
+                'name' => $this->name,
+                'price' => $this->price,
+            ]);
+        }
+        $this->save();
+    }
 
     public function tanks(){
         return $this->hasMany(Tank::class);
