@@ -1,9 +1,3 @@
-
-interface ConstructorProps {
-    id?: number,
-    name?: string,
-}
-
 interface RoleProperties{
     id: number,
     name: string,
@@ -18,7 +12,7 @@ export default class Role {
 
     private _isDefined = false
 
-    constructor(props?: ConstructorProps){
+    constructor(props?: Partial<RoleProperties>){
         if (props === undefined) return;
 
         this.properties = {

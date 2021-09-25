@@ -2,6 +2,7 @@ import React, { ReactElement } from "react"
 import { AxiosInstance } from "axios"
 
 import User from "./models/User"
+import Product from "./models/Product"
 
 import { IPersediaanReport } from "./interfaces/reports/PersediaanReport"
 
@@ -113,20 +114,19 @@ export interface IConfig {
 }
 
 export interface IAdminConfig {
-    editUserObject? : User
-    editProductObject? : ProductObject
-    editTankObject? : TankObject
-    editPumpObject? : PumpObject
-    editPermissionObject? : IPermission
-    editRoleObejct? : RoleObject
-    pumpReportObejct? : PumpReportObject
-    editRequestPenerimaanObject? : RequestPenerimaanObejct
-    konfirmasiPenerimaanObject? : KonfirmasiPenerimaanObject
-    detailPenerimaanObject? : DetailPenerimaanObject
-    editLaporanTotalisatorObject? : EditLaporanTotalisatorObject
-    createLaporanTotalisatorDate? : Date
-    persediaanReportDate? : Date
-    persediaanReport? : IPersediaanReport
+    editUserObject : User
+    editTankObject : TankObject
+    editPumpObject : PumpObject
+    editPermissionObject : IPermission
+    editRoleObejct : RoleObject
+    pumpReportObejct : PumpReportObject
+    editRequestPenerimaanObject : RequestPenerimaanObejct
+    konfirmasiPenerimaanObject : KonfirmasiPenerimaanObject
+    detailPenerimaanObject : DetailPenerimaanObject
+    editLaporanTotalisatorObject : EditLaporanTotalisatorObject
+    createLaporanTotalisatorDate : Date
+    persediaanReportDate : Date
+    persediaanReport : IPersediaanReport
 }
 
 export interface IAuth {

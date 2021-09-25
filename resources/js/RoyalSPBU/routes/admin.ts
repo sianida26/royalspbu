@@ -9,8 +9,6 @@ import FormPermission from '../pages/adminPages/permissions/FormPermission'
 import RolesPage from '../pages/adminPages/roles/Roles'
 
 import Products from '../pages/adminPages/products/Products'
-import AddProduct from '../pages/adminPages/products/AddProduct'
-import EditProduct from '../pages/adminPages/products/EditProduct'
 
 import Tanks from '../pages/adminPages/tanks/Tanks'
 import FormTank from '../pages/adminPages/tanks/FormTank'
@@ -69,14 +67,6 @@ const routes: IRoute[] = [
     {
         path: '/products',
         component: Products
-    },
-    {
-        path: '/products/tambah',
-        component: AddProduct,
-    },
-    {
-        path: '/products/edit',
-        component: EditProduct
     },
     {
         path: '/tanks',

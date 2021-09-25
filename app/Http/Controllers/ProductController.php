@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Product;
+
 use Carbon\Carbon;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class ProductController extends Controller
 {
@@ -83,13 +87,18 @@ class ProductController extends Controller
     }
 
     public function deleteProduct(Request $request){
+        $deleter = Auth::user();
         $product = Product::findOrFail($request->id);
-        abort_unless($product->tanks->isEmpty(), 403, 'Anda harus menghapus atau mengalihkan semua tangki yang berkaitan dengan produk ini sebelum menghapus');
-        $product->delete();
-        return [
-            'name' => $product->name,
-            'price' => $product->price,
-            'message' => 'Produk berhasil dihapus',
-        ];
+        if (Hash::check($request->password, $deleter->password)){
+            abort_unless($product->tanks->isEmpty(), 403, 'Anda harus menghapus atau mengalihkan semua tangki yang berkaitan dengan produk ini sebelum menghapus');
+            $product->delete();
+            return [
+                'name' => $product->name,
+                'price' => $product->price,
+                'message' => 'Produk berhasil dihapus',
+            ];
+        } else {
+            abort(422, 'Password salah');
+        }
     }
 }

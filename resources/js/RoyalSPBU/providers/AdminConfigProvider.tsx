@@ -1,13 +1,14 @@
 import React, { createContext, useContext, useState, FC } from "react";
 
 import User from "../models/User";
+import Product from "../models/Product";
 
 import { IAdminConfig } from "../types";
 import { persediaanReportDefaultObject } from "../constants/adminConfigDefaultValues";
 
 type AdminConfigContextState = {
     configs: IAdminConfig
-    setConfig: (newConfig: IAdminConfig) => void
+    setConfig: (newConfig: Partial<IAdminConfig>) => void
 }
 
 //TODO: move iadminconfig from types to here
@@ -92,7 +93,6 @@ export const editTotalisatorReportDefaultObject = {
 const contextDefaultValues: AdminConfigContextState = {
     configs: {
         editUserObject: new User(),
-        editProductObject: editProductDefaultObject,
         editTankObject: editTankDefaultObject,
         editPumpObject: editPumpDefaultObject,
         editPermissionObject: editPermissionDefaultObject,
@@ -115,7 +115,7 @@ export const useAdminConfig = () => useContext(AdminConfigContext)
 const AdminConfigProvider: FC = ({children}) => {
     const [configs, _setConfig] = useState<IAdminConfig>(contextDefaultValues.configs)
     
-    const setConfig = (newConfig: IAdminConfig) => _setConfig(config => {
+    const setConfig = (newConfig: Partial<IAdminConfig>) => _setConfig(config => {
         return {
             ...config,
             ...newConfig,

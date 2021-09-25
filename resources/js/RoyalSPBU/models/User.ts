@@ -1,13 +1,3 @@
-interface ConstructorProps{
-    id?: number
-    name?: string
-    username?: string
-    roleId?: number
-    password?: string
-    roleName?: string
-    isActive?: boolean
-}
-
 interface UserProps {
     id: number,
     name: string,
@@ -32,7 +22,7 @@ export default class User{
         isActive: false,
     }
 
-    constructor(props?: ConstructorProps){
+    constructor(props?: Partial<UserProps>){
         if (props === undefined) return
         this.properties = {
             ...this.properties,
@@ -53,7 +43,7 @@ export default class User{
         return this.properties
     }
 
-    set(props: ConstructorProps): this{
+    set(props: Partial<UserProps>): this{
         this.properties = {
             ...this.properties,
             ...props,
