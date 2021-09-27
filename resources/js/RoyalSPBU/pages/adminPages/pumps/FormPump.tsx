@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import {useSnackbar} from 'notistack'
 import {useHistory} from 'react-router-dom'
-import { useAdminConfig, editTankDefaultObject, editPumpDefaultObject } from '../../../providers/AdminConfigProvider'
+import { useAdminConfig, editPumpDefaultObject } from '../../../providers/AdminConfigProvider'
 
 import { useAuth } from '../../../providers/AuthProvider'
 import { NozzleObject, PumpObject, TankObject } from '../../../types'

@@ -145,6 +145,8 @@ export default function Products() {
     }
 
     const handleCloseModal = () => {
+        if (isFormLoading) return
+        
         setShowModalForm(false)
         setShowModalDelete(false)
         setFormId(-1)

@@ -115,7 +115,6 @@ export interface IConfig {
 
 export interface IAdminConfig {
     editUserObject : User
-    editTankObject : TankObject
     editPumpObject : PumpObject
     editPermissionObject : IPermission
     editRoleObejct : RoleObject

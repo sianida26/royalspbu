@@ -13,20 +13,6 @@ type AdminConfigContextState = {
 
 //TODO: move iadminconfig from types to here
 
-export const editProductDefaultObject = {
-    id: -1,
-    name: '',
-    price: 0,
-}
-
-export const editTankDefaultObject = {
-    id: -1,
-    name: '',
-    product: '',
-    productId: -1,
-    stock: 0,
-}
-
 export const editPumpDefaultObject = {
     id: -1,
     nozzles: [],
@@ -93,7 +79,6 @@ export const editTotalisatorReportDefaultObject = {
 const contextDefaultValues: AdminConfigContextState = {
     configs: {
         editUserObject: new User(),
-        editTankObject: editTankDefaultObject,
         editPumpObject: editPumpDefaultObject,
         editPermissionObject: editPermissionDefaultObject,
         editRoleObejct: editRoleDefaultObject,

@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import {useSnackbar} from 'notistack'
 import {useHistory} from 'react-router-dom'
-import { useAdminConfig, editTankDefaultObject, editPumpDefaultObject, editPermissionDefaultObject } from '../../../providers/AdminConfigProvider'
+import { useAdminConfig, editPermissionDefaultObject } from '../../../providers/AdminConfigProvider'
 import { useAuth } from '../../../providers/AuthProvider'
 
 // import axios from '../../../utils/aaaadmin'

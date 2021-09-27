@@ -11,7 +11,6 @@ import RolesPage from '../pages/adminPages/roles/Roles'
 import Products from '../pages/adminPages/products/Products'
 
 import Tanks from '../pages/adminPages/tanks/Tanks'
-import FormTank from '../pages/adminPages/tanks/FormTank'
 
 import Pumps from '../pages/adminPages/pumps/Pumps'
 import FormPump from '../pages/adminPages/pumps/FormPump'
@@ -71,14 +70,6 @@ const routes: IRoute[] = [
     {
         path: '/tanks',
         component: Tanks
-    },
-    {
-        path: '/tanks/tambah',
-        component: FormTank
-    },
-    {
-        path: '/tanks/edit',
-        component: FormTank,
     },
     {
         path: '/presensi',

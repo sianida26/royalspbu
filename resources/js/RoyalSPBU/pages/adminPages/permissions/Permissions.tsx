@@ -5,7 +5,7 @@ import { useAdminConfig } from '../../../providers/AdminConfigProvider'
 
 
 import { useAuth } from '../../../providers/AuthProvider'
-import {IPermission, ProductObject} from '../../../types'
+import { IPermission } from '../../../types'
 
 
 interface ServerResponse {
