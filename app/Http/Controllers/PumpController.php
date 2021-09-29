@@ -2,13 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Pump;
 use App\Models\Nozzle;
+use App\Models\Pump;
 use App\Models\Tank;
+
 use Carbon\Carbon;
 
 use Debugbar;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+
 
 class PumpController extends Controller
 {
@@ -126,9 +131,14 @@ class PumpController extends Controller
     }
 
     public function delete(Request $request){
-
+        $deleter = Auth::user();
         $pump = Pump::findOrFail($request->id);
-        $pump->hapus();
+        // if correct password
+        if (Hash::check($request->password, $deleter->password)){
+            $pump->hapus();
+        } else {
+            abort(422, 'Password salah');
+        }
         return 'ok';
     }
 

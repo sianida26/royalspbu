@@ -2,7 +2,7 @@ import React, { ReactElement } from "react"
 import { AxiosInstance } from "axios"
 
 import User from "./models/User"
-import Product from "./models/Product"
+import Pump from "./models/Pump"
 
 import { IPersediaanReport } from "./interfaces/reports/PersediaanReport"
 
@@ -115,7 +115,7 @@ export interface IConfig {
 
 export interface IAdminConfig {
     editUserObject : User
-    editPumpObject : PumpObject
+    editPumpObject : Pump
     editPermissionObject : IPermission
     editRoleObejct : RoleObject
     pumpReportObejct : PumpReportObject
