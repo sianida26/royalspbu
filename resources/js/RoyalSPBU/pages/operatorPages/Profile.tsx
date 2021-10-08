@@ -4,6 +4,8 @@ import { useHistory } from 'react-router'
 import { useAuth } from '../../providers/AuthProvider'
 import ModalChangePassword from '../../components/modals/ModalChangePassword'
 
+import OperatorHeader from '../../components/OperatorHeader'
+
 export default function Profile() {
 
     const history = useHistory()
@@ -23,15 +25,7 @@ export default function Profile() {
     return (
         <div className="tw-flex tw-flex-col tw-items-center tw-justify-center tw-w-screen tw-bg-gray-50">
 
-            {/* topbar */}
-            <div className="tw-flex tw-items-center tw-w-full tw-h-14 tw-bg-primary-700 tw-px-5 tw-py-4 tw-justify-between">
-                <i 
-                    className="bi bi-house-fill tw-text-white tw-text-2xl" 
-                    onClick={() => history.goBack()}
-                />
-                <span className="tw-text-white tw-font-smeibold tw-text-3xl tw-text-center tw-justify-center">Profil</span>
-                <i />
-            </div>
+            <OperatorHeader title="Profil" />
 
             {/* nama */}
             <div className="tw-grid tw-grid-cols-5 tw-gap-4 tw-mt-10 tw-w-full tw-px-5 tw-items-center tw-justify-center">
