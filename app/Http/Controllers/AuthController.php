@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
-use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -47,6 +49,31 @@ class AuthController extends Controller
     }
 
     public function submitNewPassword(Request $request){
+
+        return 'ok';
+    }
+
+    //TODO: prevent submitting new password same as old password
+    public function changePassword(Request $request){
+        $user = Auth::user();
+
+        $rules = [
+            'old' => [
+                'required',
+                function($attribute, $value, $fail){ //validate old password
+                    if (!Hash::check($value, Auth::user()->password)){
+                        $fail('Password salah');
+                    }
+                },
+            ],
+            'new' => ['required','min:8'],
+        ];
+
+        $messages = [
+            'required' => 'Harus diisi',
+        ];
+
+        $request->validate($rules, $messages);
 
         return 'ok';
     }

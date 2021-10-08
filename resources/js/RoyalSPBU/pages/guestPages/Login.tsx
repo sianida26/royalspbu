@@ -109,7 +109,10 @@ export default function Login() {
                     errorMsg && <p className="tw-mt-4 tw-text-white tw-text-center tw-bg-red-500 tw-py-1 tw-px-2 tw-rounded-md">{errorMsg}</p>
                 }
 
-                <div className={`tw-w-full tw-px-4 tw-flex tw-flex-col tw-gap-6 tw-mt-4 ${isLoading && 'tw-opacity-75'}`}>
+                <form 
+                    className={`tw-w-full tw-px-4 tw-flex tw-flex-col tw-gap-6 tw-mt-4 ${isLoading && 'tw-opacity-75'}`}
+                    onSubmit={(e) => {e.preventDefault(); handleLogin()}}
+                >
 
                     {/* username */}
                     <input 
@@ -137,7 +140,7 @@ export default function Login() {
                     <div className="tw-flex tw-justify-end tw-mt-2">
                         <button 
                             className="tw-bg-primary-600 tw-text-white tw-justify-self-end tw-py-2 tw-px-3 tw-rounded-md"
-                            onClick={handleLogin}
+                            type="submit"
                             disabled={isLoading}
                         >
                             {
@@ -148,7 +151,7 @@ export default function Login() {
                             }
                         </button>
                     </div>
-                </div>
+                </form>
             </div>
             <span className="tw-mt-2 tw-text-xs">&copy; 2021 Royal SPBU</span>
             {/* <span className="tw-border tw-border-black">Username</span>

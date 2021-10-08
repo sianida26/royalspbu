@@ -36,6 +36,8 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:api')->group(function(){
     
     Route::get('/logout', [AuthController::class, 'logout']);
+    Route::post('/changepassword', [AuthController::class, 'changePassword']);
+
     Route::prefix('admin')->group(function(){
         Route::prefix('user')->group(function(){
             Route::get('/getAll', [UserController::class, 'getAllUser'] );
@@ -122,5 +124,6 @@ Route::middleware('auth:api')->group(function(){
         Route::get('/getAvailablePumps', [PumpController::class, 'getAvailablePumps']);
         Route::post('/uploadBuktiTotalizer', [DailyPumpReportController::class, 'uploadBuktiTotalizer']);
         Route::post('/sendPumpReport', [DailyPumpReportController::class, 'submitPumpReport']);
+        Route::get('/getReportingStatus', [UserController::class, 'getOperatorReportingStatus']);
     });
 });

@@ -2,6 +2,14 @@
 
 namespace App\Http\Controllers;
 
+
+use App\Models\AppConfig;
+use App\Models\TotalizatorReport;
+use App\Models\Presence;
+use App\Models\User;
+
+use Carbon\Carbon;
+
 use Debugbar;
 
 use Illuminate\Http\Request;
@@ -9,8 +17,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
-use App\Models\AppConfig;
-use App\Models\User;
 use Spatie\Permission\Models\Role;
 
 /**
@@ -268,5 +274,21 @@ class UserController extends Controller
 
     function getAllRoles(Request $request){
         return Role::select('id','name')->get();
+    }
+
+    function getOperatorReportingStatus(Request $request){
+
+        $presenceStatus = Presence::where('user_id', Auth::id())
+            ->whereDate('timestamp', Carbon::today())
+            ->exists();
+        
+        $reportStatus = TotalizatorReport::where('reporter_id', Auth::id())
+            ->whereDate('created_at', Carbon::today())
+            ->exists();
+
+        return [
+            'presence' => $presenceStatus,
+            'report' => $reportStatus,
+        ];
     }
 }

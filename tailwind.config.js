@@ -13,6 +13,9 @@ module.exports = {
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
+      borderWidth: {
+        '10': '10px',
+      },
       colors: {
         sky: colors.sky,
         primary: colors.sky,
