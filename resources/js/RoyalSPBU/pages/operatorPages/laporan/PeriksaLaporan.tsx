@@ -1,41 +1,48 @@
 import React from 'react'
-import { useSnackbar } from 'notistack'
-import { useAuth } from '../../../providers/AuthProvider'
-import { useHistory } from 'react-router'
 
-import {Report} from '.'
+import DailyPumpReport from '../../../models/DailyPumpReport'
+import { formatRupiah, numberWithCommas } from '../../../utils/helper'
+import { useAuth } from '../../../providers/AuthProvider'
+import { useConfig, ReportStatus } from '../../../providers/ConfigProvider'
+import { useHistory } from 'react-router'
+import { useSnackbar } from 'notistack'
+
+
+//TODO: handle error when submitting
 
 interface Props {
-    report : Report
+    report : DailyPumpReport
     handleBack: () => void
 }
 
-export default function PeriksaLaporan({report, handleBack} : Props) {
+export default function PeriksaLaporan(props : Props) {
 
     const {axios} = useAuth()
     const history = useHistory()
     const {enqueueSnackbar} = useSnackbar()
+    const { setConfig } = useConfig()
 
     const [isLoading, setLoading] = React.useState(false)
 
     const handleSendReport = () => {
         setLoading(true)
         axios({url: '/sendPumpReport', method: 'post', data: {
-            pumpId: report.id,
-            pumpNumber: report.pumpNumber,
-            nozzles: report.nozzles.map(nozzle => ({
+            pumpId: props.report.pump.id,
+            pumpNumber: props.report.pump.pumpNumber,
+            nozzles: props.report.pump.nozzles.map(nozzle => ({
                 id: nozzle.id,
-                finalTotalizator: nozzle.finalTotalizator,
+                finalTotalizator: nozzle.totalizator,
                 filename: nozzle.reportFilename
             }))
         }})
         .then(response => {
-            console.log(response)
             history.replace('/')
+            setConfig({
+                laporanStatus: ReportStatus.SUDAH_LAPORAN,
+            })
             enqueueSnackbar('Laporan berhasil dikirim',{variant: 'success'})
         })
         .catch(err => {
-            console.log(err)
             enqueueSnackbar('Yah error',{variant: 'error'})
         })
         .finally(() => {
@@ -44,37 +51,72 @@ export default function PeriksaLaporan({report, handleBack} : Props) {
     }
 
     return (
-        <div className="tw-flex tw-flex-col tw-gap-2">
-            <p className="tw-text-center">Laporan pulau pompa {report.pumpNumber+1}</p>
-            {/* {
-                Object.entries(report.nozzles).map(([nozzle, totalisator]) => (
-                    <p>nozzle {nozzle} : {totalisator}</p>
-                ))
-            } */}
-            {
-                report.nozzles.map((nozzle, i) => {
-
-                    let diff = Math.abs(nozzle.finalTotalizator - nozzle.initialTotalizator)
-
-                    return (<div className="tw-w-full tw-flex tw-flex-col tw-border tw-p-2 tw-border-black" key={nozzle.id}>
-                        <p className="tw-text-center tw-font-bold">Nozzle {i+1}</p>
-                        <p>Nama Produk: {nozzle.productName}</p>
-                        <p>Totalisator Awal: {nozzle.initialTotalizator} L</p>
-                        <p>Totalisator AKhir: {nozzle.finalTotalizator} L</p>
-                        <p>Volume penjualan: {diff} L</p>
-                        <p>Harga per liter: Rp{nozzle.price}</p>
-                        <p>Total pendapatan: Rp{nozzle.price*diff}</p>
-                        <p>Bukti foto</p>
-                        <img src={nozzle.imageUrl} />
+        <div 
+            className="tw-flex tw-flex-col tw-max-w-screen-sm tw-w-full tw-items-center tw-justify-center tw-mt-2 tw-px-5 tw-py-5 tw-bg-white tw-rounded-xl tw-gap-4"
+            style={{boxShadow: '2px 3px 4px rgba(0, 0, 0, 0.25)', borderRadius: '12px'}}
+        >
+            <p className="tw-font-semibold tw-text-gray-500 tw-text-xl">Laporan Pulau Pompa {props.report.pump.pumpNumber}</p>
+            {props.report.pump.nozzles.map((nozzle, i) => 
+                {
+                    return <div key={nozzle.id} className="tw-flex tw-flex-col tw-items-center tw-w-full tw-bg-gray-100 tw-py-4 tw-px-2 tw-rounded-lg">
+                        <div className="tw-grid tw-grid-cols-7 tw-gap-2 tw-w-full tw-items-center tw-justify-center">
+                            <div className="tw-col-span-3 tw-font-semibold tw-text-lg">Nozzle {i+1}</div>
+                            <div className="tw-col-span-4" />
+                            <div className="tw-col-span-4 tw-font-medium tw-mt-2">Nama Produk</div>
+                            <div className="tw-col-span-3 tw-font-semibold tw-text-gray-600 tw-mt-2">{nozzle.productName}</div>
+                            <div className="tw-col-span-4 tw-font-medium tw-mt-2">Totalisator Awal</div>
+                            <div className="tw-col-span-3 tw-font-semibold tw-text-gray-600 tw-mt-2">{numberWithCommas(nozzle.initialTotalizator)} L</div>
+                            <div className="tw-col-span-4 tw-font-medium tw-mt-2">Totalisator Akhir</div>
+                            <div className="tw-col-span-3 tw-font-semibold tw-text-gray-600 tw-mt-2">{numberWithCommas(nozzle.totalizator)} L</div>
+                            <div className="tw-col-span-4 tw-font-medium tw-mt-2">Volume Penjualan</div>
+                            <div className="tw-col-span-3 tw-font-semibold tw-text-gray-600 tw-mt-2">{numberWithCommas(nozzle.getTotalizatorDiff())} L</div>
+                            <div className="tw-col-span-4 tw-font-medium tw-mt-2">Harga per Liter</div>
+                            <div className="tw-col-span-3 tw-font-semibold tw-text-gray-600 tw-mt-2">{formatRupiah(nozzle.price)}</div>
+                            <div className="tw-col-span-4 tw-font-medium tw-mt-2">Total pendapatan</div>
+                            <div className="tw-col-span-3 tw-font-bold tw-text-gray-600 tw-mt-2">{formatRupiah(nozzle.getRevenue())}</div>
+                        </div>
+                        <div className="tw-flex tw-flex-col tw-w-full tw-mt-4 tw-bg-white tw-px-4 tw-py-4">
+                            <div className="">Bukti Foto</div>
+                            <img src={nozzle.imageUrl} alt="Bukti Laporan" className="tw-max-w-full" />
+                        </div>
                     </div>
-                )})
+                })
             }
-            <p className="tw-font-bold">Pendapatan: {report.nozzles.reduce((current, nozzle) => {
-                let diff = Math.abs(nozzle.finalTotalizator - nozzle.initialTotalizator)
-                return nozzle.price*diff+current
-            },0)}</p>
-            <button className="tw-border tw-bg-gray-400 tw-my-2" onClick={handleBack}>Kembali</button>
-            <button className="tw-border tw-bg-gray-400" onClick={handleSendReport}>Kirim</button>
+
+
+            <div className="tw-flex tw-flex-col tw-w-full tw-bg-gray-100 tw-py-4 tw-px-2 tw-rounded-lg">
+                <p className="tw-text-center tw-text-xl tw-font-bold tw-mb-2">Total Pendapatan Pompa {props.report.pump.pumpNumber}</p>
+                {
+                    props.report.pump.nozzles.map((nozzle, i) => {
+
+                        return <div key={i} className="tw-flex tw-gap-2">
+                            <div className="tw-w-20">Nozzle {i+1}</div>
+                            <div className="">:</div>
+                            <div className="tw-font-semibold">{formatRupiah(nozzle.getRevenue())}</div>
+                        </div>
+                    })
+                }
+                <div className="tw-mt-4 tw-w-full tw-rounded-lg tw-bg-white tw-py-4 tw-px-2 tw-flex tw-flex-col tw-items-center">
+                    <span className="tw-text-xl">Total pendapatan</span>
+                    <span className="tw-text-green-600 tw-font-extrabold tw-text-3xl">{formatRupiah(props.report.getRevenue())}</span>
+                </div>
+            </div>
+            <div className="tw-flex tw-w-full tw-items-center tw-justify-between tw-my-10">
+                <button 
+                    className={`tw-border tw-border-orange-500 tw-rounded-full tw-py-1 tw-px-3 tw-text-center tw-justify-center tw-font-semibold tw-text-orange-500 focus:tw-outline-none ${isLoading && 'tw-opacity-75'}`}
+                    disabled={isLoading}
+                    onClick={() => props.handleBack()}
+                >
+                    Kembali
+                </button>
+                <button 
+                    disabled={isLoading}
+                    className={`tw-bg-primary-500 tw-border tw-border-primary-500 tw-rounded-full tw-py-1 tw-px-3 tw-text-center tw-justify-center tw-font-semibold tw-text-white focus:tw-outline-none ${isLoading && 'tw-opacity-75'}`}
+                    onClick={handleSendReport}
+                >
+                    {isLoading ? 'Mengirim...' : 'Kirim'}
+                </button>
+            </div>
         </div>
     )
 }

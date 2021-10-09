@@ -1,17 +1,16 @@
+import Pump from './Pump'
 import Model, {ModelProps} from './Model'
 
 interface Properties extends ModelProps {
     id: number,
-    name: string,
-    price: number,
+    pump: Pump,
 }
 
-export default class Product extends Model{
+export default class DailyPumpReport extends Model{
 
     properties: Properties = {
         id: -1,
-        name: '',
-        price: 0,
+        pump: new Pump(),
     }
 
     constructor(props?: Partial<Properties>){
@@ -24,23 +23,17 @@ export default class Product extends Model{
         this._isDefined = true
     }
 
+    getRevenue(): number{
+        return this.properties.pump.nozzles.reduce((prev, current) => {
+            return prev+current.getRevenue()
+        }, 0)
+    }
+
     get id(){
         return this.properties.id
     }
 
-    get name(){
-        return this.properties.name
-    }
-
-    get price(){
-        return this.properties.price
-    }
-
-    set price(price: number){
-        this.set({price})
-    }
-
-    set name(name: string){
-        this.set({name})
+    get pump(){
+        return this.properties.pump
     }
 }

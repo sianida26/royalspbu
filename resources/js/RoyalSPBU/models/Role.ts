@@ -1,18 +1,19 @@
-interface RoleProperties{
+import Model, {ModelProps} from './Model'
+
+interface RoleProperties extends ModelProps{
     id: number,
     name: string,
 }
 
-export default class Role {
+export default class Role extends Model {
     
-    private properties: RoleProperties = {
+    properties: RoleProperties = {
         id: -1,
         name: '',
     }
 
-    private _isDefined = false
-
     constructor(props?: Partial<RoleProperties>){
+        super()
         if (props === undefined) return;
 
         this.properties = {
@@ -21,14 +22,5 @@ export default class Role {
         }
 
         this._isDefined = true
-    }
-
-
-    isDefined(){
-        return this._isDefined
-    }
-
-    isNotDefined(){
-        return !this._isDefined
     }
 }

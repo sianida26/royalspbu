@@ -1,4 +1,6 @@
-interface UserProps {
+import Model, {ModelProps} from './Model'
+
+interface UserProps extends ModelProps {
     id: number,
     name: string,
     username: string,
@@ -8,11 +10,9 @@ interface UserProps {
     isActive: boolean,
 }
 
-export default class User{
+export default class User extends Model{
 
-    private _isDefined = false
-
-    private properties: UserProps = {
+    properties: UserProps = {
         id: -1,
         name: '',
         username: '',
@@ -23,20 +23,13 @@ export default class User{
     }
 
     constructor(props?: Partial<UserProps>){
+        super()
         if (props === undefined) return
         this.properties = {
             ...this.properties,
             ...props,
         }
         this._isDefined = true
-    }
-
-    isDefined(): boolean {
-        return this._isDefined
-    }
-
-    isNotDefined(): boolean{
-        return !this._isDefined
     }
 
     toObject(): UserProps {

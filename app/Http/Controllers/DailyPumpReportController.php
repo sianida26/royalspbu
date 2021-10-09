@@ -87,7 +87,7 @@ class DailyPumpReportController extends Controller
 
         abort_if(
             DailyPumpReport::whereDate('created_at',Carbon::today())->where('pump_id',$request->pumpId)->exists(),
-            501,
+            403,
             'Anda sudah membuat laporan'
         );
 

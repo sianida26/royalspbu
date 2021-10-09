@@ -43,18 +43,15 @@ export default function Home() {
         axios({method:'get', url: '/getReportingStatus'})
         .then(result => { //handle success response
             let data: ServerResponse = result.data;
-            console.log(data) //TODO: remove log
             setConfig({
                 laporanStatus: data.report ? ReportStatus.SUDAH_LAPORAN : ReportStatus.BELUM_LAPORAN,
                 presenceStatus: data.presence ? ReportStatus.SUDAH_LAPORAN : ReportStatus.BELUM_LAPORAN,
             })
         })
         .catch(error =>{ //handle error response
-            console.log(JSON.stringify(error, Object.getOwnPropertyNames(error)))
             let errorMessage = error.pesan ? error.pesan : "Terjadi kesalahan pada pengaturan request ini. Silakan hubungi Admin.";
             if (error.response){
                 //Error caused from the server
-                console.log(error.response) //TODO: remove log
                 let errorCode = error.response.status
                 switch(errorCode){
                     case 400: /*bad request*/ break; 
@@ -75,11 +72,9 @@ export default function Home() {
                 }
             } else if (error.request){
                 //Request was made but no response was received
-                console.log('request error')
             } else {
                 //Something happened in setting up the request that triggered an Error
             }
-            // console.log(JSON.stringify(error))
             //you can show error notification here
             if (errorMessage) enqueueSnackbar(errorMessage,{variant:"error"});
         })
@@ -140,15 +135,6 @@ export default function Home() {
     }
 
     return (
-        // <div className="tw-w-full tw-flex tw-flex-col tw-gap-8">
-        //     <div className="tw-p-8 tw-border tw-border-black" onClick={handleAbsenClick}>
-        //         <span>Absen</span>
-        //     </div>
-
-        //     <div className="tw-p-8 tw-border tw-border-black" onClick={handleLaporanClick}>
-        //         <span>Laporan</span>
-        //     </div>
-        // </div>
         <div className="tw-w-screen tw-bg-gray-50">
             <div className="tw-flex tw-flex-col tw-items-center tw-w-full tw-h-screen tw-relative tw-overflow-x-hidden">
                 
@@ -159,7 +145,7 @@ export default function Home() {
                 <span 
                     onClick={handleProfileClick}
                     style={{zIndex: 2}}
-                    className="tw-rounded-full tw-absolute tw-right-3 tw-top-3 tw-bg-red-700 tw-w-12 tw-h-12 tw-flex tw-items-center tw-justify-center"
+                    className="tw-rounded-full tw-absolute tw-right-3 tw-top-3 tw-bg-primary-700 tw-w-12 tw-h-12 tw-flex tw-items-center tw-justify-center"
                 >
                     <i className="bi bi-person-circle tw-text-3-xl tw-text-right tw-text-white" />
                 </span>

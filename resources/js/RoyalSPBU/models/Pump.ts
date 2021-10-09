@@ -1,36 +1,30 @@
 import Nozzle, {Properties as NozzleProps} from './Nozzle'
+import Model, {ModelProps} from './Model'
 
-interface Properties {
+interface Properties extends ModelProps {
+    available: boolean, //available for reporting or not
     id: number,
     pumpNumber: number,
     nozzles: Nozzle[],
 }
 
-export default class Pump{
+export default class Pump extends Model{
 
-    private _isDefined = false
-
-    private properties: Properties = {
+    properties: Properties = {
+        available: false,
         id: -1,
         pumpNumber: 0,
         nozzles: [],
     }
 
     constructor(props?: Partial<Properties>){
+        super()
         if (props === undefined) return
         this.properties = {
             ...this.properties,
             ...props,
         }
         this._isDefined = true
-    }
-
-    isDefined(): boolean {
-        return this._isDefined
-    }
-
-    isNotDefined(): boolean{
-        return !this._isDefined
     }
 
     inputNozzles(nozzles: Partial<NozzleProps>[]): void {
@@ -45,12 +39,16 @@ export default class Pump{
         return this.properties.id
     }
 
-    get nozzles(){
+    get nozzles(): Nozzle[]{
         return this.properties.nozzles
     }
 
     get pumpNumber(){
         return this.properties.pumpNumber
+    }
+
+    get available(){
+        return this.properties.available
     }
 
     set nozzles(_nozzles: Nozzle[]){

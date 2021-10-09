@@ -1,40 +1,32 @@
 import Product from './Product'
+import Model, {ModelProps} from './Model'
 
-interface Properties {
+interface Properties extends ModelProps {
     id: number,
     name: string,
-    product: Product|null,
+    product: Product,
     stock: number,
     tankNumber: number,
 }
 
-export default class Tank{
+export default class Tank extends Model{
 
-    private _isDefined = false
-
-    private properties: Properties = {
+    properties: Properties = {
         id: -1,
         name: '',
-        product: null,
+        product: new Product(),
         stock: 0,
         tankNumber: 0,
     }
 
     constructor(props?: Partial<Properties>){
+        super()
         if (props === undefined) return
         this.properties = {
             ...this.properties,
             ...props,
         }
         this._isDefined = true
-    }
-
-    isDefined(): boolean {
-        return this._isDefined
-    }
-
-    isNotDefined(): boolean{
-        return !this._isDefined
     }
 
     get id(){

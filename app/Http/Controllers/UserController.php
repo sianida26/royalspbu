@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AppConfig;
 use App\Models\TotalizatorReport;
+use App\Models\DailyPumpReport;
 use App\Models\Presence;
 use App\Models\User;
 
@@ -282,7 +283,7 @@ class UserController extends Controller
             ->whereDate('timestamp', Carbon::today())
             ->exists();
         
-        $reportStatus = TotalizatorReport::where('reporter_id', Auth::id())
+        $reportStatus = DailyPumpReport::where('reporter_id', Auth::id())
             ->whereDate('created_at', Carbon::today())
             ->exists();
 
