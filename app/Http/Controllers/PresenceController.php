@@ -21,16 +21,7 @@ class PresenceController extends Controller
     public function getPresenceToken(Request $request){
         
         $user = Auth::user();
-        $token = $user->presenceToken;
-        if ($token == null) {
-            $token = new PresenceToken;
-            $chars = ['1','2','3','4','5','6','7','8','9','0','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
-            $tokenChars = implode(Arr::random($chars,6));
-            while (PresenceToken::firstWhere('token',$tokenChars) != null) $tokenChars = implode(Arr::random($chars,6)); //preventing duplicates
-            $token->token = $tokenChars;
-            $token->user_id = $user->id;
-            $token->save();
-        }
+        $token = $user->getPresenceToken();
         return [
             'token' => $token->token,
         ];

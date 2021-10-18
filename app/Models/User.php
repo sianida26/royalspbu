@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\PresenceToken;
+
 use Carbon\Carbon;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -12,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Arr;
 
 use Spatie\Permission\Traits\HasRoles;
 
@@ -106,6 +109,26 @@ class User extends Authenticatable
                     ->orWhereDate('deleted_at','<=',$date);
             })
             ->get();
+    }
+
+    public function generatePresenceToken(){
+        if ($this->hasRole('operator')){
+            $token = PresenceToken::firstOrNew(['user_id' => $this->id]);
+            $chars = ['1','2','3','4','5','6','7','8','9','0','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
+            $tokenChars = implode(Arr::random($chars,6));
+            while (PresenceToken::firstWhere('token',$tokenChars) != null) $tokenChars = implode(Arr::random($chars,6)); //preventing duplicates
+            $token->token = $tokenChars;
+            $token->save();
+            return $token;
+        }
+    }
+
+    public function getPresenceToken(){
+        $token = $this->presenceToken;
+        if ($token == null) {
+            $token = $this->generatePresenceToken();
+        }
+        return $token;
     }
 
     // helper functions
