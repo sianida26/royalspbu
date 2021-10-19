@@ -5,6 +5,7 @@ import Pump from "../models/Pump";
 
 import { IAdminConfig } from "../types";
 import { persediaanReportDefaultObject } from "../constants/adminConfigDefaultValues";
+import DailyPumpReport from "../models/DailyPumpReport";
 
 type AdminConfigContextState = {
     configs: IAdminConfig
@@ -82,7 +83,7 @@ const contextDefaultValues: AdminConfigContextState = {
         editPumpObject: new Pump(),
         editPermissionObject: editPermissionDefaultObject,
         editRoleObejct: editRoleDefaultObject,
-        pumpReportObejct: pumpReportDefaultObejct,
+        pumpReportObejct: new DailyPumpReport(),
         editRequestPenerimaanObject: requestPenerimaanDefaultObejct,
         konfirmasiPenerimaanObject: konfirmasiPenerimaanDefaultObejct,
         detailPenerimaanObject: detailPenerimaanDefaultObject,

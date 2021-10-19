@@ -148,7 +148,7 @@ export default function IsiLaporan(props: Props) {
                             uploadStatus: UploadStatus.ERROR,
                             imageUrl: '',
                             uploadProgress: 0,
-                            uploadErrorMsg: err.response?.data?.errors?.image[0] || 'Terjadi kesalahan ketika mengirim',
+                            uploadErrorMsg: err.response?.data?.errors?.image[0] || `Terjadi kesalahan ketika mengirim ${err.message}`,
                         })
                     })
                 },

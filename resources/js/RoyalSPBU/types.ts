@@ -3,6 +3,7 @@ import { AxiosInstance } from "axios"
 
 import User from "./models/User"
 import Pump from "./models/Pump"
+import DailyPumpReport from "./models/DailyPumpReport"
 
 import { IPersediaanReport } from "./interfaces/reports/PersediaanReport"
 
@@ -118,7 +119,7 @@ export interface IAdminConfig {
     editPumpObject : Pump
     editPermissionObject : IPermission
     editRoleObejct : RoleObject
-    pumpReportObejct : PumpReportObject
+    pumpReportObejct : DailyPumpReport
     editRequestPenerimaanObject : RequestPenerimaanObejct
     konfirmasiPenerimaanObject : KonfirmasiPenerimaanObject
     detailPenerimaanObject : DetailPenerimaanObject

@@ -108,4 +108,8 @@ export default class Nozzle extends Model{
     set totalizator(i: number){
         this.properties.totalizator = i
     }
+
+    set initialTotalizator(i: number){
+        this.properties.initialTotalizator = i
+    }
 }

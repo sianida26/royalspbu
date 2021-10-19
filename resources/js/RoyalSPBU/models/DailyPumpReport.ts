@@ -4,6 +4,10 @@ import Model, {ModelProps} from './Model'
 interface Properties extends ModelProps {
     id: number,
     pump: Pump,
+    reporter: string,
+    income: number,
+    createdAt: string,
+    editable: boolean,
 }
 
 export default class DailyPumpReport extends Model{
@@ -11,6 +15,10 @@ export default class DailyPumpReport extends Model{
     properties: Properties = {
         id: -1,
         pump: new Pump(),
+        editable: false,
+        reporter: '',
+        income: 0,
+        createdAt: '',
     }
 
     constructor(props?: Partial<Properties>){
@@ -35,5 +43,17 @@ export default class DailyPumpReport extends Model{
 
     get pump(){
         return this.properties.pump
+    }
+
+    get reporter(){
+        return this.properties.reporter
+    }
+
+    get income(){
+        return this.properties.income
+    }
+
+    get createdAt(){
+        return this.properties.createdAt
     }
 }
