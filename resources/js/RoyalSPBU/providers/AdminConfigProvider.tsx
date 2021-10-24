@@ -6,6 +6,7 @@ import Pump from "../models/Pump";
 import { IAdminConfig } from "../types";
 import { persediaanReportDefaultObject } from "../constants/adminConfigDefaultValues";
 import DailyPumpReport from "../models/DailyPumpReport";
+import TotalizatorReport from '../models/TotalizatorReport'
 
 type AdminConfigContextState = {
     configs: IAdminConfig
@@ -87,7 +88,7 @@ const contextDefaultValues: AdminConfigContextState = {
         editRequestPenerimaanObject: requestPenerimaanDefaultObejct,
         konfirmasiPenerimaanObject: konfirmasiPenerimaanDefaultObejct,
         detailPenerimaanObject: detailPenerimaanDefaultObject,
-        editLaporanTotalisatorObject: editTotalisatorReportDefaultObject,
+        editLaporanTotalisatorObject: new TotalizatorReport(),
         createLaporanTotalisatorDate: new Date(),
         persediaanReportDate: new Date(),
         persediaanReport: persediaanReportDefaultObject,

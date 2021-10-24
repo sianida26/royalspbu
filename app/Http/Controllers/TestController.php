@@ -15,8 +15,9 @@ class TestController extends Controller
     public function PDF(Request $request){
         $html = '<h1>Bill</h1><p>You owe me money, dude.</p>';
         $snappy = App::make('snappy.pdf');
-        $pdf = App::make('snappy.pdf.wrapper');
-        $pdf->loadHTML('<h1>Test</h1>');
-        return $pdf->stream('aaa.pdf');
+        // $pdf = App::make('snappy.pdf.wrapper');
+        // $pdf->loadHTML('<h1>Test</h1>');
+        $pdf = PDF::loadView('PDF.totalizator');
+        return $pdf->inline('aaa.pdf');
     }
 }

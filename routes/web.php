@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TestController;
+use App\Http\Controllers\TotalizatorReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,9 +18,13 @@ use App\Http\Controllers\TestController;
 Route::view('/','royalSPBU.app')->name('login');
 
 Route::view('/{path}','royalSPBU.app')
-    ->where('path','^(?!(api|tests)).*$');
+    ->where('path','^(?!(api|tests|pdf)).*$');
 
-    Route::prefix('tests')->group(function(){
+Route::prefix('tests')->group(function(){
 
-        Route::get('testPDF', [TestController::class, 'pdf']);
-    });
+    Route::get('testPDF', [TestController::class, 'pdf']);
+});
+
+Route::prefix('pdf')->group(function(){
+    Route::get('totalizatorReport', [TotalizatorReportController::class, 'downloadPDF']);
+});

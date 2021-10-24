@@ -4,6 +4,7 @@ import { AxiosInstance } from "axios"
 import User from "./models/User"
 import Pump from "./models/Pump"
 import DailyPumpReport from "./models/DailyPumpReport"
+import TotalizatorReport from "./models/TotalizatorReport"
 
 import { IPersediaanReport } from "./interfaces/reports/PersediaanReport"
 
@@ -123,7 +124,7 @@ export interface IAdminConfig {
     editRequestPenerimaanObject : RequestPenerimaanObejct
     konfirmasiPenerimaanObject : KonfirmasiPenerimaanObject
     detailPenerimaanObject : DetailPenerimaanObject
-    editLaporanTotalisatorObject : EditLaporanTotalisatorObject
+    editLaporanTotalisatorObject : TotalizatorReport
     createLaporanTotalisatorDate : Date
     persediaanReportDate : Date
     persediaanReport : IPersediaanReport

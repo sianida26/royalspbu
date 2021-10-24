@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Debugbar;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -18,6 +19,8 @@ use App\Models\Tabungan;
 use App\Models\DailyPumpReport;
 use App\Models\TotalizatorReport;
 use App\Rules\UuidOrNumber;
+
+use PDF;
 
 class TotalizatorReportController extends Controller
 {
@@ -96,6 +99,13 @@ class TotalizatorReportController extends Controller
 
         $path = $request->file('image')->store('public/temp');
         return Str::afterLast($path, '/');
+    }
+
+    private function generateToken(){
+        $chars = ['1','2','3','4','5','6','7','8','9','0','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u' ,'v', 'w', 'x', 'y', 'z'];
+        $token = implode(Arr::random($chars,12));
+        while (TotalizatorReport::firstWhere('report_token',$token) != null) $token = implode(Arr::random($chars,12)); //preventing duplicates
+        return $token;
     }
 
     public function submit(Request $request){
@@ -224,6 +234,8 @@ class TotalizatorReportController extends Controller
             }
         }
 
+        $report->report_token = $this->generateToken();
+
         //apply all model changes
         try{
             $report->save();
@@ -241,5 +253,18 @@ class TotalizatorReportController extends Controller
         }
 
         return 'ok';
+    }
+
+    public function getReportPDF(Request $request){
+        $date = Carbon::createFromFormat('j-n-Y',$request->date);
+        $report = TotalizatorReport::whereDate('created_at', $date)->firstOrFail();
+        return '/pdf/totalizatorReport?t='.$report->report_token;
+    }
+
+    public function downloadPDF(Request $request){
+        $t = $request->t;
+        $report = TotalizatorReport::where('report_token',$t)->firstOrFail();
+        $pdf = PDF::loadView('PDF.totalizator', ['report' => $report->getDetailedReport(), 'model' => $report]);
+        return $pdf->inline('Laporan Totalisator'.$report->created_at->isoFormat('D MMMM Y').'.pdf');
     }
 }

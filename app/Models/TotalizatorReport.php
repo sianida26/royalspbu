@@ -32,19 +32,40 @@ class TotalizatorReport extends Model
         return $this->belongsTo(User::class, 'reporter_id');
     }
 
+    public function getGrossIncome(){
+        return DailyPumpReport::getPenjualanByTanksOnDate($this->created_at)->reduce(function($carry, $item){
+            return $carry + ($item['volume']*$item['price']);
+        }, 0);
+    }
+
+    public function getTotalExpenses(){
+        return Pengeluaran::getPengeluaransOnDate($this->created_at)->reduce(function($carry, $item){
+            return $carry + $item['amount'];
+        }, 0);
+    }
+
+    public function getNetIncome(){
+        return $this->getGrossIncome() - $this->getTotalExpenses();
+    }
+
+    public function getDetailedReport(){
+
+        $date = $this->created_at;
+
+        return [
+            'penerimaan' => Penerimaan::getVolumePerTanksOnDate($date),
+            'penjualan' => DailyPumpReport::getPenjualanByTanksOnDate($date),
+            'pengeluaran' => Pengeluaran::getPengeluaransOnDate($date),
+            'tabungan' => Tabungan::whereDate('created_at',$date)->first(),
+            'reporter' => $this->reporter->name,
+        ];
+    }
+
     public static function getDetailedReportOnDate($date){
         $report = self::whereDate('created_at',$date)->first();
 
         //if not null
-        if ($report !== null){
-            return [
-                'penerimaan' => Penerimaan::getVolumePerTanksOnDate($date),
-                'penjualan' => DailyPumpReport::getPenjualanByTanksOnDate($date),
-                'pengeluaran' => Pengeluaran::getPengeluaransOnDate($date),
-                'tabungan' => Tabungan::whereDate('created_at',$date)->first(),
-                'reporter' => $report->reporter->name,
-            ];
-        }
+        if ($report !== null) return $report->getDetailedReport();
 
         return 0; //if report is not found
     }

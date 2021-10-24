@@ -4,36 +4,44 @@ import Compressor from 'compressorjs'
 import moment from 'moment'
 import { useSnackbar } from 'notistack'
 import {useHistory} from 'react-router-dom'
-import * as uuid from 'uuid'
+
+import AdminHeaderSidebar from '../../../../components/AdminHeaderSidebar'
 
 import ModalPengeluaran from '../../../../components/modals/ModalPengeluaran'
+import {numberWithCommas, formatRupiah} from '../../../../utils/helper'
 import {useAuth} from '../../../../providers/AuthProvider'
 import { editTotalisatorReportDefaultObject, useAdminConfig } from '../../../../providers/AdminConfigProvider'
 
 import 'moment/locale/id'
+import Penjualan from '../../../../models/Penjualan'
+import Penerimaan from '../../../../models/Penerimaan'
+import {UploadStatus} from '../../../../models/Tabungan'
+import TotalizatorReport from '../../../../models/TotalizatorReport'
 
-interface Pengeluaran {
+import {
+    TextField,
+    InputAdornment,
+} from '@material-ui/core'
+
+interface PengeluaranData {
     id: number | string, //if string (uuid), new item. if number, old item
     name: string,
     amount: number,
+    url: string,
     reportFilename: string | null,
 }
 
-interface Penerimaan {
-    tankName: string,
-    volume: number,
-}
-
-interface Penjualan {
-    tankName: string,
-    volume: number,
-    price: number,
-    income: number,
-}
-
-interface ReportData {
-    penerimaan: Penerimaan[],
-    penjualan: Penjualan[],
+interface ReportServerResponse {
+    penerimaan: {
+        tankName: string,
+        volume: number,
+    }[],
+    penjualan: {
+        tankName: string,
+        volume: number,
+        price: number,
+        income: number,
+    }[],
     totalIncome: number,
 }
 
@@ -42,10 +50,11 @@ interface ModalOptions{
     isEdit: boolean,
 }
 
-const defaultModalData: Pengeluaran = {
+const defaultModalData: PengeluaranData = {
     id: '',
     name: '',
     amount: 0,
+    url: '',
     reportFilename: '',
 }
 
@@ -65,10 +74,11 @@ export default function FormLaporan() {
 
     const [isRequestingData, setRequestingData] = React.useState(true)
     const [modalOptions, setModalOptions] = React.useState<ModalOptions>(defaultModalOptions)
-    const [pengeluarans, setPengeluarans] = React.useState<Pengeluaran[]>([])
-    const [modalData, setModalData] = React.useState<Pengeluaran>(defaultModalData)
+    const [pengeluarans, setPengeluarans] = React.useState<PengeluaranData[]>([])
+    const [modalData, setModalData] = React.useState<PengeluaranData>(defaultModalData)
     const [savings, setSavings] = React.useState(0)
     const [isUploading, setUploading] = React.useState(false)
+    const [uploadStatus, setUploadStatus] = React.useState(UploadStatus.NONE)
     const [uploadError, setUploadError] = React.useState('')
     const [isUploadSuccess, setUploadSuccess] = React.useState(false)
     const [savingsFileUrl, setSavingsFileUrl] = React.useState('')
@@ -80,25 +90,34 @@ export default function FormLaporan() {
 
     React.useEffect(() => {
         if (isEdit){
-            if (configs.editLaporanTotalisatorObject?.date === null) {
+            if (configs.editLaporanTotalisatorObject.isNotDefined()) {
                 history.replace('/laporan/totalisator-harian')
                 return
             }
-            setDate(configs.editLaporanTotalisatorObject!.date)
-            setPengeluarans(configs.editLaporanTotalisatorObject!.pengeluaran)
-            setSavings(configs.editLaporanTotalisatorObject?.tabungan?.amount || 0)
-            if (configs.editLaporanTotalisatorObject?.tabungan?.report_filename){
-                setSavingsFileUrl(`/storage/images/receipts/tabungan/${configs.editLaporanTotalisatorObject?.tabungan?.report_filename}`)
+            setDate(configs.editLaporanTotalisatorObject.date)
+            setPengeluarans(configs.editLaporanTotalisatorObject.pengeluarans.map(pengeluaran => {
+
+                return {
+                    id: pengeluaran.id,
+                    amount: pengeluaran.amount,
+                    name: pengeluaran.name,
+                    reportFilename: pengeluaran.reportFilename,
+                    url: `/storage/images/receipts/pengeluaran/${pengeluaran.reportFilename}`
+                }
+            }))
+            setSavings(configs.editLaporanTotalisatorObject.tabungan?.amount || 0)
+            if (configs.editLaporanTotalisatorObject.tabungan?.reportFilename){
+                setSavingsFileUrl(`/storage/images/receipts/tabungan/${configs.editLaporanTotalisatorObject?.tabungan?.reportFilename}`)
             }
-            setConfig({editLaporanTotalisatorObject: editTotalisatorReportDefaultObject}) //reset to default
+            setConfig({editLaporanTotalisatorObject: new TotalizatorReport()}) //reset to default
         }
-        setDate(configs.createLaporanTotalisatorDate!)
+        setDate(configs.createLaporanTotalisatorDate)
         requestReportData()
     }, [])
 
     const requestReportData = () => {
         setRequestingData(true)
-        let reportDate = configs.editLaporanTotalisatorObject?.date || configs.createLaporanTotalisatorDate!
+        let reportDate = configs.editLaporanTotalisatorObject.date || configs.createLaporanTotalisatorDate
         axios({
             method: 'post',
             url: '/admin/totalizatorReport/getFormReportData',
@@ -107,10 +126,23 @@ export default function FormLaporan() {
             }
         })
         .then(result => { //handle success response
-            let data: ReportData = result.data;
-            console.log(data) //todo remove log
-            setPenerimaans(data.penerimaan)
-            setPenjualans(data.penjualan)
+            let data: ReportServerResponse = result.data;
+            setPenerimaans(data.penerimaan.map(penerimaan => {
+                let model = new Penerimaan({
+                    volume: penerimaan.volume
+                })
+                model.tankName = penerimaan.tankName
+                return model
+            }))
+            setPenjualans(data.penjualan.map(penjualan => {
+                let model = new Penjualan({
+                    volume: penjualan.volume
+                })
+
+                model.tankName = penjualan.tankName
+                model.price = penjualan.price
+                return model
+            }))
             setTotalIncome(data.totalIncome)
         })
         .catch(error =>{ //handle error response
@@ -128,11 +160,12 @@ export default function FormLaporan() {
         setModalData(defaultModalData) //reset modal data
     }
 
-    const handleSubmitPengeluaran = (pengeluaran: string, amount: number, fileName: string, id: number|string) => {
+    const handleSubmitPengeluaran = (pengeluaran: string, amount: number, fileName: string, id: number|string, url: string) => {
         let submittedData = {
             id,
             name: pengeluaran, 
             amount, 
+            url,
             reportFilename: fileName
         }
 
@@ -153,7 +186,7 @@ export default function FormLaporan() {
         handleCloseModal()
     }
 
-    const handleEditClick = (pengeluaran: Pengeluaran) => {
+    const handleEditClick = (pengeluaran: PengeluaranData) => {
         setModalData(pengeluaran)
         setModalOptions({
             isEdit: true,
@@ -168,7 +201,7 @@ export default function FormLaporan() {
         })
     }
 
-    const handleDeleteClick = (pengeluaran: Pengeluaran) => {
+    const handleDeleteClick = (pengeluaran: PengeluaranData) => {
         setPengeluarans(pengeluarans.filter(p => p.id !== pengeluaran.id))
     }
 
@@ -281,80 +314,185 @@ export default function FormLaporan() {
 
     return isRequestingData ? <span>Meminta Data....</span> : (
         <div className="tw-w-full tw-flex tw-flex-col">
-            <span>Pelapor: <span className="tw-font-semibold">Fulan bin Anonim</span></span>
-            <span>Hari, Tanggal: <span className="tw-font-semibold">{moment(date).locale('id').format('dddd, LL')}</span></span>
-            <h1 className="tw-font-bold tw-text-lg text-center">Penerimaan BBM</h1>
-            {
-                penerimaans.map(penerimaan => <p>{penerimaan.tankName}: {penerimaan.volume || '-'}</p>)
-            }
-            <h1 className="tw-font-bold tw-text-lg text-center">Penjualan</h1>
-            {
-                penjualans.map(penjualan => <div>
-                    <h2 className="tw-font-semibold tw-text-md">{penjualan.tankName}</h2>
-                    <div className="tw-flex tw-justify-between">
-                        <span>Harga per liter</span>
-                        <span>Rp{penjualan.price}</span>
-                    </div>
-                    <div className="tw-flex tw-justify-between">
-                        <span>Volume Penjualan</span>
-                        <span>{penjualan.volume} L</span>
-                    </div>
-                    <div className="tw-flex tw-justify-between">
-                        <span>Total Penjualan</span>
-                        <span>Rp{penjualan.income}</span>
-                    </div>
-                </div>)
-            }
-            <h1 className="tw-font-bold tw-text-lg text-center">Total Penjualan Kotor</h1>
-            {
-                penjualans.map(penjualan => <p>{penjualan.tankName}: Rp{penjualan.income}</p>)
-            }
-            <h2 className="tw-font-semibold tw-text-md">Total Penjualan Kotor</h2>
-            <h2 className="tw-font-semibold tw-text-md">Rp{totalIncome}</h2>
-            <h1 className="tw-font-bold tw-text-lg tw-text-center">Biaya Pengeluaran</h1>
-            {
-                pengeluarans.length > 0 ? <div>{pengeluarans.map((pengeluaran, i) => (
-                        <div key={pengeluaran.id} className="tw-w-full tw-border tw-border-black tw-flex tw-flex-col tw-gap-2">
-                            <span>{i+1}</span>
-                            <span>{pengeluaran.name}</span>
-                            <span>{pengeluaran.amount}</span>
-                            <span onClick={() => handleDeleteClick(pengeluaran)}>Hapus</span>
-                            <span onClick={() => handleEditClick(pengeluaran)}>Edit</span>
-                        </div>
-                    ))}
-                    <hr />
-                    <span className="">Total Biaya: {pengeluarans.reduce((accumulator, pengeluaran) => accumulator+pengeluaran.amount,0)}</span>
+            <AdminHeaderSidebar title="Laporan Totalisator Harian" />
+            <div className="tw-px-4 tw-flex tw-flex-col tw-mt-4">
+                <span>Pelapor: <span className="tw-font-semibold">Fulan bin Anonim</span></span>
+                <span>Hari, Tanggal: <span className="tw-font-semibold">{moment(date).locale('id').format('dddd, LL')}</span></span>
+
+                {/* Penerimaan BBM */}
+                <div className="tw-flex tw-w-full tw-flex-col tw-mt-8">
+                    <h1 className="tw-text-center tw-w-full tw-font-bold tw-text-xl tw-mb-2">Penerimaan BBM</h1>
+                    {
+                    //   penerimaans.map(penerimaan => <p>{penerimaan.tankName}: {penerimaan.volume || '-'}</p>)  
+                      penerimaans.map((penerimaan,i) => <div key={i} className="tw-flex tw-w-full tw-border-b tw-py-2 tw-items-center">
+                          <span className="tw-w-32">{penerimaan.tankName}</span>
+                          <span className="tw-font-semibold tw-mr-2">:</span>
+                          <span className="tw-flex-grow tw-text-gray-500 tw-font-semibold"> {numberWithCommas(penerimaan.volume)} L</span>
+                        </div>)  
+                    }
                 </div>
-                : <span>Tidak ada pengeluaran</span>
-            }
-            <button className="tw-w-full tw-border tw-border-black tw-py-2" onClick={handleAddPengeluaranClick}>Tambah</button>
-            <ModalPengeluaran show={modalOptions.show} isEdit={modalOptions.isEdit} closeModal={handleCloseModal} onSubmit={handleSubmitPengeluaran} data={modalData}  />
 
-            <h1 className="tw-font-bold tw-text-lg tw-text-center">Tabungan</h1>
-            <span>Nominal</span>
-            <input className="tw-border tw-border-black" type="number" min="0" value={savings || ''} onChange={(e) => setSavings(+e.target.value)} />
-            <p>Bukti Pembayaran</p>
-            {
-                savingsFileUrl && <img src={`${savingsFileUrl}`} alt="Bukti Struk" className=""></img>
-            }
-            <input accept="image/*" className="tw-hidden" id="button-upload-savings" type="file" onChange={e => handleChooseImage(e)} disabled={isUploading} />
-            <label htmlFor="button-upload-savings">
-                {
-                    isUploading ? <div className="tw-flex items-center">
-                        <span className="tw-ml-3">Mengupload...</span>
+
+                {/* Penjualan BBM */}
+                <div className="tw-flex tw-w-full tw-flex-col tw-mt-8">
+                    <h1 className="tw-text-center tw-w-full tw-font-bold tw-text-xl tw-mb-2">Penjualan</h1>
+                    {
+                        penjualans.map((penjualan, i) => <div key={i} className="tw-flex tw-flex-col tw-py-2">
+                            <h2 className="tw-font-semibold tw-text-lg tw-text-orange-500">{penjualan.tankName}</h2>
+                            <div className="tw-flex tw-justify-between tw-items-center">
+                                <span>Harga per Liter</span>
+                                <span className="tw-text-gray-500 tw-font-semibold">{formatRupiah(penjualan.price)}</span>
+                            </div>
+                            <div className="tw-flex tw-justify-between tw-items-center">
+                                <span>Volume Penjualan</span>
+                                <span className="tw-text-gray-500 tw-font-semibold">{numberWithCommas(penjualan.volume)} L</span>
+                            </div>
+                            <div className="tw-flex tw-justify-between tw-items-center">
+                                <span>Total Penjualan</span>
+                                <span className="tw-text-gray-500 tw-font-semibold">{formatRupiah(penjualan.getIncome())}</span>
+                            </div>
+                        </div>)
+                    }
+                </div>
+
+                {/* Penjualan Kotor */}
+                <div className="tw-flex tw-w-full tw-flex-col tw-mt-8 tw-rounded-md tw-bg-gray-100 tw-py-4 tw-px-2">
+                    <h1 className="tw-text-center tw-w-full tw-font-bold tw-text-xl tw-mb-2">Total Penjualan Kotor</h1>
+                    {
+                    //   penerimaans.map(penerimaan => <p>{penerimaan.tankName}: {penerimaan.volume || '-'}</p>)  
+                      penjualans.map((penjualan,i) => <div key={i} className="tw-flex tw-w-full tw-border-b tw-border-gray-300 tw-py-2 tw-items-center">
+                          <span className="tw-w-32">{penjualan.tankName}</span>
+                          <span className="tw-font-semibold tw-mr-2">:</span>
+                          <span className="tw-flex-grow tw-text-gray-500 tw-font-semibold"> {formatRupiah(penjualan.getIncome())} </span>
+                        </div>)  
+                    }
+
+                    <div className="tw-mx-3 tw-rounded-lg tw-bg-white tw-flex tw-flex-col tw-items-center tw-mt-8">
+                        <span className="tw-text-lg tw-font-medium">Total Penjualan Kotor</span>
+                        <span className="tw-font-bold tw-text-orange-500 tw-text-xl">{formatRupiah(totalIncome)}</span>
                     </div>
-                    : <span className="tw-border tw-border-black tw-bg-purple-500">
-                        Ambil Gambar
-                    </span>
-                }
-            </label>
+                </div>
 
-            <h1 className="tw-font-bold tw-text-lg tw-text-center">Total Penjualan Bersih</h1>
-            <span>Total Penjualan Kotor: Rp{totalIncome}</span>
-            <span>Total Biaya: Rp{pengeluarans.reduce((accumulator,pengeluaran) => accumulator+pengeluaran.amount,0)}</span>
-            <span>Total Penjualan Bersih: Rp{totalIncome - pengeluarans.reduce((accumulator,pengeluaran) => accumulator+pengeluaran.amount,0)}</span>
-            <button className="tw-border tw-border-black">Batal</button>
-            <button className="tw-border tw-border-black" onClick={handleSubmit}>Simpan</button>
+                {/* Biaya */}
+                <div className="tw-relative tw-rounded-xl tw-border tw-border-black tw-flex tw-flex-col tw-px-2 tw-pb-3 tw-pt-6 tw-mt-8">
+                    <span className="tw-absolute tw-px-2 tw-bg-white tw-text-lg tw-font-semibold tw--top-0.5 tw-left-1/2" style={{transform: 'translate(-50%, -50%)'}}>Biaya</span>
+                    {
+                        pengeluarans.length > 0 && <div className="tw-p-2">
+                            {
+                                pengeluarans.map((pengeluaran, i) => <div className="tw-border-b tw-border-gray-300 tw-py-2" key={i}>
+                                    <div className="tw-flex tw-justify-between tw-py-2">
+                                        <span>{i+1}. {pengeluaran.name}</span>
+                                        <span>{formatRupiah(pengeluaran.amount)}</span> 
+                                    </div>
+                                    <div className="tw-flex tw-justify-around">
+                                        <button 
+                                            className="tw-rounded-xl tw-w-20 tw-bg-yellow-500 tw-text-white tw-px-2 tw-py-1 tw-justify-center tw-items-center tw-mx-auto tw-text-sm"
+                                            onClick={() => handleEditClick(pengeluaran)}
+                                        >
+                                            Edit
+                                        </button>
+                                        <button 
+                                            className="tw-rounded-xl tw-w-20 tw-bg-red-500 tw-text-white tw-px-2 tw-py-1 tw-justify-center tw-items-center tw-mx-auto tw-text-sm"
+                                            onClick={() => handleDeleteClick(pengeluaran)}
+                                        >
+                                            Hapus
+                                        </button> 
+                                    </div>
+                                </div>)
+                            }
+
+                            <div className="tw-flex tw-justify-between tw-py-2">
+                                <span>Total biaya</span>
+                                <span>{formatRupiah(pengeluarans.reduce((accumulator, pengeluaran) => accumulator+pengeluaran.amount,0))}</span> 
+                            </div>
+                        </div>
+                    }
+                    <button 
+                        className="btn-dense tw-bg-green-600 tw-text-white"
+                        onClick={handleAddPengeluaranClick}
+                    >
+                        <i className="bi bi-plus" />
+                        <span>Tambah</span>
+                    </button>
+                </div>
+                <ModalPengeluaran show={modalOptions.show} isEdit={modalOptions.isEdit} closeModal={handleCloseModal} onSubmit={handleSubmitPengeluaran} data={modalData}  />
+
+                {/* Tabungan */}
+                <div className="tw-relative tw-rounded-xl tw-border tw-border-black tw-flex tw-flex-col tw-px-4 tw-pb-3 tw-pt-4 tw-mt-8">
+                    <span className="tw-absolute tw-px-2 tw-bg-white tw-text-lg tw-font-semibold tw--top-0.5 tw-left-1/2" style={{transform: 'translate(-50%, -50%)'}}>Tabungan</span>
+
+                    <TextField
+                        label="Nominal"
+                        type="number"
+                        value={savings || ''}
+                        onChange={(e) => setSavings(+e.target.value)}
+                        fullWidth
+                        InputProps={{
+                            startAdornment: <InputAdornment position="start">Rp</InputAdornment>,
+                        }}
+                    />
+
+                    <div className="tw-mt-4">Bukti Foto</div>
+                    <label htmlFor={`tabungan-upload-button`}>
+                        {
+                            savingsFileUrl ? <div className="tw-relative">
+                                <img src={savingsFileUrl} alt="Bukti Laporan" className="tw-max-w-full" />
+                                {
+                                    (uploadStatus === UploadStatus.COMPRESSING || uploadStatus === UploadStatus.UPLOADING) && <div className="tw-absolute tw-w-full tw-h-full tw-bg-black tw-bg-opacity-75 tw-text-white tw-grid tw-place-items-center tw-top-0">
+                                        <span>
+                                            {
+                                                uploadStatus === UploadStatus.COMPRESSING ? 'Mengompres...' : `Mengupload...`
+                                            }
+                                        </span>
+                                    </div>
+                                }
+                            </div>
+                            : <div className="tw-flex tw-flex-col tw-items-center tw-justify-center tw-w-full tw-h-24 tw-bg-gray-200 tw-font-smeibold tw-text-sm">Ambil Gambar</div>
+                        }
+                    </label>
+                    <input id={`tabungan-upload-button`} disabled={uploadStatus === UploadStatus.COMPRESSING || uploadStatus === UploadStatus.UPLOADING} hidden type="file" accept="images/*" onChange={(event) => handleChooseImage(event)} />
+                </div>
+
+                {/* Penjualan Bersih */}
+                <div className="tw-flex tw-w-full tw-flex-col tw-mt-8 tw-rounded-md tw-bg-gray-100 tw-py-4 tw-px-2">
+                    <h1 className="tw-text-center tw-w-full tw-font-bold tw-text-xl tw-mb-2">Total Penjualan Bersih</h1>
+                    
+                    <div className="tw-flex tw-w-full tw-border-b tw-border-gray-300 tw-py-2 tw-items-center">
+                        <span className="tw-w-44">Total Penjualan Kotor</span>
+                        <span className="tw-font-semibold tw-mr-2">:</span>
+                        <span className="tw-flex-grow tw-text-gray-500 tw-font-semibold"> {formatRupiah(totalIncome)} </span>
+                    </div>
+
+                    <div className="tw-flex tw-w-full tw-border-b tw-border-gray-300 tw-py-2 tw-items-center">
+                        <span className="tw-w-44">Total Biaya</span>
+                        <span className="tw-font-semibold tw-mr-2">:</span>
+                        <span className="tw-flex-grow tw-text-gray-500 tw-font-semibold"> {formatRupiah(pengeluarans.reduce((accumulator, pengeluaran) => accumulator+pengeluaran.amount,0))} </span>
+                    </div>
+
+                    <div className="tw-mx-3 tw-rounded-lg tw-bg-white tw-flex tw-flex-col tw-items-center tw-mt-8">
+                        <span className="tw-text-lg tw-font-medium">Total Penjualan Bersih</span>
+                        <span className="tw-font-bold tw-text-green-600 tw-text-xl">{formatRupiah(totalIncome - pengeluarans.reduce((accumulator, pengeluaran) => accumulator+pengeluaran.amount,0))}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div className="tw-w-full tw-flex tw-py-8 tw-justify-between">
+
+                {/* cancel button */}
+                <button className="btn-dense tw-border tw-border-red-500 tw-text-red-500">
+                    <i className="bi bi-x-lg" />
+                    <span>Batal</span>
+                </button>
+
+                {/* save button */}
+                <button 
+                    className="btn-dense tw-bg-primary-500 tw-text-white"
+                    onClick={handleSubmit}
+                >
+                    <i className="bi bi-check-lg" />
+                    <span>Simpan</span>
+                </button>
+            </div>
         </div>
     )
 }

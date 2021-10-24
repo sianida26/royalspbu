@@ -102,6 +102,7 @@ Route::middleware('auth:api')->group(function(){
             Route::post('create', [TotalizatorReportController::class, 'create']);
             Route::post('edit', [TotalizatorReportController::class, 'edit']); //todo delete create and edit
             Route::post('submit', [TotalizatorReportController::class, 'submit']);
+            Route::post('downloadPDF', [TotalizatorReportController::class, 'getReportPDF']);
         });
 
         Route::prefix('persediaanReport')->group(function(){

@@ -18,6 +18,7 @@ import InsertPhotoIcon from '@material-ui/icons/InsertPhoto'
 
 import GreenButton from '../GreenButton'
 import {useAuth} from '../../providers/AuthProvider'
+import zIndexes from '../../constants/zIndexes'
 
 //todo fix autofocus on modal show
 
@@ -30,6 +31,7 @@ interface Pengeluaran {
     id: number | string,
     name: string,
     amount: number,
+    url: string,
     reportFilename: string | null,
 }
 
@@ -38,7 +40,7 @@ interface ComponentProps {
     isEdit: boolean,
     show: boolean,
     closeModal: () => void,
-    onSubmit: (pengeluaran: string, amount: number, fileName: string, id: number|string) => void
+    onSubmit: (pengeluaran: string, amount: number, fileName: string, id: number|string, url: string) => void
 }
 
 export default function ModalPengeluaran(props: ComponentProps) {
@@ -77,7 +79,7 @@ export default function ModalPengeluaran(props: ComponentProps) {
             setUploading(false)
             setUploadSuccess(false)
             setFileName(props.data.reportFilename || '')
-            setFileUrl(oldItem ? `/storage/images/receipts/pengeluaran/${props.data.reportFilename}` : '')
+            setFileUrl(props.data.url)
             setUploadError('')
             setId(props.data.id)
             setIsOldItem(oldItem)
@@ -107,11 +109,14 @@ export default function ModalPengeluaran(props: ComponentProps) {
             setAmountError('')
         }
 
-        if (!(pengeluaranError && amountError)) props.onSubmit(pengeluaran, amount, fileName, isOldItem ? id : uuid.v1())
+        if (!(pengeluaranError && amountError)) props.onSubmit(pengeluaran, amount, fileName, isOldItem ? id : uuid.v1(), fileUrl)
     }
 
     const handleChooseImage = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files[0]){
+
+            let url = URL.createObjectURL(event.target.files![0])
+            setFileUrl(url)
 
             new Compressor(event.target.files[0],{
                 quality: 0.6,
@@ -157,7 +162,7 @@ export default function ModalPengeluaran(props: ComponentProps) {
             setUploadSuccess(true)
             let data = result.data;
             setFileName(data)
-            setFileUrl(`/storage/temp/${data}`)
+            // setFileUrl(`/storage/temp/${data}`)
         })
         .catch(error =>{ //handle error response
             setUploadSuccess(false)
@@ -180,9 +185,9 @@ export default function ModalPengeluaran(props: ComponentProps) {
     }
 
     return (
-        <div className={`${props.show ? 'tw-fixed' : 'tw-hidden' } tw-w-screen tw-h-screen tw-bg-black tw-bg-opacity-75 tw-grid tw-place-items-center tw-overflow-y-auto`}>
-            <PerfectScrollbar className="tw-w-screen tw-h-screen tw-grid tw-place-items-center">
-                <div className="tw-max-w-md tw-w-full tw-bg-white tw-rounded-xl tw-py-4 tw-px-8 tw-flex tw-flex-col">
+        <div style={{zIndex: zIndexes.modalBackdrop}} className={`tw-fixed tw-top-0 tw-left-0 tw-w-screen tw-h-screen ${props.show ? 'tw-grid' : 'tw-hidden'} tw-place-items-center tw-bg-black tw-bg-opacity-75`}>
+            <PerfectScrollbar className="tw-w-screen tw-h-screen tw-grid tw-place-items-center tw-px-4">
+                <div className="tw-max-w-screen-sm tw-w-full tw-bg-white tw-rounded-xl tw-py-4 tw-px-8 tw-flex tw-flex-col">
                     <h1 className="tw-text-center tw-text-xl tw-font-bold">{props.isEdit ? 'Edit' : 'Tambah'} Pengeluaran</h1>
                     <form onSubmit={handleSubmit} className="tw-flex tw-flex-col tw-gap-4">
                         <Autocomplete
