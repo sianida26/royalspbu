@@ -5,6 +5,7 @@ import User from "./models/User"
 import Pump from "./models/Pump"
 import DailyPumpReport from "./models/DailyPumpReport"
 import TotalizatorReport from "./models/TotalizatorReport"
+import PersediaanReport from "./models/PersediaanReport"
 
 import { IPersediaanReport } from "./interfaces/reports/PersediaanReport"
 
@@ -127,7 +128,7 @@ export interface IAdminConfig {
     editLaporanTotalisatorObject : TotalizatorReport
     createLaporanTotalisatorDate : Date
     persediaanReportDate : Date
-    persediaanReport : IPersediaanReport
+    persediaanReport : PersediaanReport
 }
 
 export interface IAuth {

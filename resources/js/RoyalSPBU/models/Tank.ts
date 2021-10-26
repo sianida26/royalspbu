@@ -7,6 +7,7 @@ interface Properties extends ModelProps {
     product: Product,
     stock: number,
     tankNumber: number,
+    volumeOut: number,
 }
 
 export default class Tank extends Model{
@@ -17,6 +18,7 @@ export default class Tank extends Model{
         product: new Product(),
         stock: 0,
         tankNumber: 0,
+        volumeOut: 0,
     }
 
     constructor(props?: Partial<Properties>){
@@ -47,5 +49,9 @@ export default class Tank extends Model{
 
     get tankNumber(){
         return this.properties.tankNumber
+    }
+
+    get volumeOut(){
+        return this.properties.volumeOut
     }
 }
