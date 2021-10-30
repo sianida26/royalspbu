@@ -256,7 +256,7 @@ class TotalizatorReportController extends Controller
     }
 
     public function getReportPDF(Request $request){
-        $date = Carbon::createFromFormat('j-n-Y',$request->date);
+        $date = Carbon::createFromFormat('d-m-Y',$request->date);
         $report = TotalizatorReport::whereDate('created_at', $date)->firstOrFail();
         return '/pdf/totalizatorReport?t='.$report->report_token;
     }

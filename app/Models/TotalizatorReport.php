@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * - id : unsigned big integer, pk, ai
  * - reporter_id : foreignId on users
  * - created_at : timestamp
- * - modified_at : timestamp* 
+ * - updated_at : timestamp* 
  */
 
 class TotalizatorReport extends Model

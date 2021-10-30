@@ -46,4 +46,13 @@ class Pump extends Model
     public function isAvailableForReporting(){
         return !$this->dailyPumpReports()->whereDate('created_at', Carbon::today())->where('pump_id',$this->id)->exists();
     }
+
+    public static function getPumpsOnDate($date){
+        return self::withTrashed()->whereDate('created_at','<=',$date)
+            ->where(function($query) use ($date){
+                $query->whereDate('deleted_at','>',$date)
+                    ->orWhere('deleted_at',null);
+            })
+            ->get();
+    }
 }

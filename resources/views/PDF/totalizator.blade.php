@@ -98,7 +98,7 @@
                 <td colspan="3">PENJUALAN BERSIH</td>
                 <td class="relative">
                     <span>Rp</span>
-                    <span class="self-end">{{number_format($model->getNEtIncome(), 0, ',', '.')}}</span>
+                    <span class="self-end">{{number_format($model->getNetIncome(), 0, ',', '.')}}</span>
                 </td>
             </tr>
         </table>

@@ -1,0 +1,9 @@
+*
+!.gitignore
+!reports/
+!receipts/
+!receipts/pengeluaran
+!receipts/tabungan
+!reports/seed.png
+!receipts/pengeluaran/seed.png
+!receipts/tabungan/seed.png

@@ -91,7 +91,7 @@ class Tank extends Model
                 });
                 if ($last !== null){
                     $tank->name = $last['name'];
-                    $tank->productId = $last['productId'];
+                    $tank->product_id = $last['productId'];
                 }
                 return $tank;
             });

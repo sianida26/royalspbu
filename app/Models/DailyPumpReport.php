@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\PumpReportNozzle;
+use App\Models\User;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -113,5 +116,46 @@ class DailyPumpReport extends Model
         return $penjualanData
             ->union($penjualanDefault)
             ->values();
+    }
+
+
+    public static function generateRandomReport($pump, $pumpNumber, $date){
+
+        $reporter = User::role('operator')->get()->random();
+        
+        $totalIncome = 0;
+        $nozzles = $pump->nozzles->map(function($nozzleModel) use (&$totalIncome, $date){
+
+            //generate random data
+            $initialTotalizator = $nozzleModel->totalizator;
+            $volumeOut = rand(0,1)*rand(0,1000); //rand 0,1 for boolean switch, generating volume out 0 L to 1000 L
+            $finalTotaliator = $initialTotalizator+$volumeOut;
+            $reportFilename = 'seed.png';
+
+            $nozzleModel->totalizator = $finalTotaliator; //update totalizator to database
+            $nozzleModel->save();
+
+            $price = $nozzleModel->price();
+            $totalIncome += $volumeOut*$price;
+
+            return new PumpReportNozzle([
+                'nozzle_id' => $nozzleModel->id,
+                'totalizator_initial' => $initialTotalizator,
+                'totalizator_final' => $finalTotaliator,
+                'report_filename' => $reportFilename,
+                'created_at' => $date,
+                'updated_at' => $date,
+            ]);
+        });
+
+        $report = self::create([
+            'pump_id' => $pump->id,
+            'pump_number' => $pumpNumber,
+            'reporter_id' => $reporter->id,
+            'income' => $totalIncome,
+            'created_at' => $date,
+        ]);
+
+        $report->nozzles()->saveMany($nozzles);
     }
 }
