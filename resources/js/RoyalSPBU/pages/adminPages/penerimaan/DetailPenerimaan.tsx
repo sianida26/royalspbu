@@ -5,21 +5,10 @@ import { useHistory } from 'react-router'
 
 import { useAuth } from '../../../providers/AuthProvider'
 import { useAdminConfig, requestPenerimaanDefaultObejct, konfirmasiPenerimaanDefaultObejct, detailPenerimaanDefaultObject } from '../../../providers/AdminConfigProvider'
+import Penerimaan from '../../../models/Penerimaan'
+import AdminHeaderSidebar from '../../../components/AdminHeaderSidebar'
+import {numberWithCommas} from '../../../utils/helper'
 
-interface Penerimaan{
-    actualVolume? : number,
-    id?: number,
-    initialVolume? : number,
-    issueTimestamp?: string,
-    issuer?: string,
-    pnbp?: string,
-    pnbpVolume?: number,
-    receiveTimestamp?: string,
-    receiver?: string,
-    tankId?: number,
-    tankName?: string,
-    truckId?: string
-}
 
 export default function DetailPenerimaan() {
 
@@ -29,53 +18,44 @@ export default function DetailPenerimaan() {
     const {configs, setConfig} = useAdminConfig()
 
     const [isLoading, setLoading] = React.useState(false)
-    const [formData, setFormData] = React.useState<Penerimaan>({
-        actualVolume: 0,
-        id: -1,
-        initialVolume: 0,
-        issueTimestamp: '',
-        issuer: '-',
-        pnbp: '',
-        pnbpVolume: 0,
-        receiveTimestamp: '',
-        receiver: '',
-        tankId: 0,
-        tankName: '',
-        truckId: '',
-    })
+    const [data, setData] = React.useState<Penerimaan>(new Penerimaan())
 
     React.useEffect(() => {
 
         //redirect to home if no data provided in context API
-        if (configs.detailPenerimaanObject!.id < 0){
+        if (configs.detailPenerimaanObject.isNotDefined()){
             history.replace('/');
             return
         }
-        updateFormData(configs.detailPenerimaanObject!)
+        setData(configs.detailPenerimaanObject)
 
-        setConfig({detailPenerimaanObject: detailPenerimaanDefaultObject}) //hapus objek
+        setConfig({detailPenerimaanObject: new Penerimaan()}) //hapus objek
     },[])
-
-    const updateFormData = (newData: Penerimaan) => {
-        setFormData(prev => ({
-            ...prev,
-            ...newData
-        }))
-    }
 
     return (
         <div className="tw-w-full tw-flex tw-flex-col tw-gap-2">
-            <p>Hari/Tanggal Permintaan: {formData.issueTimestamp}</p>
-            <p>Hari/Tanggal Penerimaan: {formData.receiveTimestamp}</p>
-            <p>Pemohon: {formData.issuer}</p>
-            <p>Penerima: {formData.receiver}</p>
-            <p>Nama tangki: {formData.tankName}</p>
-            <p>Volume PNBP: {formData.pnbpVolume}</p>
-            <p>No Mobil Tangki: {formData.truckId}</p>
-            <p>No PNBP: {formData.pnbp}</p>
-            <p>Volume sebelum penerimaan: {formData.initialVolume}</p>
-            <p>Volume penerimaan aktual: {formData.actualVolume}</p>
-            <p>Selisih Volume: {(formData.actualVolume || 0) - (formData.pnbpVolume || 0)}</p>
+            <AdminHeaderSidebar title="Penerimaan BBM" />
+
+            <div className="tw-flex tw-flex-col tw-gap-2 tw-divide-y tw-px-4 tw-mt-4">
+                {
+                    [
+                        ['Hari/Tanggal Permintaan', data.getFormattedIssueTimestamp()],
+                        ['Hari/Tanggal Penerimaan', data.getFormattedReceiveTimestamp()],
+                        ['Pemohon', data.issuer],
+                        ['Penerima', data.receiver],
+                        ['Nama tangki', data.tankName],
+                        ['Volume PNBP', numberWithCommas(data.pnbpVolume)+" L"],
+                        ['No Mobil Tangki', data.truckId],
+                        ['No PNBP', data.pnbp],
+                        ['Volume sebelum penerimaan', numberWithCommas(data.initialVolume)+" L"],
+                        ['Volume penerimaan aktual', numberWithCommas(data.actualVolume)+" L"],
+                        ['Selisih volume', numberWithCommas(data.getVolumeDiff())+" L"]
+                    ].map((item, i) => <div key={i} className="tw-flex tw-w-full tw-items-center">
+                        <p className="tw-w-40 tw-flex-shrink-0">{item[0]}</p>
+                        <p className="tw-w-full tw-font-semibold tw-text-right">{item[1]}</p>
+                    </div>)
+                }
+            </div>
         </div>
     )
 }

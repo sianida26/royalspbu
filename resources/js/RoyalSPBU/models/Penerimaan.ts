@@ -1,7 +1,10 @@
 import Tank from './Tank'
 import Model, {ModelProps} from './Model'
+import {format} from 'date-fns'
+import idLocale from 'date-fns/locale/id'
 
 interface Properties extends ModelProps {
+    id: number,
     tank: Tank,
     volume: number,
     actualVolume: number,
@@ -9,6 +12,11 @@ interface Properties extends ModelProps {
     pnbp: string,
     pnbpVolume: number,
     truckId: string,
+    issueTimestamp: Date,
+    issuer: string,
+    receiveTimestamp: Date | null,
+    receiver: string,
+
 }
 
 export default class Penerimaan extends Model{
@@ -21,6 +29,11 @@ export default class Penerimaan extends Model{
         pnbp: '',
         pnbpVolume: 0,
         truckId: '',
+        id: -1,
+        issueTimestamp: new Date(0),
+        issuer: '',
+        receiveTimestamp: null,
+        receiver: '',
     }
 
     constructor(props?: Partial<Properties>){
@@ -34,7 +47,43 @@ export default class Penerimaan extends Model{
     }
 
     getVolumeDiff(){
-        return this.actualVolume - this.pnbpVolume
+        return this.actualVolume - this.initialVolume - this.pnbpVolume
+    }
+
+    isReceived(){
+        return this.properties.receiveTimestamp !== null
+    }
+
+    isNotReceived(){
+        return !this.isReceived()
+    }
+
+    getFormattedIssueTimestamp(dateFormat: string = 'dd MMMM yyyy'){
+        return format(this.issueTimestamp, dateFormat, {locale: idLocale})
+    }
+
+    getFormattedReceiveTimestamp(dateFormat: string = 'dd MMMM yyyy'){
+        return this.receiveTimestamp === null ? '' : format(this.receiveTimestamp, dateFormat, {locale: idLocale})
+    }
+
+    get issueTimestamp(){
+        return this.properties.issueTimestamp
+    }
+
+    get issuer(){
+        return this.properties.issuer
+    }
+
+    get receiveTimestamp(){
+        return this.properties.receiveTimestamp
+    }
+
+    get receiver(){
+        return this.properties.receiver
+    }
+
+    get id(){
+        return this.properties.id
     }
 
     get tankName(){
@@ -67,5 +116,9 @@ export default class Penerimaan extends Model{
 
     set tankName(name: string){
         this.properties.tank.set({name})
+    }
+
+    set tankId(id: number){
+        this.properties.tank.set({id})
     }
 }

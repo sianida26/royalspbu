@@ -2,33 +2,40 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Penerimaan;
+
+use Carbon\Carbon;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Penerimaan;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Hash;
 
 class PenerimaanController extends Controller
 {
     //
 
     public function all(Request $request){
-        return Penerimaan::all()
-        ->map(function($penerimaan){
-            return [
-                'id' => $penerimaan->id,
-                'issueTimestamp' => $penerimaan->issue_timestamp,
-                'issuer' => $penerimaan->issuer()->first()->name,
-                'tankName' => $penerimaan->tank()->first()->name,
-                'tankId' => $penerimaan->tank_id,
-                'pnbpVolume' => $penerimaan->pnbp_volume,
-                'receiveTimestamp' => $penerimaan->receive_timestamp,
-                'receiver' => $penerimaan->receiver()->first()->name ?? '',
-                'truckId' => $penerimaan->truck_id,
-                'pnbp' => $penerimaan->pnbp,
-                'initialVolume' => $penerimaan->initial_volume,
-                'actualVolume' => $penerimaan->actual_volume,
-            ];
-        });
+
+        $date = Carbon::createFromFormat('m-Y', $request->m);
+
+        return Penerimaan::whereMonth('issue_timestamp',$date)
+            ->get()
+            ->map(function($penerimaan){
+                return [
+                    'id' => $penerimaan->id,
+                    'issueTimestamp' => $penerimaan->issue_timestamp,
+                    'issuer' => $penerimaan->issuer()->first()->name,
+                    'tankName' => $penerimaan->tank()->first()->name,
+                    'tankId' => $penerimaan->tank_id,
+                    'pnbpVolume' => $penerimaan->pnbp_volume,
+                    'receiveTimestamp' => $penerimaan->receive_timestamp,
+                    'receiver' => $penerimaan->receiver()->first()->name ?? '',
+                    'truckId' => $penerimaan->truck_id,
+                    'pnbp' => $penerimaan->pnbp,
+                    'initialVolume' => $penerimaan->initial_volume,
+                    'actualVolume' => $penerimaan->actual_volume,
+                ];
+            });
     }
 
     public function create(Request $request){
@@ -86,6 +93,8 @@ class PenerimaanController extends Controller
     }
 
     public function delete(Request $request){
+
+        $deleter = Auth::user();
         $rules = [
             'id' => ['required', 'exists:penerimaans,id'],
         ];
@@ -97,8 +106,12 @@ class PenerimaanController extends Controller
 
         $request->validate($rules, $messages);
 
-        $penerimaan = Penerimaan::findOrFail($request->id);
-        $penerimaan->delete();
+        if (Hash::check($request->password, $deleter->password)){
+            $penerimaan = Penerimaan::findOrFail($request->id);
+            $penerimaan->delete();
+        } else {
+            abort(422, 'Password salah');
+        }
         return $penerimaan;
     }
 

@@ -6,8 +6,7 @@ import Pump from "./models/Pump"
 import DailyPumpReport from "./models/DailyPumpReport"
 import TotalizatorReport from "./models/TotalizatorReport"
 import PersediaanReport from "./models/PersediaanReport"
-
-import { IPersediaanReport } from "./interfaces/reports/PersediaanReport"
+import Penerimaan from "./models/Penerimaan"
 
 export enum Roles {
     OPERATOR = 'operator',
@@ -122,9 +121,10 @@ export interface IAdminConfig {
     editPermissionObject : IPermission
     editRoleObejct : RoleObject
     pumpReportObejct : DailyPumpReport
-    editRequestPenerimaanObject : RequestPenerimaanObejct
-    konfirmasiPenerimaanObject : KonfirmasiPenerimaanObject
-    detailPenerimaanObject : DetailPenerimaanObject
+    editRequestPenerimaanObject : Penerimaan
+    editFinishedPenerimaanObject: Penerimaan
+    konfirmasiPenerimaanObject : Penerimaan
+    detailPenerimaanObject : Penerimaan
     editLaporanTotalisatorObject : TotalizatorReport
     createLaporanTotalisatorDate : Date
     persediaanReportDate : Date

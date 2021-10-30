@@ -164,6 +164,10 @@ const routes: IRoute[] = [
         component: KonfirmasiPenerimaan,
     },
     {
+        path: '/penerimaan/konfirmasi/edit',
+        component: KonfirmasiPenerimaan,
+    },
+    {
         path: '/penerimaan/detail',
         component: DetailPenerimaan,
     },

@@ -111,7 +111,7 @@ Route::middleware('auth:api')->group(function(){
         });
 
         Route::prefix('penerimaan')->group(function(){
-            Route::get('all', [PenerimaanController::class, 'all']);
+            Route::post('all', [PenerimaanController::class, 'all']);
             Route::post('create', [PenerimaanController::class, 'create']);
             Route::post('edit', [PenerimaanController::class, 'edit']);
             Route::post('delete', [PenerimaanController::class, 'delete']);
