@@ -42,7 +42,7 @@ export function formatRupiah(rp: number, prefix: string = "Rp"): string {
 }
 
 export function numberWithCommas(n: number, separator: string = ".") {
-    return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, separator);
+    return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, separator)
 }
 
 export function formatDate(d: Date, f: string = 'dd MMMM yyyy'){

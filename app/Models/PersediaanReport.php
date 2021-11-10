@@ -48,6 +48,25 @@ class PersediaanReport extends Model
         return $this->belongsTo(Tank::class);
     }
 
+    public function getPenerimaan(){
+        return Penerimaan::getPenerimaansOnDate($this->created_at)->where('tank_id',$this->tank->id)->first();
+    }
+
+    public function getVolumeOutDispenser(){
+        return $this->tank->getVolumeOutOnDate($this->created_at);
+    }
+
+    public function getTheoriticalFinalStock(){
+        // return ($report ? $report->initial_stock : $tank->stock) + ($penerimaan ? $penerimaan['volumeDiff'] : 0) - $volumeOut
+        $penerimaan = $this->getPenerimaan();
+        return $this->initial_stock + ($penerimaan ? $penerimaan->getActualPenerimaanVolume() : 0) - $this->getVolumeOutDispenser();
+    }
+
+    //Stock akhir aktual - Stock akhir teoritis
+    public function getOutVolumeDiff(){
+        return $this->actual_stock - $this->getTheoriticalFinalStock();
+    }
+
     public static function getReportDataOnTank($tankId, $date){
         $report = self::whereDate('created_at',$date)->where('tank_id',$tankId)->first();
         $penerimaanModel = Penerimaan::getPenerimaansOnDate($date)->where('tank_id',$tankId)->first();

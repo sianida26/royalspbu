@@ -21,7 +21,7 @@ use Carbon\Carbon;
  * - pnbp : string, nullable
  * - initial_volume : unsigned integer, nullable
  * - pnbp_volume : unsigned integer, nullable
- * - actual_volume : unsigned integer, nullable
+ * - actual_volume : unsigned integer, nullable (VOLUME AKTUAL ADALAH VOLUME TANK SETELAH PENERIMAAN)
  * - receive_timestamp : timestamp, nullable
  * - receiver_id : foreign on users, nullable
  */
@@ -65,7 +65,11 @@ class Penerimaan extends Model
     }
 
     public function getVolumeDiff(){
-        return $this->actual_volume - $this->pnbp_volume;
+        return $this->getActualPenerimaanVolume() - $this->pnbp_volume;
+    }
+
+    public function getActualPenerimaanVolume(){
+        return $this->actual_volume - $this->initial_volume;
     }
 
     /**
