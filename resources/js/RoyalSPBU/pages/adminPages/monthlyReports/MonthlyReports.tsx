@@ -1,4 +1,5 @@
 import React, {ButtonHTMLAttributes} from 'react'
+import { useAdminConfig } from '../../../providers/AdminConfigProvider'
 
 import {useHistory} from 'react-router'
 
@@ -9,6 +10,8 @@ export default function MonthlyReports() {
 
     const [selectedDate, setSelectedDate] = React.useState(new Date())
 
+    const {setConfig} = useAdminConfig()
+
     const history = useHistory()
 
     const CalendarComponent = (props: React.DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>, ref: React.Ref<HTMLButtonElement>) => {
@@ -17,6 +20,12 @@ export default function MonthlyReports() {
                 <i className="bi bi-calendar2-week" />{props.value}
             </button>
         )
+    }
+
+    const handleClickPersediaan = () => {
+        //set persediaan date on config
+        setConfig({persediaanReportDate: selectedDate})
+        history.push('/laporan-bulanan/persediaan')
     }
 
     return (
@@ -37,7 +46,7 @@ export default function MonthlyReports() {
                 <button 
                     className="tw-w-full tw-bg-orange-600 tw-text-white tw-rounded-lg tw-py-8 tw-font-medium tw-text-lg tw-grid tw-place-content-center tw-text-center" 
                     style={{boxShadow: "2px 4px 4px rgba(0, 0, 0, 0.25)"}}
-                    onClick={() => history.push('/laporan-bulanan/persediaan')}
+                    onClick={handleClickPersediaan}
                 >
                     Download Catatan Persediaan Bulanan
                 </button>

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\TotalizatorReportController;
+use App\Http\Controllers\PersediaanReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,4 +28,5 @@ Route::prefix('tests')->group(function(){
 
 Route::prefix('pdf')->group(function(){
     Route::get('totalizatorReport', [TotalizatorReportController::class, 'downloadPDF']);
+    Route::get('persediaanReport', [PersediaanReportController::class, 'downloadPDF']);
 });

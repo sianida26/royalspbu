@@ -108,6 +108,7 @@ Route::middleware('auth:api')->group(function(){
         Route::prefix('persediaanReport')->group(function(){
             Route::post('getReportData',[PersediaanReportController::class, 'getReportData']);
             Route::post('submitReport', [PersediaanReportController::class, 'submit']);
+            Route::get('getTanks', [PersediaanReportController::class, 'getTanks']);
         });
 
         Route::prefix('penerimaan')->group(function(){

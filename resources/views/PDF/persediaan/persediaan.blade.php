@@ -1,6 +1,8 @@
 <?php
-    $tank = App\Models\Tank::find(8);
-    $reports = App\Models\PersediaanReport::where('tank_id',$tank->id)->get();
+    // $tank = App\Models\Tank::find();
+    //get PersediaanReports on specified tank id and selected month
+    $reports = App\Models\PersediaanReport::where('tank_id', $tank->id)->whereMonth('created_at', $date)->get();
+    // $reports = App\Models\PersediaanReport::where('tank_id',$tank->id)->get();
 ?>
 
 <!DOCTYPE html>
@@ -31,7 +33,7 @@
         <div class="mt-10 relative">
             <h2 class="text-1D2D5D">CATATAN PERSEDIAAN BBM</h2>
             {{-- logo pertamina --}}
-            <img src={{public_path('/storage/assets/logos/pertamina-always-there.png')}} class="absolute right-0 -top-11" width="125" height="125" />
+            <img src={{public_path('/storage/assets/pertamina-always-there.png')}} class="absolute right-0 -top-11" width="125" height="125" />
         </div>
 
         {{-- header form --}}
@@ -205,7 +207,7 @@
             <div class="mt-10 relative">
                 <h2 class="text-1D2D5D">CATATAN PERSEDIAAN BBM</h2>
                 {{-- logo pertamina --}}
-                <img src={{public_path('/storage/assets/logos/pertamina-always-there.png')}} class="absolute right-0 -top-11" width="125" height="125" />
+                <img src={{public_path('/storage/assets/pertamina-always-there.png')}} class="absolute right-0 -top-11" width="125" height="125" />
             </div>
 
             {{-- header form --}}

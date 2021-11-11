@@ -21,9 +21,7 @@ class AppConfigSeeder extends Seeder
         ]);
 
         $data->each(function($value, $key){
-            $model = AppConfig::firstOrNew(['key', $key]);
-            $model->key = $key;
-            $model->value = $value;
+            $model = AppConfig::firstOrCreate(['key' => $key],['value' => $value]);
             $model->save();
         });
     }

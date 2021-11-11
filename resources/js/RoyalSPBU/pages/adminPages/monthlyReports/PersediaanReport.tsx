@@ -1,27 +1,44 @@
 import React from 'react'
 
+import Tank from '../../../models/Tank'
+
 import { useAuth } from '../../../providers/AuthProvider'
+import { useAdminConfig } from '../../../providers/AdminConfigProvider'
 
 import { useSnackbar } from 'notistack'
 
 import AdminHeaderSidebar from '../../../components/AdminHeaderSidebar'
+
+import moment from 'moment'
+
+
+interface TankFromServer {
+    id: number,
+    name: string,
+}
 
 export default function PersediaanReport() {
 
     const {axios} = useAuth()
 
     const {enqueueSnackbar} = useSnackbar()
+    const {configs, setConfig} = useAdminConfig()
+
+    const [tanks, setTanks] = React.useState<Tank[]>([])
+    const [loading, setLoading] = React.useState(false)
+
+    //TODO create error flag and display it
 
     React.useEffect(() => {
         requestTanks()
     }, [])
 
     const requestTanks = () => {
-        axios({method:'get', url: '/laporan-bulanan/getTanks'})
+        setLoading(true)
+        axios({method:'get', url: '/admin/persediaanReport/getTanks'})
         .then(result => { //handle success response
-            let data = result.data;
-            
-            console.log(data) //todo remove log
+            let data: TankFromServer[] = result.data;
+            setTanks(data.map(tank => new Tank({id: tank.id, name: tank.name})))
         })
         .catch(error =>{ //handle error response
             let errorMessage = error.pesan ? error.pesan : "Terjadi kesalahan pada pengaturan request ini. Silakan hubungi Admin.";
@@ -55,8 +72,15 @@ export default function PersediaanReport() {
             if (errorMessage) enqueueSnackbar(errorMessage,{variant:"error"});
         })
         .finally(() => {
-            //
+            setLoading(false)
         })
+    }
+
+    const handleClickTank = (tank: Tank) => {
+        
+        //open link /pdf/persediaanReport with parameter m as month with year, and t as tank id.
+        let url = `/pdf/persediaanReport?m=${moment(configs.persediaanReportDate).format('MM-YYYY')}&t=${tank.id}`
+        window.open(url, '_blank')?.focus() //opens file in new tab
     }
 
     return (
@@ -65,7 +89,23 @@ export default function PersediaanReport() {
             <div className="tw-flex tw-flex-col tw-px-4 tw-py-8">
                 <p>Pilih tangki</p>
                 
-                
+                {
+                    //show loading if request is still processing
+                    loading ? <div className="">Loading...</div> :
+                    <div className="tw-flex tw-flex-col tw-gap-2">
+                        {
+                            tanks.map(tank => (
+                                <div 
+                                    key={tank.id} 
+                                    onClick={() => handleClickTank(tank)}
+                                    className={`tw-border-2 tw-border-primary-500 tw-px-4 tw-py-2 tw-text-lg tw-font-bold tw-rounded-lg`} 
+                                >
+                                    <div className="tw-flex-1 tw-text-left tw-text-gray-600">{tank.name}</div>
+                                </div>
+                            ))
+                        }
+                    </div>
+                }
             </div>
         </div>
     )

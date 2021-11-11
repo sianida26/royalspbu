@@ -10,6 +10,8 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+use PDF;
+
 class PersediaanReportController extends Controller
 {
     //
@@ -71,5 +73,24 @@ class PersediaanReportController extends Controller
         $tank->save();
 
         return $report;
+    }
+
+    public function getTanks(Request $request){
+        //TODO select tanks available on selected month
+        return Tank::all();
+    }
+
+    public function downloadPDF(Request $request){
+        $tankId = $request->t;
+        $tank = Tank::findOrFail($tankId);
+        //parse the date from request
+        $date = Carbon::createFromFormat('m-Y',$request->m);
+        $pdf = PDF::loadView('PDF.persediaan.persediaan', ['tank' => $tank, 'date' => $date])
+            ->setOrientation('landscape')
+            ->setOption('dpi', 300)
+            ->setOption('disable-smart-shrinking', true)
+            // ->setOption('header-html', $header)
+            ->setOption('margin-top', 0);
+        return $pdf->inline('Laporan Persediaan Bulanan.pdf');
     }
 }
