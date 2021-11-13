@@ -20,12 +20,12 @@ class TestController extends Controller
 
         // $header = view()->make('PDF.persediaan.header')->render();
 
-        $pdf = PDF::loadView('PDF.persediaan.persediaan')
-            ->setOrientation('landscape')
+        $pdf = PDF::loadView('PDF.stock')
             ->setOption('dpi', 300)
-            ->setOption('disable-smart-shrinking', true)
+            ->setOption('disable-smart-shrinking', true);
+            // ->setOrientation('landscape')
             // ->setOption('header-html', $header)
-            ->setOption('margin-top', 0);
+            // ->setOption('margin-top', 0);
         return $pdf->inline('aaa.pdf');
     }
 }

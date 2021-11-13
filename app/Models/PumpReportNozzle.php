@@ -52,6 +52,13 @@ class PumpReportNozzle extends Model
     }
 
     public function getTotalizatorDiff(){
-        return abs($this->totalizator_final - $this->totalizator_initial); //todo buat logic pas udah 99999
+        $totalizatorDigit = 5;
+        //if meteran lebih dari max digit totalisator
+        if ($this->totalizator_final - $this->totalizator_initial < 0){
+            $maxDigit = pow(10, $totalizatorDigit);
+            return $this->totalizator_final + $maxDigit - $this->totalizator_initial;
+        } else {
+            return abs($this->totalizator_final - $this->totalizator_initial);
+        }
     }
 }

@@ -42,7 +42,7 @@
                 <td class="border-0 w-third py-3">
                     <span class="font-semibold text-sm">No. SPBU:</span>
                     <span class="border border-black inline-block text-sm">
-                        65.xxxx.xxxx
+                        {{App\Models\AppConfig::firstWhere('key','no_spbu')->value}}
                     </span>
                 </td>
                 <td class="border-0 w-third py-3">

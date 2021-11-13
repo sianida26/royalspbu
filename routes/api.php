@@ -14,6 +14,7 @@ use App\Http\Controllers\TotalizatorReportController;
 use App\Http\Controllers\PresenceController;
 use App\Http\Controllers\PenerimaanController;
 use App\Http\Controllers\PersediaanReportController;
+use App\Http\Controllers\LaporanBulananController;
 
 /*
 |--------------------------------------------------------------------------

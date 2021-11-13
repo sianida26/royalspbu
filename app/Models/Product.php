@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\PersediaanReport;
+use App\Models\PumpReportNozzle;
+
 use Carbon\Carbon;
 
 use Illuminate\Database\Eloquent\Model;
@@ -64,6 +67,12 @@ class Product extends Model
         return $this->hasMany(Tank::class);
     }
 
+    public function getNozzles(){
+        return $this->tanks->map(function($tank){
+            return $tank->nozzles;
+        })->flatten(1);
+    }
+
     public function getNameOnDate($date){
         $last = $this->history->last(function($value) use ($date){
             return $date >= $value['timestamp'];
@@ -76,5 +85,136 @@ class Product extends Model
             return $date >= $value['timestamp'];
         });
         return $last['price'];
+    }
+
+    public function getInitialStockOnBeginningOfMonth(Carbon $date){
+        
+        $tanks = $this->tanks;
+        $initialStock = 0;
+        //carbon first day of month
+        $date = $date->copy()->startOfMonth();
+
+        foreach ($this->tanks as $tank) {
+            $tankStock = 0;
+            $model = PersediaanReport::whereDate('created_at', $date)
+            ->where('tank_id', $tank->id)
+            ->first();
+        
+            //check if first report is not on first day of month
+            if ($model === null) {
+                $model = PersediaanReport::whereMonth('created_at', $date)
+                    ->where('tank_id', $tank->id)
+                    ->get()
+                    ->sortBy('created_at')
+                    ->first();
+                
+                if ($model !== null) {
+                    $tankStock= $model->initial_stock;
+                }
+                //if report is still null, then take the latest report
+                else {
+                    $model = PersediaanReport::where('tank_id', $tank->id)
+                        ->get()
+                        ->sortBy('created_at')
+                        ->last();
+                    if ($model !== null) {
+                        $tankStock = $model->initial_stock;
+                    }
+                }
+            } 
+            //if first report is on first day of month
+            else {
+                $tankStock = $model->initial_stock;
+            }
+
+            $initialStock += $tankStock;
+        }
+
+        return $initialStock;
+    }
+
+    public function getActualStockOnEndOfMonth($date){
+        $tanks = $this->tanks;
+        $initialStock = 0;
+        //carbon last day of month
+        $date = $date->copy()->endOfMonth();
+
+        foreach ($this->tanks as $tank) {
+            $tankStock = 0;
+            $model = PersediaanReport::whereDate('created_at', $date)
+            ->where('tank_id', $tank->id)
+            ->first();
+        
+            //check if last report is not on last day of month
+            if ($model === null) {
+                $model = PersediaanReport::whereMonth('created_at', $date)
+                    ->where('tank_id', $tank->id)
+                    ->get()
+                    ->sortByDesc('created_at')
+                    ->first();
+                
+                if ($model !== null) {
+                    $tankStock= $model->actual_stock;
+                }
+                //if report is still null, then take the latest report
+                else {
+                    $model = PersediaanReport::where('tank_id', $tank->id)
+                        ->get()
+                        ->sortBy('created_at')
+                        ->last();
+                    
+                    if ($model !== null) {
+                        $tankStock = $model->actual_stock;
+                    }
+                }
+            } else {
+                $tankStock = $model->actual_stock;
+            }
+
+            $initialStock += $tankStock;
+        }
+
+        return $initialStock;
+    }
+
+    public function getTotalPenerimaanOfMonth($date){
+        $tanks = $this->tanks;
+        $totalPenerimaan = 0;
+        
+        foreach($tanks as $tank){
+            $volumePenerimaanOnThisTank = 0;
+            $penerimaans = Penerimaan::where('tank_id', $tank->id)
+                ->whereMonth('receive_timestamp', $date)
+                ->get();
+            
+            foreach ($penerimaans as $penerimaan) {
+                $volumePenerimaanOnThisTank += $penerimaan->getActualPenerimaanVolume();
+            }
+
+            $totalPenerimaan += $volumePenerimaanOnThisTank;
+        }
+
+        return $totalPenerimaan;
+    }
+
+    public function getVolumeOutFromNozzlesOnMonth($date){
+        $tanks = $this->tanks;
+        $totalVolume = 0;
+
+        foreach ($tanks as $tank){
+            $volumeOnThisTank = 0;
+            foreach ($tank->nozzles as $nozzle){
+                $nozzleId = $nozzle->id;
+                $reports = PumpReportNozzle::whereMonth('created_at',$date)
+                    ->where('nozzle_id', $nozzleId)
+                    ->get();
+                foreach ($reports as $report){
+                    $volumeOnThisTank += $report->getTotalizatorDiff();
+                }
+            }
+            $totalVolume += $volumeOnThisTank;
+        }
+
+        return $totalVolume;
     }
 }

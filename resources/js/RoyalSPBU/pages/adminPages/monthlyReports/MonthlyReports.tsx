@@ -1,16 +1,22 @@
 import React, {ButtonHTMLAttributes} from 'react'
 import { useAdminConfig } from '../../../providers/AdminConfigProvider'
+import { useAuth } from '../../../providers/AuthProvider'
 
 import {useHistory} from 'react-router'
 
+import moment from 'moment'
+
 import DatePicker from 'react-datepicker'
+import {useSnackbar} from 'notistack'
 import AdminHeaderSidebar from '../../../components/AdminHeaderSidebar'
 
 export default function MonthlyReports() {
 
     const [selectedDate, setSelectedDate] = React.useState(new Date())
+    const {enqueueSnackbar} = useSnackbar()
 
     const {setConfig} = useAdminConfig()
+    const {axios} = useAuth()
 
     const history = useHistory()
 
@@ -26,6 +32,11 @@ export default function MonthlyReports() {
         //set persediaan date on config
         setConfig({persediaanReportDate: selectedDate})
         history.push('/laporan-bulanan/persediaan')
+    }
+
+    const handleClickStock = () => {
+        let url = `/pdf/stockReport?m=${moment(selectedDate).format('MM-YYYY')}`
+        window.open(url, '_blank')?.focus() //opens file in new tab
     }
 
     return (
@@ -54,6 +65,7 @@ export default function MonthlyReports() {
                 <div 
                     className="tw-w-full tw-bg-primary-600 tw-text-white tw-rounded-lg tw-py-8 tw-font-medium tw-text-lg tw-grid tw-place-content-center tw-text-center"
                     style={{boxShadow: "2px 4px 4px rgba(0, 0, 0, 0.25)"}}
+                    onClick={handleClickStock}
                 >
                     Download Laporan Stok, Realisasi Penerimaan dan Penyaluran
                 </div>

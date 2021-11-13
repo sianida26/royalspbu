@@ -41,6 +41,10 @@
         background-color: #ED2024;
     }
 
+    .bg-white {
+        background-color: #FFFFFF;
+    }
+
     .border{
         border-width: 4px;
     }
@@ -114,6 +118,10 @@
         padding: 0 0 0 8px;
     }
 
+    .italic{
+        font-style: italic;
+    }
+
     .justify-between{
         -webkit-box-pack: justify;
     }
@@ -141,6 +149,10 @@
         margin-top: 0.25rem /*4 px */;
     }
 
+    .mt-2{
+        margin-top: 0.5rem /*8px */;
+    }
+
     .mt-3 {
         margin-top: 0.75rem/* 12px */;
     }
@@ -155,6 +167,19 @@
         margin-top: 2.5rem/* 16px */;
     }
 
+    .p-3 {
+        padding: 0.75rem/* 12px */;
+    }
+
+    .pl-6 {
+        padding-left: 1.5rem/* 24px */;
+    }
+
+    .px-0 {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
     .px-2 {
         padding-left: 0.25rem/* 8px */;
         padding-right: 0.25rem/* 8px */;
@@ -165,8 +190,19 @@
         padding-right: 1rem/* 16px */;
     }
 
-    .p-3 {
-        padding: 0.75rem/* 12px */;
+    .px-8 {
+        padding-left: 2rem/* 32px */;
+        padding-right: 2rem/* 32px */;
+    }
+
+    .px-16 {
+        padding-left: 4rem/* 64px */;
+        padding-right: 4rem/* 64px */;
+    }
+
+    .py-0{
+        padding-bottom: 0;
+        padding-top: 0;
     }
 
     .py-3 {
@@ -200,14 +236,26 @@
     .table{
         display: table;
     }
+
+    .table-border-white td{
+        border-color: #FFFFFF !important;
+    }
     .tanggal{
         margin-top: 36px;
     }
     .td-penjualan{
         width: 25%;
     }
+
+    .text-base {
+        font-size: 1rem;
+        line-height: 1.5rem;
+    }
     .text-center{
         text-align: center;
+    }
+    .text-left{
+        text-align: left;
     }
     .text-right{
         text-align: right;
@@ -233,8 +281,22 @@
         line-height: 0.7rem;
     }
 
+    .text-4xs{
+        font-size: 0.4rem;
+        line-height: 0.6rem;
+    }
+
+    .text-5xs{
+        font-size: 0.3rem;
+        line-height: 0.5rem;
+    }
+
     .text-1D2D5D{
         color: #1D2D5D;
+    }
+
+    .top-4{
+        top: 1rem;
     }
 
     .-top-11{
@@ -261,11 +323,31 @@
         padding-top: 0.5rem;
     }
 
+    .underline{
+        text-decoration: underline;
+    }
+
     .w-third{
         width: 33%;
     }
 
     .w-full{
         width: 100%;
+    }
+
+    .w-1\/3{
+        width: 33%;
+    }
+
+    .w-2\/3{
+        width: 66%;
+    }
+    .w-16{
+        width: 4rem;
+    }
+
+    .table-dense td{
+        padding-top: 0.085rem;
+        padding-bottom: 0.085rem;
     }
 </style>
