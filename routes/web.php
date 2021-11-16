@@ -20,7 +20,7 @@ use App\Http\Controllers\LaporanBulananController;
 Route::view('/','royalSPBU.app')->name('login');
 
 Route::view('/{path}','royalSPBU.app')
-    ->where('path','^(?!(api|tests|pdf)).*$');
+    ->where('path','^(?!(api|tests|pdf|assets)).*$');
 
 Route::prefix('tests')->group(function(){
 

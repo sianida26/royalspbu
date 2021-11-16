@@ -4,6 +4,8 @@ import { useHistory } from 'react-router-dom'
 import { useAuth } from '../../providers/AuthProvider'
 import { Roles } from '../../types'
 
+import zIndexes from '../../constants/zIndexes'
+
 import axios from 'axios'
 
 import DB from '../../utils/DB'
@@ -35,7 +37,6 @@ export default function Login() {
             url: '/api/login',
         })
         .then(result => {
-            console.log(result) //todo remove console
             let data: ServerResponse = result.data
             let role = data.role === 'admin' ? Roles.ADMIN
                 : data.role === 'operator' ? Roles.OPERATOR
@@ -85,14 +86,15 @@ export default function Login() {
             setErrorMsg(pesan)
             setLoading(false)
         })
-        // history.replace('/')
     }
 
     return (
-        <div className="tw-flex tw-flex-col tw-w-screen tw-h-screen tw-justify-center tw-items-center tw-px-4">
+        <div className="tw-flex tw-flex-col tw-w-screen tw-h-screen tw-justify-center tw-items-center tw-px-4 tw-relative">
+            <img src="/storage/assets/spbu.jpeg" alt="" className="tw-w-full tw-h-full tw-object-cover tw-absolute" style={{zIndex: zIndexes.base}} />
+            <div className="tw-w-full tw-h-full tw-bg-black tw-bg-opacity-75 tw-absolute" style={{zIndex: zIndexes.loginBackdrop}} />
             <div 
-                className="tw-px-8 tw-py-8 tw-w-full tw-rounded-xl tw-border tw-border-gray-300"
-                style={{maxWidth: '560px'}}
+                className="tw-px-8 tw-py-8 tw-w-full tw-rounded-xl tw-border tw-border-gray-300 tw-bg-white tw-bg-opacity-80"
+                style={{maxWidth: '560px', zIndex: zIndexes.loginCard}}
             >
 
                 {/* logo */}
@@ -116,7 +118,7 @@ export default function Login() {
 
                     {/* username */}
                     <input 
-                        className="tw-text-md tw-w-full tw-max-w-screen-sm tw-border tw-rounded-md tw-border-gray-300 tw-py-3 tw-px-4 tw-placeholder-black" 
+                        className="tw-text-md tw-w-full tw-max-w-screen-sm tw-border tw-rounded-md tw-border-gray-500 tw-py-3 tw-px-4 tw-placeholder-gray-500" 
                         placeholder="Username"
                         autoComplete="username"
                         disabled={isLoading}
@@ -127,7 +129,7 @@ export default function Login() {
                     {/* password */}
                     <input
                         autoFocus
-                        className="tw-text-md tw-w-full tw-max-w-screen-sm tw-border tw-rounded-md tw-border-gray-300 tw-py-3 tw-px-4 tw-placeholder-black" 
+                        className="tw-text-md tw-w-full tw-max-w-screen-sm tw-border tw-rounded-md tw-border-gray-500 tw-py-3 tw-px-4 tw-placeholder-gray-500" 
                         placeholder="Password"
                         type="password"
                         autoComplete="currentPassword"
@@ -154,11 +156,6 @@ export default function Login() {
                 </form>
             </div>
             <span className="tw-mt-2 tw-text-xs">&copy; 2021 Royal SPBU</span>
-            {/* <span className="tw-border tw-border-black">Username</span>
-            <input onChange={(e) => {setUsername(e.target.value)}} value={username} />
-            <span>Password</span>
-            <input type="password" className="tw-border tw-border-black"  />
-            <button className="" >Masuk</button> */}
         </div>
     )
 }
