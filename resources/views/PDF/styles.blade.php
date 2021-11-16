@@ -9,6 +9,20 @@
         padding: 2px 8px 2px 8px;
     }
 
+    table.cell-border-0 td{
+        border: 0px solid rgba(0,0,0,1);
+    }
+
+    table.cell-px-1 td{
+        padding-left: 0.25rem;
+        padding-right: 0.25rem;
+    }
+
+    tr.cell-py-0 td{
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+
     .absolute{
         position: absolute;
     }
@@ -49,6 +63,14 @@
         border-width: 4px;
     }
 
+    .border-2{
+        border: 2px solid;
+    }
+
+    .border-b{
+        border-bottom: 1px solid;
+    }
+
     .border-black{
         border-color: #000000;
     }
@@ -78,6 +100,16 @@
         border-width: 0;
     }
 
+    .cell-rupiah{
+        text-align: right;
+    }
+
+    .cell-rupiah::before{
+        content: "Rp";
+        float: left;
+        padding-right: 4px;
+    }
+
     .flex{
         display: -webkit-box;
     }
@@ -104,6 +136,10 @@
 
     .h-8{
         height: 2rem/* 32px */;
+    }
+
+    .h-96 {
+        height: 24rem/* 384px */;
     }
 
     .header{
@@ -145,6 +181,10 @@
         min-height: 6rem;
     }
 
+    .min-h-200{
+        min-height: 60rem;
+    }
+
     .mt-1 {
         margin-top: 0.25rem /*4 px */;
     }
@@ -155,6 +195,10 @@
 
     .mt-3 {
         margin-top: 0.75rem/* 12px */;
+    }
+
+    .mt-4 {
+        margin-top: 1rem/* 16px */;
     }
 
     .mt-5 {
@@ -173,6 +217,10 @@
 
     .pl-6 {
         padding-left: 1.5rem/* 24px */;
+    }
+
+    .pl-8 {
+        padding-left: 2rem/* 32px */;
     }
 
     .px-0 {
@@ -203,6 +251,11 @@
     .py-0{
         padding-bottom: 0;
         padding-top: 0;
+    }
+
+    .py-1 {
+        padding-bottom: 0.25rem/* 8px */;
+        padding-top: 0.25rem/* 8px */;
     }
 
     .py-3 {
@@ -341,6 +394,10 @@
 
     .w-2\/3{
         width: 66%;
+    }
+
+    .w-4\/5{
+        width: 80%;
     }
     .w-16{
         width: 4rem;

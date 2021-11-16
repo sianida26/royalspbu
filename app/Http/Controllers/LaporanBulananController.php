@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Pengeluaran;
 
 use Carbon\Carbon;
 
@@ -79,7 +80,7 @@ class LaporanBulananController extends Controller
                 ];
             } else {
 
-                $nozzleModels = $productModel->getNozzles();
+                $nozzleModels = $productModel->getNozzles(); //FIXME: Harusnya get nozzle on month
                 $nozzlesData = $nozzleModels->map(function ($nozzle) use ($date) {
 
                     $awal = $nozzle->getTotalizatorOnBeginningOfMonth($date);
@@ -114,10 +115,144 @@ class LaporanBulananController extends Controller
         )
             ->setOption('dpi', 300)
             ->setOption('disable-smart-shrinking', true);
-            // ->setOrientation('landscape')
-            // ->setOption('header-html', $header)
-            // ->setOption('margin-top', 0);
         return $pdf->inline('Laporan Stok.pdf');
+
+    }
+
+    public function downloadLRReport(Request $request){
+
+        //validate request
+        // d = date in m-Y
+        $this->validate($request, [
+            'm' => 'required|date_format:m-Y'
+        ]);
+
+        $date = Carbon::createFromFormat('m-Y',$request->m);
+        $products = Product::getProductsOnDate($date);
+
+        //PENJUALAN BBM
+        $totalPenjualan = 0;
+        $penjualanProducts = $products->mapWithKeys(function ($product) use ($date, &$totalPenjualan) {
+
+            $volume = $product->getVolumeOutFromNozzlesOnMonth($date);
+            $total = $product->price*$volume;
+            $totalPenjualan += $total;
+            return [
+                $product->name => [
+                    'rangetime' => '01/12/20; pk 08.00 s/d 31/12/20; pk 16.00',
+                    'volume' => $volume,
+                    'price' => $product->price,
+                    'total' => $total,
+                ]
+            ];
+        });
+
+        $penjualan = [
+            'products' => $penjualanProducts,
+            'total' => $totalPenjualan,
+        ];
+
+        //HARGA POKOK PENJUALAN
+        $totalHargaPokokPenjualan = 0;
+
+        $productStokAwal = collect([]);
+        $productPembelian = collect([]);
+        $productStokAkhir = collect([]);
+        $totalStokAwal = 0;
+        $totalPembelian = 0;
+        $totalStokAkhir = 0;
+        foreach ($products as $product) {
+
+            //Stok Awal
+            $initialStock = $product->getInitialStockOnBeginningOfMonth($date);
+            $totalStokAwalProduk = $product->price*$initialStock;
+            $totalStokAwal += $totalStokAwalProduk;
+            
+            $productStokAwal->put($product->name, [
+                'volume' => $initialStock,
+                'price' => $product->price,
+                'total' => $totalStokAwalProduk,
+            ]);
+
+            //Pembelian
+            $pembelianVolume = $product->getTotalVolumePenerimaanPNBPOfMonth($date);
+            $totalPembelianProduk = $product->penerimaan_price*$pembelianVolume;
+            $totalPembelian += $totalPembelianProduk;
+
+            $productPembelian->put($product->name, [
+                'volume' => $pembelianVolume,
+                'price' => $product->penerimaan_price,
+                'total' => $totalPembelianProduk,
+            ]);
+
+            //Stok Akhir
+            $stockAkhir = $product->getActualStockOnEndOfMonth($date);
+            $totalStokAkhirProduk = $product->price*$stockAkhir;
+            $totalStokAkhir += $totalStokAkhirProduk;
+
+            $productStokAkhir->put($product->name, [
+                'volume' => $stockAkhir,
+                'price' => $product->price,
+                'total' => $totalStokAkhirProduk,
+            ]);
+        }
+
+        $totalHargaPokokPenjualan = $totalStokAwal + $totalPembelian - $totalStokAkhir;
+
+        $hargaPokokPenjualan = [
+            'stokAwal' => [
+                'products' => $productStokAwal,
+                'total' => $totalStokAwal,
+            ],
+            'pembelian' => [
+                'products' => $productPembelian,
+                'total' => $totalPembelian,
+            ],
+            'stokAkhir' => [
+                'products' => $productStokAkhir,
+                'total' => $totalStokAkhir,
+            ],
+            'total' => $totalHargaPokokPenjualan,
+        ];
+
+        //LABA KOTOR
+        $labaKotor = $totalPenjualan - $totalHargaPokokPenjualan;
+
+        //BIAYA DAN PENGELUARAN
+        $pengeluarans = Pengeluaran::getPengeluaransOnMonth($date);
+        $totalPengeluaran = 0;
+        $biayas = $pengeluarans->groupBy(function($item){
+                return $item->type->name;
+            })
+            ->sort()
+            // ->values()
+            ->map(function($pengeluaran, $pengeluaranName) use (&$totalPengeluaran){
+
+                $total = $pengeluaran->reduce(function($carry, $item){
+                    return $carry + $item->amount;
+                });
+
+                $totalPengeluaran += $total;
+
+                return [
+                    'name' => $pengeluaranName,
+                    'price' => $total,
+                ];
+            });
+
+        $biayaDanPengeluaran = [
+            'biayas' => $biayas,
+            'total' => $totalPengeluaran,
+        ];
+
+        //LABA
+        $laba = $labaKotor - $totalPengeluaran;
+
+        $pdf = PDF::loadView('PDF.labarugi', ['date' => $date, 'penjualan' => $penjualan, 'hargaPokokPenjualan' => $hargaPokokPenjualan, 'labaKotor' => $labaKotor, 'biayaDanPengeluaran' => $biayaDanPengeluaran, 'laba' => $laba])
+            ->setOption('dpi', 300)
+            ->setOption('disable-smart-shrinking', true);
+
+        return $pdf->inline('LR '.$date->format('F Y').'.pdf');
 
     }
 }

@@ -31,4 +31,5 @@ Route::prefix('pdf')->group(function(){
     Route::get('totalizatorReport', [TotalizatorReportController::class, 'downloadPDF']);
     Route::get('persediaanReport', [PersediaanReportController::class, 'downloadPDF']);
     Route::get('stockReport', [LaporanBulananController::class, 'downloadStockReport']);
+    Route::get('lrReport', [LaporanBulananController::class, 'downloadLRReport']);
 });

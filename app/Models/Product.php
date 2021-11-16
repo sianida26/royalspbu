@@ -26,6 +26,7 @@ use Illuminate\Database\Eloquent\Casts\AsCollection;
  *    timestamp: timestamp,
  *    name: string,
  *    price: number,
+ *    penerimaanPrice: number,
  *  }
  * ]
  */
@@ -197,6 +198,26 @@ class Product extends Model
         return $totalPenerimaan;
     }
 
+    public function getTotalVolumePenerimaanPNBPOfMonth($date){
+        $tanks = $this->tanks;
+        $totalPenerimaan = 0;
+        
+        foreach($tanks as $tank){
+            $volumePenerimaanOnThisTank = 0;
+            $penerimaans = Penerimaan::where('tank_id', $tank->id)
+                ->whereMonth('receive_timestamp', $date)
+                ->get();
+            
+            foreach ($penerimaans as $penerimaan) {
+                $volumePenerimaanOnThisTank += $penerimaan->pnbp_volume;
+            }
+
+            $totalPenerimaan += $volumePenerimaanOnThisTank;
+        }
+
+        return $totalPenerimaan;
+    }
+
     public function getVolumeOutFromNozzlesOnMonth($date){
         $tanks = $this->tanks;
         $totalVolume = 0;
@@ -216,5 +237,25 @@ class Product extends Model
         }
 
         return $totalVolume;
+    }
+
+    public static function getProductsOnDate($date){
+        return self::withTrashed()->whereDate('created_at','<=',$date)
+            ->where(function($query) use ($date){
+                $query->whereDate('deleted_at','>',$date)
+                    ->orWhere('deleted_at',null);
+            })
+            ->get()
+            ->map(function($product) use ($date){
+                $last = $product->history->last(function($value) use ($date){
+                    return $date->gte(Carbon::create($value['timestamp']));
+                });
+                if ($last !== null){
+                    $product->name = $last['name'];
+                    $product->price = $last['price'];
+                    $product->penerimaan_price = $last['penerimaanPrice'];
+                }
+                return $product;
+            });
     }
 }

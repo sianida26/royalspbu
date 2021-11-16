@@ -4,6 +4,7 @@ interface Properties extends ModelProps {
     id: number,
     name: string,
     price: number,
+    penerimaanPrice: number,
 }
 
 export default class Product extends Model{
@@ -12,6 +13,7 @@ export default class Product extends Model{
         id: -1,
         name: '',
         price: 0,
+        penerimaanPrice: 0,
     }
 
     constructor(props?: Partial<Properties>){
@@ -34,6 +36,10 @@ export default class Product extends Model{
 
     get price(){
         return this.properties.price
+    }
+
+    get penerimaanPrice(){
+        return this.properties.penerimaanPrice
     }
 
     set price(price: number){

@@ -20,6 +20,7 @@ interface ServerResponse {
     id: number,
     name: string,
     price: number,
+    penerimaanPrice: number,
 }
 
 export default function Products() {
@@ -31,6 +32,7 @@ export default function Products() {
     const [formId, setFormId]  = useState(-1)
     const [formName, setFormName] = useState('')
     const [formPrice, setFormPrice] = useState(0)
+    const [formPenerimaanPrice, setFormPenerimaanPrice] = useState(0)
     const [isEditing, setEditing] = useState(false)
     const [isError, setError] = useState(false)
     const [isFormLoading, setFormLoading] = useState(false)
@@ -41,6 +43,7 @@ export default function Products() {
     const [formErrors, setFormErrors] = useState({
         name: '',
         price: '',
+        penerimaanPrice: '',
     })
 
     const requestAllProducts = () => {
@@ -52,6 +55,7 @@ export default function Products() {
                 id: _product.id,
                 name: _product.name,
                 price: _product.price,
+                penerimaanPrice: _product.penerimaanPrice,
             })), () => setLoading(false))
         })
         .catch(error =>{ //handle error response
@@ -94,6 +98,7 @@ export default function Products() {
     const handleEditProduct = (product: Product) => {
         setFormName(product.name)
         setFormPrice(product.price)
+        setFormPenerimaanPrice(product.penerimaanPrice)
         setEditing(true)
         setFormId(product.id)
         setShowModalForm(true)
@@ -113,6 +118,7 @@ export default function Products() {
             data: {
                 name: formName,
                 price: formPrice,
+                penerimaanPrice: formPenerimaanPrice,
                 id: formId,
             }
         })
@@ -120,6 +126,7 @@ export default function Products() {
             setFormErrors({
                 name: '',
                 price: '',
+                penerimaanPrice: '',
             })
             enqueueSnackbar(`Produk berhasil di${isEditing? 'edit' : 'tambahkan'}`,{variant: 'success'})
             requestAllProducts()
@@ -193,10 +200,11 @@ export default function Products() {
         </div>
     }
 
-    const renderSkeleton = () => {
+    const renderSkeleton = (i: number) => {
 
         return  <div
                     className="tw-animate-pulse tw-w-full tw-border-2 tw-border-gray-400 tw-rounded-lg tw-px-4 tw-pt-3 tw-pb-4 tw-flex tw-justify-between tw-items-center"
+                    key={i}
                     style={{boxShadow: "2px 4px 4px rgba(0, 0, 0, 0.25)"}}
         >
             {/* product detail */}
@@ -245,7 +253,7 @@ export default function Products() {
             </div>
             <div className="tw-mt-4 tw-px-4 tw-flex tw-flex-col tw-gap-4">
                 {
-                    isLoading ? [1,2,3,4,5].map(() => renderSkeleton())
+                    isLoading ? [1,2,3,4,5].map((i) => renderSkeleton(i))
                     : products.length > 0 ? products.map(renderProduct)
                     : isError ? <div className="tw-flex tw-flex-col tw-items-center tw-justify-center tw-px-8 tw-py-8">
                         <img src="/storage/assets/illustrations/undraw_bug_fixing_oc7a.svg" className="tw-w-full tw-max-w-screen-sm lg:tw-w-64" />
@@ -299,7 +307,7 @@ export default function Products() {
                             fullWidth
                             autoComplete="off"
                             label="Nama Produk"
-                            placeholder="Contoh: Pertamax"
+                            placeholder="Contoh: Pertalite"
                             disabled={isFormLoading}
                             error={!!formErrors.name}
                             helperText={formErrors.name}
@@ -307,19 +315,41 @@ export default function Products() {
                             onChange={(e) => setFormName(e.target.value)}
                         />
 
+                        {/* Harga */}
                         <TextField 
                             fullWidth
                             autoComplete="off"
                             label="Harga Produk per Liter"
-                            placeholder="Contoh: Pertamax"
+                            placeholder="Contoh: 7850"
                             type="number"
                             disabled={isFormLoading}
                             error={!!formErrors.price}
                             helperText={formErrors.price}
-                            value={formPrice}
+                            value={formPrice ? formPrice : ''}
                             onChange={(e) => setFormPrice(+e.target.value)}
                             InputProps={{
                                 startAdornment: <InputAdornment position="start">Rp</InputAdornment>
+                            }}
+                        />
+
+                        {/* Harga Penerimaan */}
+                        <TextField 
+                            fullWidth
+                            autoComplete="off"
+                            label="Harga Penerimaan per Liter"
+                            placeholder="Contoh: 7536,70"
+                            type="number"
+                            disabled={isFormLoading}
+                            error={!!formErrors.penerimaanPrice}
+                            helperText={formErrors.penerimaanPrice}
+                            value={formPenerimaanPrice ? formPenerimaanPrice : ''}
+                            onChange={(e) => setFormPenerimaanPrice(+e.target.value)}
+                            InputProps={{
+                                startAdornment: <InputAdornment position="start">Rp</InputAdornment>,
+                            }}
+                            inputProps={{
+                                step: 0.01,
+                                min: 0,
                             }}
                         />
                     </div>

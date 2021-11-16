@@ -19,14 +19,17 @@ class ProductSeeder extends Seeder
             [
                 'name' => 'Pertalite',
                 'price' => 7850,
+                'penerimaanPrice' => 7536.7,
             ],
             [
                 'name' => 'Pertamax',
                 'price' => 9200,
+                'penerimaanPrice' => 8784.57,
             ],
             [
                 'name' => 'Dexlite',
                 'price' => 9700,
+                'penerimaanPrice' => 9335.64,
             ]
         ];
 
@@ -35,6 +38,7 @@ class ProductSeeder extends Seeder
             $productModel = new Product;
             $productModel->name = $product['name'];
             $productModel->price = $product['price'];
+            $productModel->penerimaan_price = $product['penerimaanPrice'];
             $productModel->recordedSave();
         });
     }

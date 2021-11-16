@@ -15,7 +15,14 @@ class ProductController extends Controller
     //
 
     function getAllProducts(Request $request){
-        return Product::all();
+        return Product::all()->map(function($product){
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+                'price' => $product->price,
+                'penerimaanPrice' => $product->penerimaan_price,
+            ];
+        });
     }
 
     /**
@@ -39,6 +46,7 @@ class ProductController extends Controller
         $request->validate([
             'name' => ['required'],
             'price' => ['required','integer','min:0'],
+            'penerimaanPrice' => ['required','numeric','min:0'],
         ], $messages);
 
         $history = collect([
@@ -46,6 +54,7 @@ class ProductController extends Controller
                 'timestamp' => Carbon::today(),
                 'name' => $request->name,
                 'price' => $request->price,
+                'penerimaanPrice' => $request->penerimaanPrice,
             ]
         ]);
 
@@ -53,6 +62,7 @@ class ProductController extends Controller
             'name' => $request->name,
             'price' => $request->price,
             'history' => $history,
+            'penerimaan_price' => $request->penerimaanPrice,
         ]);
         return ['name' => $product->name, 'price' => $product->price];
     }
@@ -69,7 +79,8 @@ class ProductController extends Controller
         $request->validate([
             'id' => ['required', 'integer'],
             'name' => ['required'],
-            'price' => ['required', 'integer', 'min:0']
+            'price' => ['required', 'integer', 'min:0'],
+            'penerimaanPrice' => ['required', 'numeric', 'min:0'],
         ], $messages);
 
         $product = Product::findOrFail($request->id);
@@ -78,10 +89,12 @@ class ProductController extends Controller
             'timestamp' => Carbon::today(),
             'name' => $request->name,
             'price' => $request->price,
+            'penerimaanPrice' => $request->penerimaanPrice,
         ]);
 
         $product->name = $request->name;
         $product->price = $request->price;
+        $product->penerimaan_price = $request->penerimaanPrice;
         $product->save();
         return $product;
     }

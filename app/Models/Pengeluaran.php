@@ -47,4 +47,9 @@ class Pengeluaran extends Model
                 ];
             });
     }
+
+    public static function getPengeluaransOnMonth($date){
+        return self::whereMonth('created_at',$date)
+            ->get();
+    }
 }

@@ -61,7 +61,7 @@ class PresenceController extends Controller
 
         $messages = [
             'required' => 'Data harus tersedia',
-            'date_format' => 'Format :attribute tidak sesuai'
+            'date_format' => 'Format :attribute tidak sesuai',
         ];
 
         $request->validate($rules, $messages);

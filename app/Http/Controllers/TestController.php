@@ -20,7 +20,7 @@ class TestController extends Controller
 
         // $header = view()->make('PDF.persediaan.header')->render();
 
-        $pdf = PDF::loadView('PDF.stock')
+        $pdf = PDF::loadView('PDF.labarugi')
             ->setOption('dpi', 300)
             ->setOption('disable-smart-shrinking', true);
             // ->setOrientation('landscape')

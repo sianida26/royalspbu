@@ -39,6 +39,11 @@ export default function MonthlyReports() {
         window.open(url, '_blank')?.focus() //opens file in new tab
     }
 
+    const handleClickLR = () => {
+        let url = `/pdf/lrReport?m=${moment(selectedDate).format('MM-YYYY')}`
+        window.open(url, '_blank')?.focus() //opens file in new tab
+    }
+
     return (
         <div className="tw-flex tw-flex-col">
             <AdminHeaderSidebar title="Laporan Bulanan" />
@@ -52,7 +57,7 @@ export default function MonthlyReports() {
                     }}
                     customInput={React.createElement(React.forwardRef(CalendarComponent))}
                     showMonthYearPicker
-                    />
+                />
                 
                 <button 
                     className="tw-w-full tw-bg-orange-600 tw-text-white tw-rounded-lg tw-py-8 tw-font-medium tw-text-lg tw-grid tw-place-content-center tw-text-center" 
@@ -73,6 +78,7 @@ export default function MonthlyReports() {
                 <div 
                     className="tw-w-full tw-bg-green-600 tw-text-white tw-rounded-lg tw-py-8 tw-font-medium tw-text-lg tw-grid tw-place-content-center tw-text-center"
                     style={{boxShadow: "2px 4px 4px rgba(0, 0, 0, 0.25)"}}
+                    onClick={handleClickLR}
                 >
                     Download Laporan Laba dan Rugi
                 </div>
