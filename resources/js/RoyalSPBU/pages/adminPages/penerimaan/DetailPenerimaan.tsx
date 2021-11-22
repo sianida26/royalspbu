@@ -36,7 +36,7 @@ export default function DetailPenerimaan() {
         <div className="tw-w-full tw-flex tw-flex-col tw-gap-2">
             <AdminHeaderSidebar title="Penerimaan BBM" />
 
-            <div className="tw-flex tw-flex-col tw-gap-2 tw-divide-y tw-px-4 tw-mt-4">
+            <div className="tw-flex tw-flex-col tw-gap-2 tw-divide-y tw-px-4 tw-mt-4 tw-max-w-screen-md tw-self-center">
                 {
                     [
                         ['Hari/Tanggal Permintaan', data.getFormattedIssueTimestamp()],

@@ -386,7 +386,7 @@ export default function TotalisatorHarian() {
         <div className="tw-w-full tw-flex tw-flex-col tw-min-h-screen tw-relative">
             <ModalStruk show={showModal} url={imageUrl} handleClose={handleCloseModal} />
             <AdminHeaderSidebar title="Laporan Totalisator Harian" />
-            <div className="tw-w-full tw-flex tw-flex-col tw-gap-2 tw-px-4 tw-mt-4 tw-flex-grow">
+            <div className="tw-w-full tw-flex tw-flex-col tw-gap-2 tw-px-4 tw-mt-4 tw-flex-grow tw-max-w-screen-md tw-self-center">
                 <div className="tw-flex tw-justify-between tw-items-center tw-min-h-full">
                     <DatePicker 
                         selected={date}

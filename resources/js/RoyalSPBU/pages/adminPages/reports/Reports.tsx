@@ -10,7 +10,7 @@ export default function Reports() {
     return (
         <div className="tw-w-full tw-flex tw-flex-col">
             <AdminHeaderSidebar title="Laporan Harian" />
-            <div className="tw-w-full tw-flex tw-flex-col tw-p-4 tw-gap-4">
+            <div className="tw-w-full tw-flex tw-flex-col tw-p-4 tw-gap-4 tw-max-w-screen-md tw-self-center">
                 <button 
                     className="tw-w-full tw-bg-orange-600 tw-text-white tw-rounded-lg tw-py-8 tw-font-medium tw-text-lg tw-grid tw-place-content-center" 
                     onClick={() => history.push('/laporan/pompa-harian') }

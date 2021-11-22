@@ -251,7 +251,7 @@ export default function Products() {
                     Tambah Produk
                 </button>
             </div>
-            <div className="tw-mt-4 tw-px-4 tw-flex tw-flex-col tw-gap-4">
+            <div className="tw-mt-4 tw-px-4 tw-flex tw-flex-col tw-gap-4 tw-w-full tw-max-w-screen-sm tw-self-center">
                 {
                     isLoading ? [1,2,3,4,5].map((i) => renderSkeleton(i))
                     : products.length > 0 ? products.map(renderProduct)

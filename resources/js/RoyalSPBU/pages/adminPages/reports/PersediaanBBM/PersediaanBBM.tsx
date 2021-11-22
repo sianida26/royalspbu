@@ -164,17 +164,19 @@ export default function PersediaanBBM() {
     return (
         <div className="tw-flex tw-flex-col">
             <AdminHeaderSidebar title="Catatan Persediaan BBM" />
-            <div className="tw-p-4 tw-flex-col">
+            <div className="tw-p-4 tw-flex-col tw-w-full tw-max-w-screen-md tw-self-center">
                 <div className="tw-flex tw-justify-around tw-items-center tw-mb-4">
-                    <DatePicker 
-                        selected={date}
-                        onChange={(d) => {
-                            if (!(d instanceof Date)) return
-                            setDate(d)
-                        }}
-                        customInput={React.createElement(React.forwardRef(ShowCalendarButton))}
-                        maxDate={new Date()}
-                    />
+                    <div className="tw-w-full">
+                        <DatePicker 
+                            selected={date}
+                            onChange={(d) => {
+                                if (!(d instanceof Date)) return
+                                setDate(d)
+                            }}
+                            customInput={React.createElement(React.forwardRef(ShowCalendarButton))}
+                            maxDate={new Date()}
+                        />
+                    </div>
 
 
                 </div>

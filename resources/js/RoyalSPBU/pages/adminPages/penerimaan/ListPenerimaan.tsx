@@ -202,7 +202,7 @@ export default function ListPenerimaan() {
             <ModalDeletePenerimaan show={showModal} penerimaan={deletedPenerimaan} onFinished={() => closeModal()} onClose={handleFinishDelete} />
 
             {/* header buttons */}
-            <div className="tw-flex tw-justify-between tw-items-center tw-min-h-full tw-mt-4 tw-px-4">
+            <div className="tw-flex tw-justify-between tw-items-center tw-min-h-full tw-mt-4 tw-px-4 tw-w-full tw-max-w-screen-md tw-self-center">
                 <DatePicker 
                     selected={date}
                     onChange={(d) => {
@@ -223,9 +223,9 @@ export default function ListPenerimaan() {
             
             {
                 isError ? renderError()
-                : <div className="tw-flex tw-flex-col">
+                : <div className="tw-flex tw-flex-col tw-w-full tw-max-w-screen-md tw-self-center">
                     {/* Sedang diproses */}
-                    <div className="tw-flex tw-mt-4 tw-flex-col tw-px-4 tw-py-2 tw-w-full tw-border-t tw-border-b tw-border-gray-300">
+                    <div className="tw-flex tw-mt-4 tw-flex-col tw-px-4 tw-py-2 tw-w-full tw-border-t tw-border-b tw-border-gray-300 tw-text-center tw-justify-center tw-items-center">
                         <h2 className="tw-font-medium tw-italic tw-mb-2">Sedang diproses</h2>
                         <div className="tw-mt-2 tw-flex tw-flex-col tw-gap-4">
                             {
@@ -268,8 +268,8 @@ export default function ListPenerimaan() {
                     </div>
 
                     {/* History */}
-                    <div className="tw-flex tw-mt-4 tw-flex-col tw-px-4 tw-py-2 tw-w-full tw-border-t tw-border-b tw-border-gray-300">
-                        <h2 className="tw-font-medium tw-italic tw-mb-2">Riwayat Penerimaan</h2>
+                    <div className="tw-flex tw-mt-4 tw-flex-col tw-px-4 tw-py-2 tw-w-full tw-border-t tw-border-b tw-border-gray-300 tw-items-center tw-justify-center">
+                        <h2 className="tw-font-medium tw-italic tw-mb-2 tw-text-center">Riwayat Penerimaan</h2>
                         <div className="tw-mt-2 tw-flex tw-flex-col tw-gap-4">
                             {
                                 isLoading ? <span>Loading...</span>

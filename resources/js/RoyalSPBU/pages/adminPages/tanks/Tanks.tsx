@@ -384,7 +384,7 @@ export default function Tanks() {
         <div className="tw-flex tw-flex-col">
             <AdminHeaderSidebar title="Daftar Tangki" />
             {/* <button className="tw-border tw-border-black tw-py-2" onClick={() => history.push('/tanks/tambah')}>Tambah Tangki</button> */}
-            <div className="tw-grid tw-place-items-center tw-mt-4">
+            <div className="tw-grid tw-place-items-center tw-mt-4 tw-max-w-screen-sm tw-w-full tw-self-center">
 
                 {/* add tank button */}
                 <button
@@ -398,7 +398,7 @@ export default function Tanks() {
             </div>
 
             {/* tank item list */}
-            <div className="tw-px-4 tw-py-2">
+            <div className="tw-px-4 tw-py-2 tw-max-w-screen-sm tw-w-full tw-self-center">
                 {
                     isLoading ? [1,2,3,4,5].map((i) => renderSkeleton(i))
                     : tanks.length > 0 ? tanks.map((tank, i) => renderItem(tank))

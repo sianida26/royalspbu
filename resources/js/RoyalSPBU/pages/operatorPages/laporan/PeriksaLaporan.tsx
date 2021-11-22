@@ -52,7 +52,7 @@ export default function PeriksaLaporan(props : Props) {
 
     return (
         <div 
-            className="tw-flex tw-flex-col tw-max-w-screen-sm tw-w-full tw-items-center tw-justify-center tw-mt-2 tw-px-5 tw-py-5 tw-bg-white tw-rounded-xl tw-gap-4"
+            className="tw-flex tw-flex-col tw-max-w-screen-md tw-w-full tw-items-center tw-justify-center tw-mt-2 tw-px-5 tw-py-5 tw-bg-white tw-rounded-xl tw-gap-4"
             style={{boxShadow: '2px 3px 4px rgba(0, 0, 0, 0.25)', borderRadius: '12px'}}
         >
             <p className="tw-font-semibold tw-text-gray-500 tw-text-xl">Laporan Pulau Pompa {props.report.pump.pumpNumber}</p>

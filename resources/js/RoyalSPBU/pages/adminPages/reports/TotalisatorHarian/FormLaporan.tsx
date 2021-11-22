@@ -315,7 +315,7 @@ export default function FormLaporan() {
     return isRequestingData ? <span>Meminta Data....</span> : (
         <div className="tw-w-full tw-flex tw-flex-col">
             <AdminHeaderSidebar title="Laporan Totalisator Harian" />
-            <div className="tw-px-4 tw-flex tw-flex-col tw-mt-4">
+            <div className="tw-px-4 tw-flex tw-flex-col tw-mt-4 tw-max-w-screen-md tw-w-full tw-self-center">
                 <span>Pelapor: <span className="tw-font-semibold">Fulan bin Anonim</span></span>
                 <span>Hari, Tanggal: <span className="tw-font-semibold">{moment(date).locale('id').format('dddd, LL')}</span></span>
 

@@ -215,6 +215,10 @@
         padding: 0.75rem/* 12px */;
     }
 
+    .pb-8 {
+        padding-bottom: 2rem/* 32px */;
+    }
+
     .pl-6 {
         padding-left: 1.5rem/* 24px */;
     }
@@ -348,9 +352,14 @@
         color: #1D2D5D;
     }
 
+    .top-0{
+        top: 0;
+    }
+
     .top-4{
         top: 1rem;
     }
+
 
     .-top-11{
         top: -2.75rem;

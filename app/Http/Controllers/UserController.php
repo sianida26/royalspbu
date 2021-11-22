@@ -283,13 +283,40 @@ class UserController extends Controller
             ->whereDate('timestamp', Carbon::today())
             ->exists();
         
-        $reportStatus = DailyPumpReport::where('reporter_id', Auth::id())
+        $report = DailyPumpReport::where('reporter_id', Auth::id())
             ->whereDate('created_at', Carbon::today())
-            ->exists();
+            ->first();
+
+        $reportEdit = null;
+        $canCreateNewReport = $report ? false : true;
+
+        if ($report !== null && $report->editable){
+
+            $nozzles = $report->nozzles->map(function($nozzle){
+                
+                return [
+                    'id' => $nozzle->nozzle_id,
+                    'productName' => $nozzle->product_name,
+                    'imageUrl' => '/storage/images/reports/'.$nozzle->report_filename,
+                    'reportFilename' => $nozzle->report_filename,
+                    'totalizator' => $nozzle->totalizator_final,
+                ];                                  
+            });
+
+            $reportEdit = [
+                'id' => $report->id,
+                'pumpNumber' => $report->pump_number,
+                'pumpId' => $report->pump_id,
+                'nozzles' => $nozzles,
+            ];
+
+            $canCreateNewReport = true;
+        }
 
         return [
             'presence' => $presenceStatus,
-            'report' => $reportStatus,
+            'report' => $canCreateNewReport,
+            'reportEdit' => $reportEdit,
         ];
     }
 }

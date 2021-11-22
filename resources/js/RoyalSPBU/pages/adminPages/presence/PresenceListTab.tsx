@@ -76,7 +76,7 @@ export default function PresenceListTab() {
     }
 
     return (
-        <div className="tw-w-full tw-px-4">
+        <div className="tw-w-full tw-px-4 tw-max-w-screen-sm">
             {/* calendar */}
             <div className="tw-w-full tw-flex tw-justify-end tw-items-center tw-mt-4">
                 <DatePicker 

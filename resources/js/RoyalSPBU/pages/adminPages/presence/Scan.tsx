@@ -178,9 +178,9 @@ export default function Scan() {
     }
 
     return (
-        <div className="tw-flex tw-flex-col tw-w-full tw-px-4">
+        <div className="tw-flex tw-flex-col tw-w-full tw-px-4 tw-items-center tw-max-w-screen-sm">
             <p className="tw-text-right tw-mt-2">{format(new Date(), 'EEEE, dd LLLL yyyy', {locale: localeId})}</p>
-            <div className="tw-w-full relative" ref={scannerContainer}>
+            <div className="tw-w-full relative lg:tw-w-72 lg:tw-h-72" ref={scannerContainer}>
                 <video className="tw-block tw-transform" onCanPlay={handleCanPlay} style={{transform: 'rotateY(180deg)', WebkitTransform: 'rotateY(180deg)'}} ref={videoElement} muted autoPlay playsInline></video>
                 <canvas ref={canvasElement} className="tw-hidden tw-absolute tw-top-0 tw-left-0 tw-right-0 tw-bottom-0 tw-m-auto"></canvas>
             </div>

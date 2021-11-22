@@ -33,7 +33,7 @@
         <div class="mt-10 relative">
             <h2 class="text-1D2D5D">CATATAN PERSEDIAAN BBM</h2>
             {{-- logo pertamina --}}
-            <img src={{public_path('/storage/assets/pertamina-always-there.png')}} class="absolute right-0 -top-11" width="125" height="125" />
+            <img src={{public_path('/storage/assets/pertamina-always-there.png')}} class="absolute right-0 top-0" width="125" />
         </div>
 
         {{-- header form --}}

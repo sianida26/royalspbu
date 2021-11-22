@@ -147,7 +147,7 @@ export default function Home() {
                     style={{zIndex: 2}}
                     className="tw-rounded-full tw-absolute tw-right-3 tw-top-3 tw-bg-primary-700 tw-w-12 tw-h-12 tw-flex tw-items-center tw-justify-center"
                 >
-                    <i className="bi bi-person-circle tw-text-3-xl tw-text-right tw-text-white" />
+                    <i className="bi bi-person-circle tw-text-2xl tw-text-right tw-text-white" />
                 </span>
 
                 <div className="tw-w-full tw-h-full tw-flex tw-flex-col" style={{zIndex: 1}}>

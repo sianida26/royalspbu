@@ -181,7 +181,7 @@ export default function FormUser(props: Props) {
         <div className="tw-flex tw-flex-col tw-gap-4">
             <AdminHeaderSidebar title={isEdit ? "Edit User" : "Tambah User"} />
             <form 
-                className="tw-flex tw-flex-col tw-gap-4 tw-px-4"
+                className="tw-flex tw-flex-col tw-gap-4 tw-px-4 tw-w-full tw-max-w-screen-lg tw-self-center"
                 onSubmit={(e) => {e.preventDefault(); handleFormSubmit()}}
             >
                 <div>

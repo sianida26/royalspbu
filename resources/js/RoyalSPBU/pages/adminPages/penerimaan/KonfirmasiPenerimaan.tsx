@@ -117,7 +117,7 @@ export default function KonfirmasiPenerimaan() {
     return (
         <div className="tw-w-full tw-flex tw-flex-col tw-gap-2 tw-bg-gray-50">
             <AdminHeaderSidebar title="Penerimaan BBM" />
-            <div className="tw-w-full tw-flex tw-flex-col tw-px-4">
+            <div className="tw-w-full tw-flex tw-flex-col tw-px-4 tw-max-w-screen-md tw-self-center">
                 <p>Pemohon: <b>{penerimaan.issuer}</b></p>
                 <p>Hari/tanggal: <b>{penerimaan.getFormattedIssueTimestamp()}</b></p>
                 <p>Nama Tangki: <b>{penerimaan.tankName}</b></p>

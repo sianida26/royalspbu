@@ -67,12 +67,13 @@ export default function Users() {
     }, [])
 
     useEffect(() => {
-        setScreenLarge(windowSize.width >= 1200) //if screen width > 1200 the show table instead of list
+        setScreenLarge(windowSize.width >= 768) //if screen width > 768 the show table instead of list
     }, [windowSize.width])
 
     useEffect(() => {
         filterUser()
     }, [search, users])
+
     const filterUser = () => {
         setFilteredUsers(search.length === 0 ? users : users.filter(user => {
             return user.name.toLowerCase().indexOf(search.toLowerCase()) !== -1 
@@ -137,7 +138,7 @@ export default function Users() {
         });
     }
 
-    const renderUserSkeleton = () => <div className="tw-w-full tw-bg-white tw-shadow-md tw-border tw-border-gray-300 tw-rounded-lg tw-p-4 tw-flex tw-flex-col tw-animate-pulse">
+    const renderUserSkeleton = (i: number) => <div key={i} className="tw-w-full tw-bg-white tw-shadow-md tw-border tw-border-gray-300 tw-rounded-lg tw-p-4 tw-flex tw-flex-col tw-animate-pulse">
         <div className="tw-flex tw-items-center tw-gap-4">
             <span className="tw-h-7 tw-w-7 tw-rounded-full tw-bg-gray-400" />
             <span className="tw-h-5 tw-rounded tw-w-24 tw-bg-gray-400" />
@@ -223,12 +224,15 @@ export default function Users() {
 
             {/* search */}
             <div className="tw-w-full tw-mt-4 tw-px-2 tw-flex tw-justify-between">
-                <div className="tw-w-full tw-max-w-sm">
+                <form className="tw-w-full tw-max-w-sm" onSubmit={(e) => e.preventDefault()}>
 
                     <TextField 
                         fullWidth
                         placeholder="Cari"
-                        type="search"
+                        // type="search"
+                        autoComplete="off"
+                        autoCorrect="off"
+                        autoCapitalize="off"
                         onChange={(e) => handleSearchChange(e.target.value)}
                         InputProps={{
                             startAdornment: <InputAdornment position="start">
@@ -236,7 +240,7 @@ export default function Users() {
                             </InputAdornment>
                         }}
                     />
-                </div>
+                </form>
 
                 <div>
                     {/* <Pagination count={10} color="primary" /> */}
@@ -283,7 +287,7 @@ export default function Users() {
                                 <Tooltip title="Edit User">
                                     <span 
                                         className="tw-rounded-full tw-h-8 tw-w-8 tw-grid tw-place-items-center tw-border tw-border-orange-500 tw-bg-white"
-                                        // onClick={() => handleEditUser(user)}
+                                        onClick={() => handleEditUser(user)}
                                     >
                                         <i className="tw-text-orange-500 bi-pencil" />
                                     </span>
@@ -423,6 +427,8 @@ export default function Users() {
             {/* <button className="tw-bg-gray-300 tw-p-3" onClick={() => history.push('/user/tambahuser')}>Tambah User</button> */}
             <div className="tw-px-4 tw-flex tw-flex-col tw-h-screen tw-pt-12">
 
+                <input autoComplete="off" type="text" className="tw-hidden" />
+
                 {/* add user */}
                 <div className="tw-flex tw-w-full tw-justify-end tw-mt-4">
                     <button
@@ -435,14 +441,16 @@ export default function Users() {
                 </div>
 
                 {/* search */}
-                <div className="tw-mt-4 lg:tw-hidden">
-                    <div className="tw-w-full tw-max-w-sm">
+                <div className="tw-mt-4 md:tw-hidden">
+                    <form className="tw-w-full tw-max-w-sm" onSubmit={(e) => e.preventDefault()}>
 
                         <TextField 
                             fullWidth
                             placeholder="Cari"
-                            type="search"
+                            // type="search"
                             autoComplete="off"
+                            autoCorrect="off"
+                            autoCapitalize="off"
                             onChange={(e) => handleSearchChange(e.target.value)}
                             InputProps={{
                                 startAdornment: <InputAdornment position="start">
@@ -450,7 +458,7 @@ export default function Users() {
                                 </InputAdornment>
                             }}
                         />
-                    </div>
+                    </form>
                 </div>
 
                 {/* user list container */}
@@ -459,14 +467,14 @@ export default function Users() {
                     {
                         //show skeleton when loading
                         isLoading ? 
-                            isScreenLarge ? renderLoadingOnLargeScreen() : [1,2,3,4,5].map(() => renderUserSkeleton())
+                            isScreenLarge ? renderLoadingOnLargeScreen() : [1,2,3,4,5].map((i) => renderUserSkeleton(i))
 
                         //show data when loading done and success
                         : users.length > 0 ? 
                             isScreenLarge ? renderDataOnLargeScreen() : renderDataOnSmallScreen()
                         // if error occured
                         : isError ? <div className="tw-flex tw-flex-col tw-items-center tw-justify-center tw-px-8 tw-py-8">
-                            <img src="/storage/assets/illustrations/undraw_bug_fixing_oc7a.svg" className="tw-w-full tw-max-w-screen-sm lg:tw-w-64" />
+                            <img src="/storage/assets/illustrations/undraw_bug_fixing_oc7a.svg" className="tw-w-full tw-max-w-screen-sm md:tw-w-64" />
                             <h1 className="tw-text-center tw-font-bold tw-text-4xl tw-mt-8">Oops! Terjadi kesalahan.</h1>
                             <span className="tw-text-center tw-text-gray-800 tw-mt-3">Terdapat error sehingga data tidak dapat ditampilkan. Silakan coba beberapa saat lagi</span>
                             <span className="tw-text-center tw-mt-2 tw-text-sm tw-text-gray-700">{errorMsg}</span>
@@ -481,7 +489,7 @@ export default function Users() {
 
                         // if no user available. but this should never happened
                         : <div className="tw-flex tw-flex-col tw-items-center tw-justify-center tw-px-8 tw-py-8">
-                            <img src="/storage/assets/illustrations/undraw_Tree_swing_646s.svg" className="tw-w-full tw-max-w-screen-sm lg:tw-w-64" />
+                            <img src="/storage/assets/illustrations/undraw_Tree_swing_646s.svg" className="tw-w-full tw-max-w-screen-sm md:tw-w-64" />
                             <h1 className="tw-text-center tw-font-bold tw-text-4xl tw-mt-8">Oops!</h1>
                             <span className="tw-text-center tw-text-gray-800 tw-mt-3">Sepertinya Anda belum membuat User sama sekali. Cobalah untuk membuat 1 user</span>
                         </div>

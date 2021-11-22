@@ -47,7 +47,7 @@ export default function MonthlyReports() {
     return (
         <div className="tw-flex tw-flex-col">
             <AdminHeaderSidebar title="Laporan Bulanan" />
-            <div className="tw-flex tw-flex-col tw-px-4 tw-mt-4 tw-gap-4">
+            <div className="tw-flex tw-flex-col tw-px-4 tw-mt-4 tw-gap-4 tw-w-full tw-max-w-screen-md tw-self-center">
                 <DatePicker
                     selected={selectedDate}
                     dateFormat="MM/yyyy"

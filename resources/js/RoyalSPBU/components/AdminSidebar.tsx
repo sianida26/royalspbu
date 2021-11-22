@@ -32,7 +32,7 @@ export default function AdminSidebar(props: Props) {
             <div className={`tw-fixed tw-w-72 tw--left-72 tw-transform ${props.open ? 'tw-translate-x-72' : ''} tw-h-screen tw-bg-sky-700 tw-flex tw-flex-col tw-text-white tw-px-3 tw-py-4 tw-transition-transform tw-ease-in-out tw-duration-500`} style={{zIndex: zIndexes.sideBar}}>
                 {/* user name and logout button */}
                 <div className="tw-flex tw-px-1 tw-items-center">
-                    <div className="tw-flex-grow">
+                    <div className="tw-flex-grow" onClick={() => history.push('/profil')}>
                         <h2 className="tw-font-semibold tw-text-xl">Fulan bin Fulan</h2>
                         <p>Admin</p>
                     </div>

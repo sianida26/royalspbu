@@ -67,7 +67,7 @@ export default function Pumps() {
     return (
         <div className="tw-flex tw-flex-col">
             <AdminHeaderSidebar title="Pulau Pompa" />
-            <div className="tw-grid tw-px-4 tw-pt-8 tw-grid-cols-2 tw-place-items-center tw-gap-4">
+            <div className="tw-grid tw-px-4 tw-pt-8 tw-grid-cols-2 tw-place-items-center tw-gap-4 tw-max-w-screen-sm tw-w-full tw-self-center">
                 {
                     isLoading ? renderSkeleton()
                     : <>

@@ -244,7 +244,7 @@ export default function FormPump() {
                 </div>
 
                 {/* actions */}
-                <div className="tw-flex tw-justify-around tw-mt-8 tw-w-full">
+                <div className="tw-flex tw-justify-around tw-mt-8 tw-w-full tw-max-w-screen-sm">
                     <button 
                         className={`${isRequesting? 'tw-animate-pulse tw-bg-gray-400' : 'tw-border tw-border-red-500 tw-text-red-500'} ${!isEdit && 'tw-hidden'} ${isSending && 'tw-opacity-70'} tw-flex tw-gap-2 tw-items-center tw-px-3 tw-py-2 tw-rounded-lg`} 
                         disabled={isRequesting || isSending}

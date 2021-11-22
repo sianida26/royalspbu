@@ -14,11 +14,11 @@ return [
         'icons' => [
             '72x72' => [
                 'path' => '/images/icons/icon-72x72.png',
-                'purpose' => 'any'
+                'purpose' => 'any',
             ],
             '96x96' => [
                 'path' => '/images/icons/icon-96x96.png',
-                'purpose' => 'any'
+                'purpose' => 'any',
             ],
             '128x128' => [
                 'path' => '/images/icons/icon-128x128.png',

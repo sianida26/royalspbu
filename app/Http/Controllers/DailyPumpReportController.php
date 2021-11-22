@@ -103,8 +103,6 @@ class DailyPumpReportController extends Controller
 
             $price = $nozzleModel->price();
             $totalizatorDiff = abs($nozzleModel->totalizator - $initialTotalizator);
-            Debugbar::info($totalizatorDiff);
-            // Debugbar::info($price);
             $totalIncome += $totalizatorDiff*$price;
 
             return new PumpReportNozzle([
@@ -129,6 +127,25 @@ class DailyPumpReportController extends Controller
         collect($request->nozzles)->map(function($nozzle){
             Storage::move('temp/'.$nozzle['filename'],'public/images/reports/'.$nozzle['filename']);
         });
+
+        return $report;
+    }
+
+    public function izinkanEdit(Request $request){
+        $rules = [
+            'id' => ['required', 'exists:daily_pump_reports,id'],
+        ];
+
+        $messages = [
+            'required' => 'Harus diisi',
+            'exists' => ':attribute tidak ada',
+        ];
+
+        $request->validate($rules, $messages);
+
+        $report = DailyPumpReport::findOrFail($request->id);
+        $report->editable = true;
+        $report->save();
 
         return $report;
     }

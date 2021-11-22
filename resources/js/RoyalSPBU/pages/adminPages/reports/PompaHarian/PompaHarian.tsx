@@ -124,7 +124,7 @@ export default function PompaHarian() {
     return (
         <div className="tw-w-full tw-flex tw-flex-col">
             <AdminHeaderSidebar title="Laporan Pompa Harian" />
-            <div className="tw-w-full tw-flex tw-flex-col tw-mt-4 tw-px-4 tw-gap-4">
+            <div className="tw-w-full tw-flex tw-flex-col tw-mt-4 tw-px-4 tw-gap-4 tw-max-w-screen-md tw-self-center">
                 <DatePicker 
                     selected={date}
                     onChange={(d) => {

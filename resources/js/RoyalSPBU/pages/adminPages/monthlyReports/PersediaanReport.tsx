@@ -86,7 +86,7 @@ export default function PersediaanReport() {
     return (
         <div className="tw-flex tw-flex-col">
             <AdminHeaderSidebar title="Catatan Persediaan BBM Bulanan" />
-            <div className="tw-flex tw-flex-col tw-px-4 tw-py-8">
+            <div className="tw-flex tw-flex-col tw-px-4 tw-py-8 tw-max-w-screen-md tw-self-center tw-w-full">
                 <p>Pilih tangki</p>
                 
                 {

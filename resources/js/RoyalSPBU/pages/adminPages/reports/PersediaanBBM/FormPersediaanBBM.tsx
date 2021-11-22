@@ -104,14 +104,14 @@ export default function FormPersediaanBBM() {
         <div className="tw-flex tw-flex-col tw-bg-gray-50">
             <AdminHeaderSidebar title="Catatan Persediaan BBM" />
 
-            <div className="tw-mt-4 tw-px-4">
+            <div className="tw-mt-4 tw-px-4 tw-w-full tw-max-w-screen-md tw-self-center">
                 <p>Pelapor: <b>{report.reporter || auth.name || ''}</b></p>
                 <p>Hari, Tanggal: <b>{moment(date).locale('id').format('dddd, LL')}</b></p>
                 <p>Nama Tangki: <b>{report.tankName}</b></p>
                 <p>Produk: <b>{report.product}</b></p>
             </div>
 
-            <div className="tw-w-full tw-px-4 tw-mt-4">
+            <div className="tw-w-full tw-px-4 tw-mt-4 tw-max-w-screen-md tw-self-center">
 
                 {/* card */}
                 <div className="tw-flex tw-flex-col tw-gap-2 tw-divide-y tw-divide-gray-300 tw-rounded-lg tw-border-gray-100 tw-border" style={{boxShadow: '2px 3px 4px rgba(0, 0, 0, 0.25)'}}>
@@ -189,12 +189,20 @@ export default function FormPersediaanBBM() {
                             </div>
                         </div>
                     </div>
+                </div>
 
+                <div className="tw-mt-8">
                     {
-                        isEditable ? <>
-                            <button className="tw-border tw-border-black tw-py-2" onClick={handleBack}>Batal</button>
-                            <button className="tw-border tw-border-black tw-py-2" onClick={handleSubmit}>{loading ? 'Menyimpan...' : 'Simpan'}</button>
-                        </>
+                        isEditable ? <div className="tw-flex tw-justify-around">
+                            <button className="btn-dense tw-border tw-border-red-500 tw-text-red-500" onClick={handleBack}>
+                                <i className="bi bi-x-lg" />
+                                Batal
+                            </button>
+                            <button className="btn-dense tw-bg-primary-500 tw-text-white" onClick={handleSubmit}>
+                                <i className="bi bi-check-lg" />
+                                {loading ? 'Menyimpan...' : 'Simpan'}
+                            </button>
+                        </div>
                         : <button className="tw-border tw-border-black tw-py-2" onClick={handleBack}>Kembali</button>
                     }
                 </div>

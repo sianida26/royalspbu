@@ -80,6 +80,7 @@ export default function IsiLaporan(props: Props) {
         })
 
         if (isValid){
+            window.scrollTo(0, 0)
             props.handleSubmitIsi(report)
         }
     }

@@ -92,6 +92,7 @@ Route::middleware('auth:api')->group(function(){
 
         Route::prefix('dailyPumpReport')->group(function(){
             Route::get('all', [DailyPumpReportController::class, 'all']);
+            Route::post('izinkanEdit', [DailyPumpReportController::class, 'izinkanEdit']);
         });
 
         Route::prefix('totalizatorReport')->group(function(){

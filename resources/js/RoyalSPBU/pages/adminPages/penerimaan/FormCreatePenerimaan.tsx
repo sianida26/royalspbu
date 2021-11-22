@@ -117,7 +117,7 @@ export default function CreatePenerimaan() {
         <div className="tw-w-full tw-flex tw-flex-col">
             <AdminHeaderSidebar title="Penerimaan BBM" />
 
-            <div className="tw-flex tw-flex-col tw-w-full tw-px-4 tw-mt-4">
+            <div className="tw-flex tw-flex-col tw-w-full tw-px-4 tw-mt-4 tw-max-w-screen-md tw-self-center">
                 <p className="tw-text-right tw-italic tw-font-semibold">{formatDate(new Date(), 'eeee, dd MMMM yyyy')}</p>
                 <span>nama tangki</span>
                 <select 
