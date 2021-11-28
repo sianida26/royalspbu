@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { useSnackbar } from 'notistack'
+import { useConfig } from '../../../providers/ConfigProvider'
 
 import { useAuth } from '../../../providers/AuthProvider'
 
@@ -52,6 +53,7 @@ export default function Laporan() {
     const steps = getSteps()
 
     const {axios} = useAuth()
+    const {configs} = useConfig()
     const {enqueueSnackbar} = useSnackbar()
 
     const [currentStep, setCurrentStep] = React.useState(StepLaporan.PilihPompa)
@@ -60,8 +62,19 @@ export default function Laporan() {
     const [report, setReport] = React.useState<DailyPumpReport>(new DailyPumpReport())
 
     React.useEffect(() => {
-        requestAvailablePumps()
+        if (configs.editReport.isDefined()) {
+            setReport(configs.editReport)
+            setCurrentStep(StepLaporan.IsiLaporan)
+        } else {
+            requestAvailablePumps()
+        }
     }, [])
+
+    React.useEffect(() => {
+        if (configs.editReport.isDefined() && currentStep === StepLaporan.PilihPompa) {
+            setCurrentStep(StepLaporan.IsiLaporan)   
+        }
+    }, [currentStep])
 
     const requestAvailablePumps = () => {
         setLoading(true)
@@ -78,7 +91,7 @@ export default function Laporan() {
                     nozzleModel.price = nozzle.price
                     nozzleModel.productName = nozzle.productName
                     return nozzleModel
-                })
+                }) 
 
                 return new Pump({
                     available: x.available,

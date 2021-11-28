@@ -20,7 +20,7 @@
             <p>LAPORAN TOTALISATOR HARIAN</p>
 
             {{-- logo pertamina --}}
-            <img src={{public_path('/storage/assets/logos/pertamina.png')}} class="logo-pertamina" width="100" height="100" />
+            <img src={{public_path('/storage/assets/pertamina-always-there.png')}} class="logo-pertamina" width="200" />
         </div>
 
         {{-- tanggal --}}

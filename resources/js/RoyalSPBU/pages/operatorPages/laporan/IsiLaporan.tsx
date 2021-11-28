@@ -3,6 +3,7 @@ import React from 'react'
 import Compressor from 'compressorjs'
 
 import configs from '../../../constants/configs'
+import { useConfig } from '../../../providers/ConfigProvider'
 import DailyPumpReport from '../../../models/DailyPumpReport'
 import { UploadStatus } from '../../../models/Nozzle'
 import { useAuth } from '../../../providers/AuthProvider'
@@ -27,6 +28,7 @@ interface NozzleData {
 export default function IsiLaporan(props: Props) {
 
     const {axios} = useAuth()
+    const {configs: operatorConfigs} = useConfig()
     const [nozzleData, setNozzleData] = React.useState<NozzleData[]>([])
 
     React.useEffect(() => {
@@ -219,12 +221,12 @@ export default function IsiLaporan(props: Props) {
                 })
             }
             <div className="tw-flex tw-w-full tw-items-center tw-justify-between tw-my-10">
-                <button 
+                {operatorConfigs.editReport.isNotDefined() && <button 
                     className="tw-border tw-border-orange-500 tw-rounded-full tw-py-1 tw-px-3 tw-text-center tw-justify-center tw-font-semibold tw-text-orange-500 focus:tw-outline-none"
                     onClick={() => props.handleBack()}
                 >
                     Kembali
-                </button>
+                </button>}
                 <button 
                     className="tw-bg-primary-500 tw-border tw-border-primary-500 tw-rounded-full tw-py-1 tw-px-3 tw-text-center tw-justify-center tw-font-semibold tw-text-white focus:tw-outline-none"
                     onClick={handleSubmitForm}

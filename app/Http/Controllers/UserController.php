@@ -300,7 +300,7 @@ class UserController extends Controller
                     'imageUrl' => '/storage/images/reports/'.$nozzle->report_filename,
                     'reportFilename' => $nozzle->report_filename,
                     'totalizator' => $nozzle->totalizator_final,
-                ];                                  
+                ];
             });
 
             $reportEdit = [
@@ -315,7 +315,7 @@ class UserController extends Controller
 
         return [
             'presence' => $presenceStatus,
-            'report' => $canCreateNewReport,
+            'report' => !$canCreateNewReport,
             'reportEdit' => $reportEdit,
         ];
     }

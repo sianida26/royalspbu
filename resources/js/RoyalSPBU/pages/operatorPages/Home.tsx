@@ -1,6 +1,9 @@
 import React from 'react'
 import { useHistory } from 'react-router'
 
+import DailyPumpReport from '../../models/DailyPumpReport'
+import Pump from '../../models/Pump'
+import Nozzle from '../../models/Nozzle'
 import { useAuth } from '../../providers/AuthProvider'
 import { useConfig, ReportStatus } from '../../providers/ConfigProvider'
 import { useSnackbar } from 'notistack'
@@ -8,6 +11,18 @@ import { useSnackbar } from 'notistack'
 interface ServerResponse {
     presence: boolean,
     report: boolean,
+    reportEdit: {
+        id: number,
+        pumpId: number,
+        pumpNumber: number,
+        nozzles: {
+            id: number,
+            imageUrl: string,
+            productName: string,
+            reportFilename: string,
+            totalizator: number,
+        }[]
+    } | null
 }
 
 const bunderanStyle: React.CSSProperties = {
@@ -43,9 +58,31 @@ export default function Home() {
         axios({method:'get', url: '/getReportingStatus'})
         .then(result => { //handle success response
             let data: ServerResponse = result.data;
+            let editReport = new DailyPumpReport()
+            if (data.reportEdit){
+                let pump = new Pump({
+                    id: data.reportEdit.pumpId,
+                    pumpNumber: data.reportEdit.pumpNumber,
+                    nozzles: data.reportEdit.nozzles.map(nozzle => {
+                        let model = new Nozzle({
+                            id: nozzle.id,
+                            imageUrl: nozzle.imageUrl,
+                            reportFilename: nozzle.reportFilename,
+                            totalizator: nozzle.totalizator,
+                        })
+                        model.productName = model.productName
+                        return model
+                    })
+                })
+                editReport = new DailyPumpReport({
+                    id: data.reportEdit.id,
+                })
+                editReport.set({pump})
+            }
             setConfig({
                 laporanStatus: data.report ? ReportStatus.SUDAH_LAPORAN : ReportStatus.BELUM_LAPORAN,
                 presenceStatus: data.presence ? ReportStatus.SUDAH_LAPORAN : ReportStatus.BELUM_LAPORAN,
+                editReport: editReport
             })
         })
         .catch(error =>{ //handle error response

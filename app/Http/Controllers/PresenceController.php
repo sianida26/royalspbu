@@ -79,7 +79,7 @@ class PresenceController extends Controller
                 'name' => $user->name,
                 'id' => $user->id,
                 'status' => $user->isPresenceOnDate($date),
-                'time' => $user->getPresenceOnDate($date)->timestamp,
+                'time' => $user->getPresenceOnDate($date) ? $user->getPresenceOnDate($date)->timestamp : '-',
             ];
         });
     }

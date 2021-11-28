@@ -27,6 +27,7 @@ export default function PeriksaLaporan(props : Props) {
     const handleSendReport = () => {
         setLoading(true)
         axios({url: '/sendPumpReport', method: 'post', data: {
+            id: props.report.id,
             pumpId: props.report.pump.id,
             pumpNumber: props.report.pump.pumpNumber,
             nozzles: props.report.pump.nozzles.map(nozzle => ({

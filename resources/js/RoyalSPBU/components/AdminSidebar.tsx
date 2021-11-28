@@ -53,7 +53,7 @@ export default function AdminSidebar(props: Props) {
             </div>
 
             {/* backdrop */}
-            <div className={`tw-backdrop-filter tw-transition tw-duration-500 tw-ease-in-out ${props.open ? 'tw-fixed tw-backdrop-brightness-50' : 'tw-hidden tw-backdrop-brightness-100'} tw-w-screen tw-h-screen`} style={{zIndex: zIndexes.sideBarBackdrop}} />
+            <div className={`tw-backdrop-filter tw-transition tw-duration-500 tw-ease-in-out ${props.open ? 'tw-fixed tw-backdrop-brightness-50' : 'tw-hidden tw-backdrop-brightness-100'} tw-w-screen tw-h-screen`} style={{zIndex: zIndexes.sideBarBackdrop}} onClick={props.onClose} />
             
         </div>
     )

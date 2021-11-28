@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, FC } from "react";
 // import { ConfigContextState, IConfig } from "../types";
+import DailyPumpReport from '../models/DailyPumpReport'
 
 export enum ReportStatus {
     NO_DATA,
@@ -13,12 +14,14 @@ interface ConfigContextState {
 }
 
 interface IConfig {
+    editReport: DailyPumpReport,
     laporanStatus: ReportStatus,
     presenceStatus: ReportStatus,
 }
 
 const contextDefaultValues: ConfigContextState = {
     configs: {
+        editReport: new DailyPumpReport(),
         laporanStatus: ReportStatus.NO_DATA,
         presenceStatus: ReportStatus.NO_DATA,
     },

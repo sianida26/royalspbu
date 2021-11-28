@@ -69,6 +69,7 @@ class DailyPumpReportController extends Controller
     public function submitPumpReport(Request $request){
 
         $rules = [
+            'id' => ['required'],
             'pumpId' => ['required', 'exists:pumps,id'],
             'pumpNumber' => ['required', 'integer'],
             'nozzles' => ['required'],
@@ -94,41 +95,83 @@ class DailyPumpReportController extends Controller
         $userId = Auth::id();
 
         $totalIncome = 0;
-        $nozzles = collect($request->nozzles)->map(function($nozzle) use (&$totalIncome){
 
-            $nozzleModel = Nozzle::findOrFail($nozzle['id']);
-            $initialTotalizator = $nozzleModel->totalizator;
-            $nozzleModel->totalizator = $nozzle['finalTotalizator'];
-            $nozzleModel->save();
+        //CREATE REPORT
+        if ($request->id === -1){
+            $nozzles = collect($request->nozzles)->map(function($nozzle) use (&$totalIncome){
 
-            $price = $nozzleModel->price();
-            $totalizatorDiff = abs($nozzleModel->totalizator - $initialTotalizator);
-            $totalIncome += $totalizatorDiff*$price;
-
-            return new PumpReportNozzle([
-                'nozzle_id' => $nozzle['id'],
-                'totalizator_initial' => $initialTotalizator,
-                'totalizator_final' => $nozzleModel->totalizator,
-                'report_filename' => $nozzle['filename'],
+                $nozzleModel = Nozzle::findOrFail($nozzle['id']);
+                $initialTotalizator = $nozzleModel->totalizator;
+                $nozzleModel->totalizator = $nozzle['finalTotalizator'];
+                $nozzleModel->save();
+    
+                $price = $nozzleModel->price();
+                $totalizatorDiff = abs($nozzleModel->totalizator - $initialTotalizator);
+                $totalIncome += $totalizatorDiff*$price;
+    
+                return new PumpReportNozzle([
+                    'nozzle_id' => $nozzle['id'],
+                    'totalizator_initial' => $initialTotalizator,
+                    'totalizator_final' => $nozzleModel->totalizator,
+                    'report_filename' => $nozzle['filename'],
+                ]);
+            });
+    
+            Debugbar::info($totalIncome);
+            $report = DailyPumpReport::create([
+                'pump_id' => $request->pumpId,
+                'pump_number' => $request->pumpNumber+1,
+                'reporter_id' => $userId,
+                'income' => $totalIncome,
             ]);
-        });
+    
+            $report->nozzles()->saveMany($nozzles);
+    
+            //move report files
+            collect($request->nozzles)->map(function($nozzle){
+                Storage::move('temp/'.$nozzle['filename'],'public/images/reports/'.$nozzle['filename']);
+            });
+    
+            return $report;
+        }
+        else { //EDIT REPORT
 
-        Debugbar::info($totalIncome);
-        $report = DailyPumpReport::create([
-            'pump_id' => $request->pumpId,
-            'pump_number' => $request->pumpNumber+1,
-            'reporter_id' => $userId,
-            'income' => $totalIncome,
-        ]);
+            //delete old nozzles and revert totalizator
+            $report->nozzles->map(function($nozzle){
+                $nozzle->nozzle->totalizator = $nozzle->totalizator_initial;
+                $nozzle->nozzle->save();
+                $nozzle->delete();
+            });
 
-        $report->nozzles()->saveMany($nozzles);
+            //create new nozzles
+            $nozzles = collect($request->nozzles)->map(function($nozzle) use (&$totalIncome){
 
-        //move report files
-        collect($request->nozzles)->map(function($nozzle){
-            Storage::move('temp/'.$nozzle['filename'],'public/images/reports/'.$nozzle['filename']);
-        });
+                $nozzleModel = Nozzle::findOrFail($nozzle['id']);
+                $initialTotalizator = $nozzleModel->totalizator;
+                $nozzleModel->totalizator = $nozzle['finalTotalizator'];
+                $nozzleModel->save();
+    
+                $price = $nozzleModel->price();
+                $totalizatorDiff = abs($nozzleModel->totalizator - $initialTotalizator);
+                $totalIncome += $totalizatorDiff*$price;
+    
+                return new PumpReportNozzle([
+                    'nozzle_id' => $nozzle['id'],
+                    'totalizator_initial' => $initialTotalizator,
+                    'totalizator_final' => $nozzleModel->totalizator,
+                    'report_filename' => $nozzle['filename'],
+                ]);
+            });
 
-        return $report;
+            $report->nozzles()->saveMany($nozzles);
+
+            //move report files
+            collect($request->nozzles)->map(function($nozzle){
+                Storage::move('temp/'.$nozzle['filename'],'public/images/reports/'.$nozzle['filename']);
+            });
+
+            return $report;
+        }
     }
 
     public function izinkanEdit(Request $request){
