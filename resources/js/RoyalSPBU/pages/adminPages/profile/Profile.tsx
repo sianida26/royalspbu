@@ -23,6 +23,7 @@ import {
 import { useAuth } from '../../../providers/AuthProvider'
 import AdminHeaderSidebar from '../../../components/AdminHeaderSidebar'
 import zIndexes from '../../../constants/zIndexes'
+import { useHistory } from 'react-router-dom'
 
 const GreenButton = withStyles({
     root: {
@@ -36,7 +37,7 @@ const GreenButton = withStyles({
 
 export default function Profile() {
 
-    //todo improve responsive design
+    const history = useHistory()
     const { auth, axios } = useAuth()
     const { enqueueSnackbar } = useSnackbar()
 
@@ -104,7 +105,7 @@ export default function Profile() {
             </div>
             <div className="tw-grid tw-grid-row-2 tw-gap-10 tw-mt-24 tw-items-center tw-justify-center">
                 <button onClick={() => setShowModal(true)} className="tw-font-semibold tw-text-center tw-text-white tw-py-2 tw-px-8 tw-bg-green-500 tw-rounded-3xl focus:tw-outline-none tw-box">Ganti Password</button>
-                <button className="tw-font-semibold tw-text-center tw-text-white tw-py-2 tw-px-8 tw-bg-primary-500 tw-rounded-3xl focus:tw-outline-none tw-box">Logout</button>
+                <button onClick={() => history.replace('/logout')} className="tw-font-semibold tw-text-center tw-text-white tw-py-2 tw-px-8 tw-bg-primary-500 tw-rounded-3xl focus:tw-outline-none tw-box" >Logout</button>
             </div> 
 
             {/* modal */}
